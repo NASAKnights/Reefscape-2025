@@ -2,12 +2,13 @@
 
 #pragma once
 
-struct SDSModuleType {
+struct SDSModuleType
+{
 
-  double wheelDiameter;
-  double driveReduction;
-  bool driveInverted;
+    double wheelDiameter;
+    double driveReduction;
+    bool   driveInverted;
 
-  double steerReduction;
-  bool steerInverted;
+    double steerReduction;
+    bool   steerInverted;
 };

@@ -12,94 +12,89 @@
 #include <frc/kinematics/SwerveDriveKinematics.h>
 #include <frc/kinematics/SwerveModuleState.h>
 #include <units/acceleration.h>
-#include <units/velocity.h>
 #include <units/angular_velocity.h>
 #include <units/math.h>
 #include <units/time.h>
+#include <units/velocity.h>
 
 #include "SDSModuleType.hpp"
 
-namespace ElectricalConstants {
+namespace ElectricalConstants
+{
 
 const int kFrontLeftDriveMotorID = 10;
-const int kFrontLeftTurnMotorID = 11;
-const int kFrontLeftEncoderID = 12;
+const int kFrontLeftTurnMotorID  = 11;
+const int kFrontLeftEncoderID    = 12;
 
 const int kFrontRightDriveMotorID = 20;
-const int kFrontRightTurnMotorID = 21;
-const int kFrontRightEncoderID = 22;
+const int kFrontRightTurnMotorID  = 21;
+const int kFrontRightEncoderID    = 22;
 
 const int kBackLeftDriveMotorID = 30;
-const int kBackLeftTurnMotorID = 31;
-const int kBackLeftEncoderID = 32;
+const int kBackLeftTurnMotorID  = 31;
+const int kBackLeftEncoderID    = 32;
 
 const int kBackRightDriveMotorID = 40;
-const int kBackRightTurnMotorID = 41;
-const int kBackRightEncoderID = 42;
+const int kBackRightTurnMotorID  = 41;
+const int kBackRightEncoderID    = 42;
 
 } // namespace ElectricalConstants
 
-namespace DriveConstants {
+namespace DriveConstants
+{
 
-const int kDriverPort = 0;
+const int kDriverPort   = 0;
 const int kOperatorPort = 1;
 
-const SDSModuleType mk4i_l1{0.10033,
-                            (14.0 / 50.0) * (25.0 / 19.0) * (15.0 / 45.0), true,
+const SDSModuleType mk4i_l1{0.10033, (14.0 / 50.0) * (25.0 / 19.0) * (15.0 / 45.0), true,
                             (14.0 / 50.0) * (10.0 / 60.0), false};
-const SDSModuleType mk4i_l2{0.10033,
-                            (14.0 / 50.0) * (27.0 / 17.0) * (15.0 / 45.0), true,
+const SDSModuleType mk4i_l2{0.10033, (14.0 / 50.0) * (27.0 / 17.0) * (15.0 / 45.0), true,
                             (14.0 / 50.0) * (10.0 / 60.0), false};
-const SDSModuleType mk4i_l3{0.10033,
-                            (14.0 / 50.0) * (28.0 / 16.0) * (15.0 / 45.0), true,
+const SDSModuleType mk4i_l3{0.10033, (14.0 / 50.0) * (28.0 / 16.0) * (15.0 / 45.0), true,
                             (14.0 / 50.0) * (10.0 / 60.0), false};
 
 const SDSModuleType kSDSModule = mk4i_l3;
 
 const auto kTrackwidthMeters = 0.4_m;
-const auto kWheelbaseMeters = 0.4_m;
+const auto kWheelbaseMeters  = 0.4_m;
 
-const double kDefaultAxisDeadband = 0.15;
+const double                     kDefaultAxisDeadband = 0.15;
 const units::meters_per_second_t kMaxTranslationalVelocity{4.5};
 
 const units::radians_per_second_t kMaxRotationalVelocity{4};
-const bool kIsFieldRelative = true;
+const bool                        kIsFieldRelative = true;
 
 // ------------------------- MODULE OFFSETS -------------------------
- const frc::Rotation2d kFrontLeftOffset{ -units::degree_t{-40-1.5-1.3}};
-    // ^ Module 1 ^ //
- const frc::Rotation2d kFrontRightOffset{ -units::degree_t{75+2.5+1.3-1}};
-    // ^ Module 2 ^ //
- const frc::Rotation2d kBackLeftOffset{ -units::degree_t{-129-30+24+2}}; 
-    // ^ Module 3 ^ //
- const frc::Rotation2d kBackRightOffset{ -units::degree_t{178 - 5.5 - 27-1-1.5}};
-    // ^ Module 4 ^ // 
+const frc::Rotation2d kFrontLeftOffset{-units::degree_t{-40 - 1.5 - 1.3}};
+// ^ Module 1 ^ //
+const frc::Rotation2d kFrontRightOffset{-units::degree_t{75 + 2.5 + 1.3 - 1}};
+// ^ Module 2 ^ //
+const frc::Rotation2d kBackLeftOffset{-units::degree_t{-129 - 30 + 24 + 2}};
+// ^ Module 3 ^ //
+const frc::Rotation2d kBackRightOffset{-units::degree_t{178 - 5.5 - 27 - 1 - 1.5}};
+// ^ Module 4 ^ //
 
-const frc::Translation2d kFrontLeftPosition =
-    frc::Translation2d(units::meter_t{kTrackwidthMeters / 2.0},
-                       units::meter_t{kWheelbaseMeters / 2.0});
-const frc::Translation2d kFrontRightPosition =
-    frc::Translation2d(units::meter_t{kTrackwidthMeters / 2.0},
-                       units::meter_t{-kWheelbaseMeters / 2.0});
-const frc::Translation2d kBackLeftPosition =
-    frc::Translation2d(units::meter_t{-kTrackwidthMeters / 2.0},
-                       units::meter_t{kWheelbaseMeters / 2.0});
-const frc::Translation2d kBackRightPosition =
-    frc::Translation2d(units::meter_t{-kTrackwidthMeters / 2.0},
-                       units::meter_t{-kWheelbaseMeters / 2.0});
+const frc::Translation2d kFrontLeftPosition = frc::Translation2d(
+    units::meter_t{kTrackwidthMeters / 2.0}, units::meter_t{kWheelbaseMeters / 2.0});
+const frc::Translation2d kFrontRightPosition = frc::Translation2d(
+    units::meter_t{kTrackwidthMeters / 2.0}, units::meter_t{-kWheelbaseMeters / 2.0});
+const frc::Translation2d kBackLeftPosition = frc::Translation2d(
+    units::meter_t{-kTrackwidthMeters / 2.0}, units::meter_t{kWheelbaseMeters / 2.0});
+const frc::Translation2d kBackRightPosition = frc::Translation2d(
+    units::meter_t{-kTrackwidthMeters / 2.0}, units::meter_t{-kWheelbaseMeters / 2.0});
 
-const double kDriveLimit = 0.15; // 0.7 fast
+const double kDriveLimit    = 0.15; // 0.7 fast
 const double kRotationLimit = kDriveLimit;
 
 } // namespace DriveConstants
 
-namespace ModuleConstants {
+namespace ModuleConstants
+{
 
 // meters / second
 const auto kMaxSpeed = DriveConstants::kMaxTranslationalVelocity;
 // meters
-const auto kWheelDiameterMeters =
-    units::meter_t{0.092815210491};
+const auto kWheelDiameterMeters = units::meter_t{0.092815210491};
 // meters / turn
 
 const auto kWheelEffectiveDiameterCoeff = 1.11016;
@@ -109,7 +104,7 @@ const auto kWheelCircumference =
 
 // ratio is motor rot / wheel rot
 const double kDriveGearRatio = 1.0 / DriveConstants::kSDSModule.driveReduction;
-const double kTurnGearRatio = 1.0 / DriveConstants::kSDSModule.steerReduction;
+const double kTurnGearRatio  = 1.0 / DriveConstants::kSDSModule.steerReduction;
 
 const auto kDriveConversion = kWheelCircumference / kDriveGearRatio;
 
@@ -117,21 +112,20 @@ const bool kDriveMotorInverted = DriveConstants::kSDSModule.driveInverted;
 
 const bool kSteerMotorInverted = true;
 
-const auto kDriveMotorNeutral =
-    ctre::phoenix6::signals::NeutralModeValue::Brake;
+const auto kDriveMotorNeutral = ctre::phoenix6::signals::NeutralModeValue::Brake;
 const auto kSteerMotorNeutral =
     ctre::phoenix6::signals::NeutralModeValue::Brake; // set back to brake to be amazing
 const bool kEncoderInverted = false;
 
-const bool kSteerEnableCurrentLimit = true;
-const int kSteerContinuousCurrentLimit = 25;
-const int kSteerPeakCurrentLimit = 30;
-const double kSteerPeakCurrentDuration = 0.1;
+const bool   kSteerEnableCurrentLimit     = true;
+const int    kSteerContinuousCurrentLimit = 25;
+const int    kSteerPeakCurrentLimit       = 30;
+const double kSteerPeakCurrentDuration    = 0.1;
 
-const bool kDriveEnableCurrentLimit = true;
-const int kDriveContinuousCurrentLimit = 35;
-const int kDrivePeakCurrentLimit = 60;
-const double kDrivePeakCurrentDuration = 0.1;
+const bool   kDriveEnableCurrentLimit     = true;
+const int    kDriveContinuousCurrentLimit = 35;
+const int    kDrivePeakCurrentLimit       = 60;
+const double kDrivePeakCurrentDuration    = 0.1;
 
 // TODO: retune constants
 const double kDriveP = 0.2;
@@ -151,13 +145,18 @@ const double kSteerD = 0.0;
 
 } // namespace ModuleConstants
 
-namespace MathUtilNK {
-    inline double calculateAxis(double axis, double deadband) {
-        if (std::abs(axis) > deadband) {
-            return (axis - std::copysign(deadband, axis)) / (1.0 - deadband);
-        } else {
-            return 0.0;
-        }
+namespace MathUtilNK
+{
+inline double calculateAxis(double axis, double deadband)
+{
+    if(std::abs(axis) > deadband)
+    {
+        return (axis - std::copysign(deadband, axis)) / (1.0 - deadband);
     }
+    else
+    {
+        return 0.0;
+    }
+}
 
 } // namespace MathUtilNK

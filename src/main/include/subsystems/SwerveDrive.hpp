@@ -44,7 +44,7 @@
 
 class SwerveDrive : public frc2::SubsystemBase
 {
-  public:
+public:
     SwerveDrive();
 
     /**
@@ -58,10 +58,10 @@ class SwerveDrive : public frc2::SubsystemBase
     void SetSlow();
 
     frc::Rotation2d GetHeading();
-    void ResetHeading();
-    void ResetDriveEncoders();
-    void EnableDrive();
-    void DisableDrive();
+    void            ResetHeading();
+    void            ResetDriveEncoders();
+    void            EnableDrive();
+    void            DisableDrive();
 
     std::array<frc::SwerveModulePosition, 4> GetModulePositions();
 
@@ -69,40 +69,40 @@ class SwerveDrive : public frc2::SubsystemBase
 
     frc::Pose2d GetPose();
 
-    void UpdateOdometry();
+    void               UpdateOdometry();
     frc::ChassisSpeeds getRobotRelativeSpeeds();
 
     void InitializePID();
     void SetReference(frc::Pose2d);
     void Strafe(frc::ChassisSpeeds speeds, double angle);
 
-    void UpdatePoseEstimate();
-    void PublishOdometry(frc::Pose2d);
-    void PrintNetworkTablseValues();
-    void SetVision();
-    bool atSetpoint();
+    void        UpdatePoseEstimate();
+    void        PublishOdometry(frc::Pose2d);
+    void        PrintNetworkTablseValues();
+    void        SetVision();
+    bool        atSetpoint();
     frc::Pose2d GetVision();
-    void TurnVisionOn();
-    void TurnVisionOff();
+    void        TurnVisionOn();
+    void        TurnVisionOff();
 
-  private:
+private:
     // Components (e.g. motor controllers and sensors) should generally be
     // declared private and exposed only through public methods.
     AHRS navx{frc::SPI::Port::kMXP};
 
     ctre::phoenix6::hardware::Pigeon2 m_pigeon{2, "NKCANivore"};
 
-    std::array<SwerveModule, 4> modules;
+    std::array<SwerveModule, 4>   modules;
     frc::SwerveDriveKinematics<4> kSwerveKinematics;
 
     frc::ChassisSpeeds speeds;
-    frc::Field2d m_field;
+    frc::Field2d       m_field;
     frc::PIDController pidX;
     frc::PIDController pidY;
     frc::PIDController pidRot;
 
-    bool hasRun = false;
-    bool enable = true;
+    bool   hasRun = false;
+    bool   enable = true;
     double pos_Error;
 
     bool useVision = false;
@@ -111,14 +111,14 @@ class SwerveDrive : public frc2::SubsystemBase
 
     nt::NetworkTableInstance networkTableInst;
 
-    std::string_view baseLink1 = "base_link_1";
-    std::string_view baseLink2 = "base_link_2";
-    std::string_view baseLink = "base_link";
+    std::string_view                  baseLink1 = "base_link_1";
+    std::string_view                  baseLink2 = "base_link_2";
+    std::string_view                  baseLink  = "base_link";
     std::shared_ptr<nt::NetworkTable> poseTable;
 
-    nt::DoubleArraySubscriber baseLink1Subscribe;
-    nt::DoubleArraySubscriber baseLink2Subscribe;
-    frc::Quaternion rotation_q; // w, x, y, z
+    nt::DoubleArraySubscriber        baseLink1Subscribe;
+    nt::DoubleArraySubscriber        baseLink2Subscribe;
+    frc::Quaternion                  rotation_q; // w, x, y, z
     frc::SwerveDrivePoseEstimator<4> m_poseEstimator;
 
     nt::DoubleArrayPublisher baseLinkPublisher;

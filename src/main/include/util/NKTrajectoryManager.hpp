@@ -12,21 +12,22 @@
 
 #include "util/NKTrajectory.hpp"
 
-class NKTrajectoryManager {
+class NKTrajectoryManager
+{
 public:
-  static const NKTrajectory &GetTrajectory(const std::string &name);
+    static const NKTrajectory& GetTrajectory(const std::string& name);
 
 private:
-  std::map<std::string, NKTrajectory> LoadTrajectories();
+    std::map<std::string, NKTrajectory> LoadTrajectories();
 
-  static NKTrajectory LoadFile(const std::filesystem::path &trajPath);
+    static NKTrajectory LoadFile(const std::filesystem::path& trajPath);
 
-  std::map<std::string, NKTrajectory> m_trajectories;
+    std::map<std::string, NKTrajectory> m_trajectories;
 
-  NKTrajectoryManager();
+    NKTrajectoryManager();
 
-  static NKTrajectoryManager s_instance;
+    static NKTrajectoryManager s_instance;
 
-  NKTrajectoryManager(const NKTrajectoryManager &other) = delete;
-  NKTrajectoryManager &operator=(const NKTrajectoryManager &other) = delete;
+    NKTrajectoryManager(const NKTrajectoryManager& other)            = delete;
+    NKTrajectoryManager& operator=(const NKTrajectoryManager& other) = delete;
 };

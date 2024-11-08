@@ -19,8 +19,9 @@
 
 class SwerveModule : public frc2::SubsystemBase
 {
-  public:
-    SwerveModule(int driveMotorId, int steerMotorId, int steerEncoderId, frc::Rotation2d angleOffset);
+public:
+    SwerveModule(int driveMotorId, int steerMotorId, int steerEncoderId,
+                 frc::Rotation2d angleOffset);
 
     /**
      * Will be called periodically whenever the CommandScheduler runs.
@@ -32,22 +33,22 @@ class SwerveModule : public frc2::SubsystemBase
      */
     void SimulationPeriodic() override;
 
-    frc::SwerveModuleState GetCurrentState();
+    frc::SwerveModuleState    GetCurrentState();
     frc::SwerveModulePosition GetPosition();
-    void SetDesiredState(frc::SwerveModuleState desiredState);
-    void ResetDriveEncoders();
-    void InitEncoder(int encoderID);
-    frc::Rotation2d GetRotation();
-    frc::Rotation2d GetAbsoluteRotation();
-    void Reset();
+    void                      SetDesiredState(frc::SwerveModuleState desiredState);
+    void                      ResetDriveEncoders();
+    void                      InitEncoder(int encoderID);
+    frc::Rotation2d           GetRotation();
+    frc::Rotation2d           GetAbsoluteRotation();
+    void                      Reset();
 
-  private:
+private:
     // Components (e.g. motor controllers and sensors) should generally be
     // declared private and exposed only through public methods.
     int m_id;
 
-    ctre::phoenix6::hardware::TalonFX m_driveMotor;
-    ctre::phoenix6::hardware::TalonFX m_steerMotor;
+    ctre::phoenix6::hardware::TalonFX  m_driveMotor;
+    ctre::phoenix6::hardware::TalonFX  m_steerMotor;
     ctre::phoenix6::hardware::CANcoder m_steerEncoder;
 
     frc::Rotation2d m_angleOffset;

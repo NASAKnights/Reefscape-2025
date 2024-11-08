@@ -13,32 +13,34 @@
 #include <units/velocity.h>
 #include <wpi/json.h>
 
-class NKTrajectory {
+class NKTrajectory
+{
 public:
-  struct State {
-    units::second_t t;
-    frc::Pose2d pose;
-    units::meters_per_second_t vx;
-    units::meters_per_second_t vy;
-    units::radians_per_second_t omega;
+    struct State
+    {
+        units::second_t             t;
+        frc::Pose2d                 pose;
+        units::meters_per_second_t  vx;
+        units::meters_per_second_t  vy;
+        units::radians_per_second_t omega;
 
-    State Interpolate(const State &other, units::second_t newT) const;
-  };
+        State Interpolate(const State& other, units::second_t newT) const;
+    };
 
-  NKTrajectory() = default;
+    NKTrajectory() = default;
 
-  explicit NKTrajectory(std::vector<State> states);
+    explicit NKTrajectory(std::vector<State> states);
 
-  State Sample(units::second_t t) const;
+    State Sample(units::second_t t) const;
 
-  frc::Pose2d GetInitialPose() const;
+    frc::Pose2d GetInitialPose() const;
 
-  units::second_t GetTotalTime() const;
+    units::second_t GetTotalTime() const;
 
-  std::vector<State> m_states;
+    std::vector<State> m_states;
 };
 
-void to_json(wpi::json &j, const NKTrajectory::State &state);
-void from_json(const wpi::json &j, NKTrajectory::State &state);
-void to_json(wpi::json &j, const NKTrajectory &traj);
-void from_json(const wpi::json &j, NKTrajectory &traj);
+void to_json(wpi::json& j, const NKTrajectory::State& state);
+void from_json(const wpi::json& j, NKTrajectory::State& state);
+void to_json(wpi::json& j, const NKTrajectory& traj);
+void from_json(const wpi::json& j, NKTrajectory& traj);

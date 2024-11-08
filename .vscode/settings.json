@@ -97,4 +97,17 @@
     "xutility": "cpp"
   },
   "C_Cpp.errorSquiggles": "enabled",
+  "C_Cpp.formatting": "clangFormat",
+  "C_Cpp.clang_format_style": "file:${workspaceFolder}/.vscode/.clang-format",
+  "editor.defaultFormatter": "ms-vscode.cpptools",
+  "editor.formatOnSave": true,
+  "[json]": {
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[cpp]": {
+    "editor.defaultFormatter": "ms-vscode.cpptools"
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
+  }
 }
