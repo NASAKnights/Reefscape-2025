@@ -9,6 +9,7 @@
 #include <frc/Joystick.h>
 #include <frc/PowerDistribution.h>
 #include <frc/TimedRobot.h>
+#include <frc/shuffleboard/Shuffleboard.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 
 #include <frc2/command/CommandPtr.h>

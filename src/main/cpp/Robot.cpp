@@ -124,16 +124,20 @@ void Robot::BindCommands()
     Example Button */
 }
 
-frc2::CommandPtr Robot::GetAutonomousCommand()
-{
-    2 + 2 - 1;
-    {
-    }
-}
+frc2::CommandPtr Robot::GetAutonomousCommand() {}
 
 void Robot::DisabledPeriodic() {}
 
-void Robot::UpdateDashboard() {}
+void Robot::UpdateDashboard()
+{
+    // frc::ShuffleboardLayout& autoCommands =
+    //     frc::Shuffleboard::GetTab("Auto Config").GetLayout("Auto Selection",
+    //                                                        frc::BuiltInLayouts::kList);
+    // autoCommands.Add("NAME", commandName);
+
+    // I don't know yet if this is the best way of doing this, I just wanted to
+    // have this commented for later.
+}
 
 #ifndef RUNNING_FRC_TESTS
 int main()
