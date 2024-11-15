@@ -28,16 +28,17 @@ SwerveModule::SwerveModule(int driveMotorID, int steerMotorID,
       m_driveSim("TalonFX", driveMotorID), m_steerSim("TalonFX", steerMotorID),
       m_driveSimVelocity(m_driveSim.GetDouble("Velocity")),
       m_driveSimPosition(m_driveSim.GetDouble("Position")),
-      m_steerSimPosition(m_steerSim.GetDouble("Position")) {
+      m_steerSimPosition(m_steerSim.GetDouble("Position"))
+{
   configs::TalonFXConfiguration driveConfig{};
   configs::TalonFXConfiguration steerConfig{};
   configs::CANcoderConfiguration CANcoderConfig{};
 
   configs::ClosedLoopRampsConfigs driveClosedRamps{};
-  driveClosedRamps.WithVoltageClosedLoopRampPeriod(0.4);
-  driveClosedRamps.WithDutyCycleClosedLoopRampPeriod(0.4);
-  driveClosedRamps.WithTorqueClosedLoopRampPeriod(0.4);
-  driveConfig.ClosedLoopRamps = driveClosedRamps;
+  // driveClosedRamps.WithVoltageClosedLoopRampPeriod(0.4);
+  // driveClosedRamps.WithDutyCycleClosedLoopRampPeriod(0.4);
+  // driveClosedRamps.WithTorqueClosedLoopRampPeriod(0.4);
+  // driveConfig.ClosedLoopRamps = driveClosedRamps;
 
   CANcoderConfig.MagnetSensor.AbsoluteSensorRange =
       signals::AbsoluteSensorRangeValue::Signed_PlusMinusHalf;
@@ -79,8 +80,6 @@ SwerveModule::SwerveModule(int driveMotorID, int steerMotorID,
   driveConfig.MotorOutput.Inverted = kDriveMotorInverted;
   steerConfig.MotorOutput.Inverted = kSteerMotorInverted;
 
-  
-
   m_steerMotor.SetNeutralMode(kSteerMotorNeutral);
   m_driveMotor.SetNeutralMode(kDriveMotorNeutral);
 
@@ -98,13 +97,15 @@ SwerveModule::SwerveModule(int driveMotorID, int steerMotorID,
   m_driveMotor.SetPosition(units::turn_t{0});
   ResetDriveEncoders();
 
-  if constexpr (frc::RobotBase::IsSimulation()) {
+  if constexpr (frc::RobotBase::IsSimulation())
+  {
     m_simTimer.Start();
   }
 }
 
 // This method will be called once per scheduler run
-void SwerveModule::Periodic() {
+void SwerveModule::Periodic()
+{
   frc::SmartDashboard::PutNumber("Module " + std::to_string(m_id) + "/" +
                                      " Reported Angle",
                                  GetRotation().Degrees().value());
@@ -117,10 +118,10 @@ void SwerveModule::Periodic() {
   frc::SmartDashboard::PutNumber(
       "Module " + std::to_string(m_id) + "/" + " Rotations",
       (m_driveMotor.GetPosition()).GetValue().value());
-
 }
 
-void SwerveModule::SimulationPeriodic() {
+void SwerveModule::SimulationPeriodic()
+{
   units::second_t dt = m_simTimer.Get();
   m_simTimer.Reset();
   m_driveSimPosition.Set(m_driveSimPosition.Get() +
@@ -129,17 +130,20 @@ void SwerveModule::SimulationPeriodic() {
                                  m_driveSimPosition.Get());
 }
 
-frc::SwerveModuleState SwerveModule::GetCurrentState() {
+frc::SwerveModuleState SwerveModule::GetCurrentState()
+{
   return {m_driveMotor.GetVelocity().GetValue() * kDriveConversion,
           GetRotation()};
 }
 
-frc::SwerveModulePosition SwerveModule::GetPosition() {
+frc::SwerveModulePosition SwerveModule::GetPosition()
+{
   return {m_driveMotor.GetPosition().GetValue() * kDriveConversion,
           GetRotation()};
 }
 
-void SwerveModule::SetDesiredState(frc::SwerveModuleState state) {
+void SwerveModule::SetDesiredState(frc::SwerveModuleState state)
+{
   frc::Rotation2d rotation = GetRotation();
 
   state = frc::SwerveModuleState::Optimize(state, rotation);
@@ -151,19 +155,23 @@ void SwerveModule::SetDesiredState(frc::SwerveModuleState state) {
   m_driveMotor.SetControl(
       driveRequest.WithVelocity(state.speed / kDriveConversion));
 
-  if constexpr (frc::RobotBase::IsSimulation()) {
+  if constexpr (frc::RobotBase::IsSimulation())
+  {
     m_steerSimPosition.Set(state.angle.Radians().value());
   }
 }
 
-void SwerveModule::ResetDriveEncoders() {
+void SwerveModule::ResetDriveEncoders()
+{
   m_driveMotor.SetPosition(0_tr, 50_ms);
 }
 
-frc::Rotation2d SwerveModule::GetRotation() {
+frc::Rotation2d SwerveModule::GetRotation()
+{
   return units::radian_t{m_steerMotor.GetPosition().GetValue()};
 }
 
-frc::Rotation2d SwerveModule::GetAbsoluteRotation() {
+frc::Rotation2d SwerveModule::GetAbsoluteRotation()
+{
   return units::radian_t{m_steerEncoder.GetAbsolutePosition().GetValue()};
 }
