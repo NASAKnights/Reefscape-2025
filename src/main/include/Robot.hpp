@@ -33,6 +33,8 @@
 
 #include <cmath>
 
+#include "subsystems/Arm.h"
+
 class Robot : public frc::TimedRobot
 {
 public:
@@ -60,7 +62,8 @@ private:
     std::optional<frc2::CommandPtr> m_autonomousCommand;
 
     // Subsystems
-    SwerveDrive m_swerveDrive;
+    SwerveDrive  m_swerveDrive;
+    ArmSubsystem m_arm;
 
     frc::PowerDistribution m_pdh =
         frc::PowerDistribution{1, frc::PowerDistribution::ModuleType::kRev};

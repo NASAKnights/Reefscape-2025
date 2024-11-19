@@ -1,0 +1,91 @@
+#pragma once
+
+#include "frc/DataLogManager.h"
+#include "wpi/DataLog.h"
+#include <ctre/phoenix6/Pigeon2.hpp>
+#include <ctre/phoenix6/TalonFX.hpp>
+#include <frc/DutyCycleEncoder.h>
+#include <frc/Encoder.h>
+#include <frc/controller/ArmFeedforward.h>
+#include <frc/smartdashboard/SmartDashboard.h>
+#include <frc2/command/ProfiledPIDSubsystem.h>
+#include <rev/CANSparkFlex.h>
+#include <units/angle.h>
+#include <units/time.h>
+
+#include "Constants.hpp"
+#include <frc/DigitalInput.h>
+#include <frc/Servo.h>
+
+namespace ArmConstants
+{
+
+enum ArmState
+{
+    FORWARD,
+    BACKWARD,
+    PRIMED,
+    STARTKICK
+    // UNBRAKED,
+};
+
+const double kAngleP        = 0.2;
+const double kAngleI        = 0.0;
+const double kAngleD        = 0.0; // 0.0001
+const double kIZone         = 1.0;
+const auto   kArmVelLimit   = units::degrees_per_second_t(140.0);
+const auto   kArmAccelLimit = units::angular_acceleration::degrees_per_second_squared_t(120.0);
+const auto   kControllerTolerance = units::degree_t(1.0);
+const int    kAngleMotorId        = 5;
+
+const int  kAngleEncoderPulsePerRev = 7168;
+const auto kFFks                    = units::volt_t(0.23);            // Volts static (motor)
+const auto kFFkg                    = units::volt_t(0.28);            // Volts
+const auto kFFkV = units::unit_t<frc::ArmFeedforward::kv_unit>(1.01); // volts*s/rad
+const auto kFFkA = units::unit_t<frc::ArmFeedforward::ka_unit>(0.01); // volts*s^2/rad
+
+const bool   kArmEnableCurrentLimit     = true;
+const int    kArmContinuousCurrentLimit = 35;
+const int    kArmPeakCurrentLimit       = 60;
+const double kArmPeakCurrentDuration    = 0.1;
+
+const double kArmAngleStarting  = 0.0;   // With offset
+const double kArmAngleRetracted = -30.0; // With offset
+const double kArmAngleExtended  = 45.0;  // with offset
+
+} // namespace ArmConstants
+
+/**
+ * A robot m_arm subsystem that moves with a motion profile.
+ */
+class ArmSubsystem : public frc2::ProfiledPIDSubsystem<units::degrees>
+{
+    using State = frc::TrapezoidProfile<units::degrees>::State;
+
+public:
+    ArmSubsystem();
+    void printLog();
+    void handle_Setpoint(units::angle::degree_t);
+    void Emergency_Stop();
+    void kick();
+    // void get_pigeon();s
+    void            UseOutput(double output, State setpoint) override;
+    units::degree_t GetMeasurement() override;
+    bool            isOverLimit();
+
+    units::time::second_t  time_brake_released;
+    ArmConstants::ArmState m_ArmState;
+
+private:
+    rev::CANSparkFlex                 m_motor;
+    frc::ArmFeedforward               m_feedforward;
+    wpi::log::DoubleLogEntry          m_AngleLog;
+    wpi::log::DoubleLogEntry          m_SetPointLog;
+    wpi::log::IntegerLogEntry         m_StateLog;
+    wpi::log::DoubleLogEntry          m_MotorCurrentLog;
+    wpi::log::DoubleLogEntry          m_MotorVoltageLog;
+    ctre::phoenix6::hardware::Pigeon2 arm_pigeon{9, "NKCANivore"};
+    float                             ARM_Angle;
+    frc::PWM                          Linear;
+    frc::DigitalInput                 Kill{4};
+};

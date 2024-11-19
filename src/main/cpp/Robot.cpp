@@ -122,6 +122,13 @@ void Robot::BindCommands()
         .OnTrue(frc2::CommandPtr(frc2::InstantCommand([this]
                                                       { return exampleCommandHere(); })));
     Example Button */
+    frc2::JoystickButton(&m_driverController, 8)
+        .OnTrue(frc2::CommandPtr(frc2::InstantCommand(
+            [this]
+            {
+                return;
+                m_arm.kick();
+            })));
 }
 
 frc2::CommandPtr Robot::GetAutonomousCommand() {}
