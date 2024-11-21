@@ -29,8 +29,8 @@ ArmSubsystem::ArmSubsystem()
     armAngleConfig.CurrentLimits.SupplyCurrentLimit     = ArmConstants::kArmContinuousCurrentLimit;
     armAngleConfig.CurrentLimits.SupplyCurrentThreshold = ArmConstants::kArmPeakCurrentLimit;
     armAngleConfig.CurrentLimits.SupplyTimeThreshold    = ArmConstants::kArmPeakCurrentDuration;
+    m_timer                                             = new frc::Timer();
 
-    // m_motor.GetConfigurator().Apply(armAngleConfig);
     m_motor.SetIdleMode(rev::CANSparkBase::IdleMode::kBrake);
 
     GetController().SetTolerance(ArmConstants::kControllerTolerance);
@@ -103,22 +103,23 @@ void ArmSubsystem::kick()
         ArmSubsystem::m_ArmState = ArmConstants::STARTKICK;
     }
 }
-void ArmSubsystem::handle_Setpoint(units::angle::degree_t setpoint)
+void ArmSubsystem::handle_Setpoint()
 {
 
     switch(m_ArmState)
     {
         case ArmConstants::STARTKICK:
         {
-            SetGoal(units::angle::dergee_t{ArmConstants::kArmAngleExtended});
+            SetGoal(units::angle::degree_t{ArmConstants::kArmAngleExtended});
             m_ArmState = ArmConstants::FORWARD;
+            m_timer->Restart();
         }
         case ArmConstants::FORWARD:
         {
             // Forward state is set when Kick is in proccess
             //  After full kicking motion has been completed (successful angle has been reach)
             //  Return to backwards position
-            if(GetController().AtGoal())
+            if(GetController().AtGoal() || m_timer->Get().value() > ArmConstants::kMaxTimer)
             {
                 m_ArmState = ArmConstants::BACKWARD;
                 SetGoal(units::angle::degree_t{ArmConstants::kArmAngleRetracted});

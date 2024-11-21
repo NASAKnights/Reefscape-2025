@@ -16,6 +16,7 @@
 #include "Constants.hpp"
 #include <frc/DigitalInput.h>
 #include <frc/Servo.h>
+#include <frc/Timer.h>
 
 namespace ArmConstants
 {
@@ -34,9 +35,10 @@ const double kAngleI        = 0.0;
 const double kAngleD        = 0.0; // 0.0001
 const double kIZone         = 1.0;
 const auto   kArmVelLimit   = units::degrees_per_second_t(140.0);
-const auto   kArmAccelLimit = units::angular_acceleration::degrees_per_second_squared_t(120.0);
-const auto   kControllerTolerance = units::degree_t(1.0);
-const int    kAngleMotorId        = 5;
+const auto   kArmAccelLimit = units::angular_acceleration::degrees_per_second_squared_t(
+    120.0); // Mech limit 27 rad/s^2(1500 degree_second_squared)
+const auto kControllerTolerance = units::degree_t(1.0);
+const int  kAngleMotorId        = 5;
 
 const int  kAngleEncoderPulsePerRev = 7168;
 const auto kFFks                    = units::volt_t(0.23);            // Volts static (motor)
@@ -52,6 +54,7 @@ const double kArmPeakCurrentDuration    = 0.1;
 const double kArmAngleStarting  = 0.0;   // With offset
 const double kArmAngleRetracted = -30.0; // With offset
 const double kArmAngleExtended  = 45.0;  // with offset
+const double kMaxTimer          = 0.25;  // Max time for kicking (seconds)
 
 } // namespace ArmConstants
 
@@ -65,7 +68,7 @@ class ArmSubsystem : public frc2::ProfiledPIDSubsystem<units::degrees>
 public:
     ArmSubsystem();
     void printLog();
-    void handle_Setpoint(units::angle::degree_t);
+    void handle_Setpoint();
     void Emergency_Stop();
     void kick();
     // void get_pigeon();s
@@ -85,6 +88,7 @@ private:
     wpi::log::DoubleLogEntry          m_MotorCurrentLog;
     wpi::log::DoubleLogEntry          m_MotorVoltageLog;
     ctre::phoenix6::hardware::Pigeon2 arm_pigeon{9, "NKCANivore"};
+    frc::Timer*                       m_timer;
     float                             ARM_Angle;
     frc::PWM                          Linear;
     frc::DigitalInput                 Kill{4};

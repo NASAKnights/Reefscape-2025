@@ -60,7 +60,10 @@ void Robot::TeleopInit()
     m_swerveDrive.TurnVisionOn(); // Turn Vision back on for Teleop
 }
 
-void Robot::TeleopPeriodic() {}
+void Robot::TeleopPeriodic()
+{
+    m_arm.handle_Setpoint();
+}
 
 void Robot::TeleopExit() {}
 
@@ -123,11 +126,11 @@ void Robot::BindCommands()
                                                       { return exampleCommandHere(); })));
     Example Button */
     frc2::JoystickButton(&m_driverController, 8)
-        .OnTrue(frc2::CommandPtr(frc2::InstantCommand(
+        .WhileTrue(frc2::CommandPtr(frc2::InstantCommand(
             [this]
             {
-                return;
                 m_arm.kick();
+                return;
             })));
 }
 
