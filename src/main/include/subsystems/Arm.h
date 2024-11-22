@@ -40,7 +40,7 @@ const auto   kArmAccelLimit = units::angular_acceleration::degrees_per_second_sq
 const auto kControllerTolerance = units::degree_t(1.0);
 const int  kAngleMotorId        = 5;
 
-const int  kAngleEncoderPulsePerRev = 7168;
+const int  kAngleEncoderPulsePerRev = 42;
 const auto kFFks                    = units::volt_t(0.23);            // Volts static (motor)
 const auto kFFkg                    = units::volt_t(0.28);            // Volts
 const auto kFFkV = units::unit_t<frc::ArmFeedforward::kv_unit>(1.01); // volts*s/rad
@@ -71,7 +71,7 @@ public:
     void handle_Setpoint();
     void Emergency_Stop();
     void kick();
-    // void get_pigeon();s
+    // void get_pigeon();
     void            UseOutput(double output, State setpoint) override;
     units::degree_t GetMeasurement() override;
     bool            isOverLimit();
@@ -87,8 +87,9 @@ private:
     wpi::log::IntegerLogEntry         m_StateLog;
     wpi::log::DoubleLogEntry          m_MotorCurrentLog;
     wpi::log::DoubleLogEntry          m_MotorVoltageLog;
-    ctre::phoenix6::hardware::Pigeon2 arm_pigeon{9, "NKCANivore"};
+    ctre::phoenix6::hardware::Pigeon2 arm_pigeon{9}; //, "NKCANivore"};
     frc::Timer*                       m_timer;
+    rev::SparkRelativeEncoder         m_encoder;
     float                             ARM_Angle;
     frc::PWM                          Linear;
     frc::DigitalInput                 Kill{4};

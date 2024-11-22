@@ -17,25 +17,22 @@ ArmSubsystem::ArmSubsystem()
     , m_motor(ArmConstants::kAngleMotorId, rev::CANSparkLowLevel::MotorType::kBrushless)
     , m_feedforward(ArmConstants::kFFks, ArmConstants::kFFkg, ArmConstants::kFFkV,
                     ArmConstants::kFFkA)
-    , Linear{1} // arm_pigeon{9, "NKCANivore"}
+    , Linear{1}
+    , m_encoder{m_motor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor,
+                                   ArmConstants::kAngleEncoderPulsePerRev)}
 {
-    auto armAngleConfig = ctre::phoenix6::configs::TalonFXConfiguration();
     GetController().SetIZone(ArmConstants::kIZone);
-    auto encoder = m_motor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor,
-                                      ArmConstants::kAngleEncoderPulsePerRev);
-    encoder.SetPositionConversionFactor(6.0);
+    m_encoder.SetPositionConversionFactor(6.0);
 
-    armAngleConfig.CurrentLimits.SupplyCurrentLimitEnable = ArmConstants::kArmEnableCurrentLimit;
-    armAngleConfig.CurrentLimits.SupplyCurrentLimit     = ArmConstants::kArmContinuousCurrentLimit;
-    armAngleConfig.CurrentLimits.SupplyCurrentThreshold = ArmConstants::kArmPeakCurrentLimit;
-    armAngleConfig.CurrentLimits.SupplyTimeThreshold    = ArmConstants::kArmPeakCurrentDuration;
-    m_timer                                             = new frc::Timer();
+    m_timer = new frc::Timer();
 
     m_motor.SetIdleMode(rev::CANSparkBase::IdleMode::kBrake);
 
     GetController().SetTolerance(ArmConstants::kControllerTolerance);
     // Start m_arm in neutral position
-    SetGoal(State{units::degree_t(0.0), 0_rad_per_s});
+    SetGoal(State{units::degree_t(ArmConstants::kArmAngleRetracted), 0_rad_per_s});
+
+    m_ArmState = ArmConstants::ArmState::BACKWARD;
 
     wpi::log::DataLog& log = frc::DataLogManager::GetLog();
     m_AngleLog             = wpi::log::DoubleLogEntry(log, "/Arm/Angle");
@@ -79,23 +76,9 @@ void ArmSubsystem::printLog()
 
 units::degree_t ArmSubsystem::GetMeasurement()
 { // original get measurement function
-    return units::degree_t{m_motor
-                               .GetEncoder(rev::SparkRelativeEncoder::Type::kQuadrature,
-                                           ArmConstants::kAngleEncoderPulsePerRev)
-                               .GetPosition()};
+    return units::degree_t{m_encoder.GetPosition()};
 }
 
-// units::degree_t ArmSubsystem::GetMeasurement() { //with redunant encoders
-//   units::degree_t avrage_encoder =
-//   (units::degree_t{(m_encoderL.GetDistance())}+units::degree_t{(m_encoderR.GetDistance())})/2.0;
-//   if(m_encoderL.GetDistance() == -ArmConstants::kArmAngleOffsetL){
-//    return units::degree_t{(m_encoderR.GetDistance())};
-//   }
-//  if(m_encoderR.GetDistance() == -ArmConstants::kArmAngleOffsetR){
-//    return units::degree_t{(m_encoderL.GetDistance())};
-//   }
-//   return avrage_encoder;
-// }
 void ArmSubsystem::kick()
 {
     if(ArmConstants::PRIMED == m_ArmState)
@@ -105,7 +88,8 @@ void ArmSubsystem::kick()
 }
 void ArmSubsystem::handle_Setpoint()
 {
-
+    frc::SmartDashboard::PutNumber("Arm Goal Angle", GetController().GetGoal().position.value());
+    frc::SmartDashboard::PutNumber("Arm Actual Angle", GetMeasurement().value());
     switch(m_ArmState)
     {
         case ArmConstants::STARTKICK:
@@ -113,12 +97,14 @@ void ArmSubsystem::handle_Setpoint()
             SetGoal(units::angle::degree_t{ArmConstants::kArmAngleExtended});
             m_ArmState = ArmConstants::FORWARD;
             m_timer->Restart();
+            frc::SmartDashboard::PutString("State", "StartKick");
         }
         case ArmConstants::FORWARD:
         {
             // Forward state is set when Kick is in proccess
             //  After full kicking motion has been completed (successful angle has been reach)
             //  Return to backwards position
+            frc::SmartDashboard::PutString("State", "Forward");
             if(GetController().AtGoal() || m_timer->Get().value() > ArmConstants::kMaxTimer)
             {
                 m_ArmState = ArmConstants::BACKWARD;
@@ -129,11 +115,13 @@ void ArmSubsystem::handle_Setpoint()
         case ArmConstants::PRIMED:
         {
             // Driver input Causes kicking motion going from Primed to Extended
+            frc::SmartDashboard::PutString("State", "Primed");
             break;
         }
         case ArmConstants::BACKWARD:
         {
             // Return Arm to backwards set position
+            frc::SmartDashboard::PutString("State", "Backward");
             if(GetController().AtGoal())
             {
                 m_ArmState = ArmConstants::PRIMED;
@@ -142,6 +130,7 @@ void ArmSubsystem::handle_Setpoint()
             break;
         }
         default:
+            frc::SmartDashboard::PutString("State", "Default");
             break;
     }
 }

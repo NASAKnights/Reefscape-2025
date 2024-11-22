@@ -65,13 +65,13 @@ const units::radians_per_second_t kMaxRotationalVelocity{4};
 const bool                        kIsFieldRelative = true;
 
 // ------------------------- MODULE OFFSETS -------------------------
-const frc::Rotation2d kFrontLeftOffset{-units::degree_t{103.711}};
+const frc::Rotation2d kFrontLeftOffset{-units::degree_t{-78.0}};
 // ^ Module 1 ^ //
-const frc::Rotation2d kFrontRightOffset{-units::degree_t{318.427}};
+const frc::Rotation2d kFrontRightOffset{-units::degree_t{-28.0}};
 // ^ Module 2 ^ //
-const frc::Rotation2d kBackLeftOffset{-units::degree_t{275.273}};
+const frc::Rotation2d kBackLeftOffset{-units::degree_t{-106.5}};
 // ^ Module 3 ^ //
-const frc::Rotation2d kBackRightOffset{-units::degree_t{87.539}};
+const frc::Rotation2d kBackRightOffset{-units::degree_t{90.0}};
 // ^ Module 4 ^ //
 
 const frc::Translation2d kFrontLeftPosition = frc::Translation2d(

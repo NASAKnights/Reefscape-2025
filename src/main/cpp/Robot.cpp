@@ -53,6 +53,10 @@ void Robot::TeleopInit()
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
+
+    // m_arm.Enable();
+    using State = frc::TrapezoidProfile<units::degrees>::State;
+    m_arm.SetGoal(State{units::degree_t(ArmConstants::kArmAngleRetracted), 0_rad_per_s});
     if(m_autonomousCommand)
     {
         m_autonomousCommand->Cancel();
@@ -125,13 +129,20 @@ void Robot::BindCommands()
         .OnTrue(frc2::CommandPtr(frc2::InstantCommand([this]
                                                       { return exampleCommandHere(); })));
     Example Button */
-    frc2::JoystickButton(&m_driverController, 8)
-        .WhileTrue(frc2::CommandPtr(frc2::InstantCommand(
+    frc2::JoystickButton(&m_driverController, 2)
+        .OnTrue(frc2::CommandPtr(frc2::InstantCommand(
             [this]
             {
+                frc::SmartDashboard::PutBoolean("kicking", true);
                 m_arm.kick();
                 return;
-            })));
+            })))
+        .OnFalse((frc2::CommandPtr(frc2::InstantCommand(
+            [this]
+            {
+                frc::SmartDashboard::PutBoolean("kicking", false);
+                return;
+            }))));
 }
 
 frc2::CommandPtr Robot::GetAutonomousCommand() {}
