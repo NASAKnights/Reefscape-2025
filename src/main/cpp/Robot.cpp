@@ -54,7 +54,7 @@ void Robot::TeleopInit()
     // continue until interrupted by another command, remove
     // this line or comment it out.
 
-    // m_arm.Enable();
+    m_arm.Enable();
     using State = frc::TrapezoidProfile<units::degrees>::State;
     m_arm.SetGoal(State{units::degree_t(ArmConstants::kArmAngleRetracted), 0_rad_per_s});
     if(m_autonomousCommand)
@@ -69,7 +69,10 @@ void Robot::TeleopPeriodic()
     m_arm.handle_Setpoint();
 }
 
-void Robot::TeleopExit() {}
+void Robot::TeleopExit()
+{
+    m_arm.Disable();
+}
 
 /**
  * This function is called periodically during test mode.
@@ -129,7 +132,7 @@ void Robot::BindCommands()
         .OnTrue(frc2::CommandPtr(frc2::InstantCommand([this]
                                                       { return exampleCommandHere(); })));
     Example Button */
-    frc2::JoystickButton(&m_driverController, 2)
+    frc2::JoystickButton(&m_driverController, 7)
         .OnTrue(frc2::CommandPtr(frc2::InstantCommand(
             [this]
             {

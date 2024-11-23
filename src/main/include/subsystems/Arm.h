@@ -30,7 +30,7 @@ enum ArmState
     // UNBRAKED,
 };
 
-const double kAngleP        = 0.2;
+const double kAngleP        = 0.4;
 const double kAngleI        = 0.0;
 const double kAngleD        = 0.0; // 0.0001
 const double kIZone         = 1.0;
@@ -52,8 +52,8 @@ const int    kArmPeakCurrentLimit       = 60;
 const double kArmPeakCurrentDuration    = 0.1;
 
 const double kArmAngleStarting  = 0.0;   // With offset
-const double kArmAngleRetracted = -30.0; // With offset
-const double kArmAngleExtended  = 45.0;  // with offset
+const double kArmAngleRetracted = 45.0;  // With offset
+const double kArmAngleExtended  = -30.0; // with offset
 const double kMaxTimer          = 0.25;  // Max time for kicking (seconds)
 
 } // namespace ArmConstants
