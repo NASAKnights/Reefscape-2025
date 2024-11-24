@@ -90,7 +90,7 @@ private:
     // declared private and exposed only through public methods.
     AHRS navx{frc::SPI::Port::kMXP};
 
-    ctre::phoenix6::hardware::Pigeon2 m_pigeon{2, "NKCANivore"};
+    ctre::phoenix6::hardware::Pigeon2 m_pigeon{2}; //"NKCANivore"};
 
     std::array<SwerveModule, 4>   modules;
     frc::SwerveDriveKinematics<4> kSwerveKinematics;
