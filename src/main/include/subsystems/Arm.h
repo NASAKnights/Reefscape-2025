@@ -33,13 +33,13 @@ enum ArmState
     // UNBRAKED,
 };
 
-const double kAngleP        = 0.4;
+const double kAngleP        = 0.6;
 const double kAngleI        = 0.0;
 const double kAngleD        = 0.0; // 0.0001
 const double kIZone         = 1.0;
-const auto   kArmVelLimit   = units::degrees_per_second_t(140.0);
+const auto   kArmVelLimit   = units::degrees_per_second_t(4480.0);
 const auto   kArmAccelLimit = units::angular_acceleration::degrees_per_second_squared_t(
-    120.0); // Mech limit 27 rad/s^2(1500 degree_second_squared)
+    48000.0); // Mech limit 27 rad/s^2(1500 degree_second_squared)
 const auto kControllerTolerance = units::degree_t(1.0);
 const int  kAngleMotorId        = 5;
 
@@ -56,8 +56,8 @@ const double kArmPeakCurrentDuration    = 0.1;
 
 const double kArmAngleStarting  = 0.0;   // With offset
 const double kArmAngleRetracted = 45.0;  // With offset
-const double kArmAngleExtended  = -30.0; // with offset
-const double kMaxTimer          = 0.25;  // Max time for kicking (seconds)
+const double kArmAngleExtended  = -40.0; // with offset
+const double kMaxTimer          = 2.0;   // Max time for kicking (seconds)
 
 const double kGearRatio = 60.0; // gear ratio for motor to arm
 const units::moment_of_inertia::kilogram_square_meter_t kmoi =

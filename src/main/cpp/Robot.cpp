@@ -56,7 +56,7 @@ void Robot::TeleopInit()
 
     m_arm.Enable();
     using State = frc::TrapezoidProfile<units::degrees>::State;
-    m_arm.SetGoal(State{units::degree_t(ArmConstants::kArmAngleRetracted), 0_rad_per_s});
+    m_arm.SetGoal(State{units::degree_t(ArmConstants::kArmAngleExtended), 0_rad_per_s});
     if(m_autonomousCommand)
     {
         m_autonomousCommand->Cancel();

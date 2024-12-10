@@ -26,7 +26,7 @@ SwerveDrive::SwerveDrive()
     , pidRot{0.15, 0, 0}
     , networkTableInst(nt::NetworkTableInstance::GetDefault())
     , m_poseEstimator{kSwerveKinematics,
-                      frc::Rotation2d(units::degree_t{m_pigeon.GetAngle()}),
+                      frc::Rotation2d(units::degree_t{navx.GetAngle()}),
                       {modules[0].GetPosition(), modules[1].GetPosition(), modules[2].GetPosition(),
                        modules[3].GetPosition()},
                       frc::Pose2d()}
@@ -156,14 +156,14 @@ void SwerveDrive::SetSlow() {}
 
 frc::Rotation2d SwerveDrive::GetHeading()
 {
-    return m_pigeon.GetRotation2d();
+    return navx.GetRotation2d();
 }
 
 void SwerveDrive::ResetHeading()
 {
     if(enable == true)
     {
-        m_pigeon.Reset();
+        navx.Reset();
     }
 }
 
@@ -200,7 +200,7 @@ void SwerveDrive::UpdateOdometry()
 void SwerveDrive::SetVision()
 {
 
-    m_poseEstimator.ResetPosition(m_pigeon.GetRotation2d(), GetModulePositions(), GetVision());
+    m_poseEstimator.ResetPosition(navx.GetRotation2d(), GetModulePositions(), GetVision());
 }
 
 frc::Pose2d SwerveDrive::GetVision()
@@ -300,7 +300,7 @@ void SwerveDrive::UpdatePoseEstimate()
                                              units::second_t{compressedResults.at(7)});
     }
 
-    m_poseEstimator.Update(m_pigeon.GetRotation2d(), GetModulePositions());
+    m_poseEstimator.Update(navx.GetRotation2d(), GetModulePositions());
     m_field.SetRobotPose(m_poseEstimator.GetEstimatedPosition());
 }
 
