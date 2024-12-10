@@ -15,8 +15,11 @@
 
 #include "Constants.hpp"
 #include <frc/DigitalInput.h>
+#include <frc/RobotBase.h>
 #include <frc/Servo.h>
 #include <frc/Timer.h>
+#include <frc/simulation/SimDeviceSim.h>
+#include <frc/simulation/SingleJointedArmSim.h>
 
 namespace ArmConstants
 {
@@ -56,6 +59,15 @@ const double kArmAngleRetracted = 45.0;  // With offset
 const double kArmAngleExtended  = -30.0; // with offset
 const double kMaxTimer          = 0.25;  // Max time for kicking (seconds)
 
+const double kGearRatio = 60.0; // gear ratio for motor to arm
+const units::moment_of_inertia::kilogram_square_meter_t kmoi =
+    units::moment_of_inertia::kilogram_square_meter_t(0.175);
+const units::length::meter_t kArmLength     = units::length::meter_t(0.4064);
+const units::angle::radian_t kminAngle      = units::angle::radian_t(-0.785);
+const units::angle::radian_t kmaxAngle      = units::angle::radian_t(1.571);
+const bool                   kGravity       = true;
+const units::angle::radian_t kArmStartAngle = units::angle::radian_t(0.0);
+
 } // namespace ArmConstants
 
 /**
@@ -71,6 +83,7 @@ public:
     void handle_Setpoint();
     void Emergency_Stop();
     void kick();
+    void SimulationPeriodic();
     // void get_pigeon();
     void            UseOutput(double output, State setpoint) override;
     units::degree_t GetMeasurement() override;
@@ -93,4 +106,11 @@ private:
     float                             ARM_Angle;
     frc::PWM                          Linear;
     frc::DigitalInput                 Kill{4};
+
+    frc::Timer m_simTimer;
+
+    frc::sim::SingleJointedArmSim m_jointArm;
+
+    hal::SimDouble m_armSimVelocity;
+    hal::SimDouble m_armSimposition;
 };

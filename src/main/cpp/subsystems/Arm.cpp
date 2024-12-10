@@ -20,12 +20,14 @@ ArmSubsystem::ArmSubsystem()
     , Linear{1}
     , m_encoder{m_motor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor,
                                    ArmConstants::kAngleEncoderPulsePerRev)}
+    , m_jointArm(frc::DCMotor::NeoVortex(1), ArmConstants::kGearRatio, ArmConstants::kmoi,
+                 ArmConstants::kArmLength, ArmConstants::kminAngle, ArmConstants::kmaxAngle,
+                 ArmConstants::kGravity, ArmConstants::kArmStartAngle)
 {
     GetController().SetIZone(ArmConstants::kIZone);
     m_encoder.SetPositionConversionFactor(6.0);
 
     m_timer = new frc::Timer();
-
     m_motor.SetIdleMode(rev::CANSparkBase::IdleMode::kBrake);
 
     GetController().SetTolerance(ArmConstants::kControllerTolerance);
@@ -40,12 +42,25 @@ ArmSubsystem::ArmSubsystem()
     m_StateLog             = wpi::log::IntegerLogEntry(log, "/Arm/State");
     m_MotorCurrentLog      = wpi::log::DoubleLogEntry(log, "/Arm/MotorCurrent");
     m_MotorVoltageLog      = wpi::log::DoubleLogEntry(log, "/Arm/MotorVoltage");
+
+    if constexpr(frc::RobotBase::IsSimulation())
+    {
+        m_simTimer.Start();
+    }
 }
 
+void ArmSubsystem::SimulationPeriodic()
+{
+    m_jointArm.Update(5_ms);
+}
 void ArmSubsystem::UseOutput(double output, State setpoint)
 {
     // Calculate the feedforward from the sepoint
     units::volt_t feedforward = m_feedforward.Calculate(setpoint.position, setpoint.velocity);
+    if constexpr(frc::RobotBase::IsSimulation())
+    {
+        m_jointArm.SetInputVoltage(units::volt_t{output} + feedforward);
+    }
     m_motor.SetVoltage(units::volt_t{output} + feedforward);
 }
 
@@ -76,6 +91,11 @@ void ArmSubsystem::printLog()
 
 units::degree_t ArmSubsystem::GetMeasurement()
 { // original get measurement function
+    if constexpr(frc::RobotBase::IsSimulation())
+    {
+        return m_jointArm.GetAngle();
+    }
+
     return units::degree_t{m_encoder.GetPosition()};
 }
 
