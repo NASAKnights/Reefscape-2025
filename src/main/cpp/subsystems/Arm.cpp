@@ -43,10 +43,10 @@ ArmSubsystem::ArmSubsystem()
     m_MotorCurrentLog      = wpi::log::DoubleLogEntry(log, "/Arm/MotorCurrent");
     m_MotorVoltageLog      = wpi::log::DoubleLogEntry(log, "/Arm/MotorVoltage");
 
-    if constexpr(frc::RobotBase::IsSimulation())
-    {
-        m_simTimer.Start();
-    }
+    // if constexpr(frc::RobotBase::IsSimulation())
+    // {
+    //     m_simTimer.Start();
+    // }
 }
 
 void ArmSubsystem::SimulationPeriodic()
