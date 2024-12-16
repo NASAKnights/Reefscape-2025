@@ -148,7 +148,10 @@ void Robot::BindCommands()
             }))));
 }
 
-frc2::CommandPtr Robot::GetAutonomousCommand() {}
+frc2::CommandPtr Robot::GetAutonomousCommand()
+{
+    return frc2::InstantCommand().ToPtr();
+}
 
 void Robot::DisabledPeriodic() {}
 

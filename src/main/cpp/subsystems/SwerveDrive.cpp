@@ -125,30 +125,30 @@ void SwerveDrive::Drive(frc::ChassisSpeeds speeds)
     }
 }
 
-void SwerveDrive::Strafe(frc::ChassisSpeeds s_speeds, double desiredAngle)
-{
-    auto currentAngle = m_poseEstimator.GetEstimatedPosition().Rotation().Radians().value();
+// void SwerveDrive::Strafe(frc::ChassisSpeeds s_speeds, double desiredAngle)
+// {
+//     auto currentAngle = m_poseEstimator.GetEstimatedPosition().Rotation().Radians().value();
 
-    double errorBand = (M_PI - (-M_PI)) / 2;
-    pos_Error        = frc::InputModulus(desiredAngle - currentAngle, -errorBand, errorBand);
+//     double errorBand = (M_PI - (-M_PI)) / 2;
+//     pos_Error        = frc::InputModulus(desiredAngle - currentAngle, -errorBand, errorBand);
 
-    s_speeds.omega = units::angular_velocity::radians_per_second_t{9.5 * (pos_Error)};
-    frc::SmartDashboard::PutNumber("wrapped cA", currentAngle);
-    frc::SmartDashboard::PutNumber("wrapped dA", desiredAngle);
+//     s_speeds.omega = units::angular_velocity::radians_per_second_t{9.5 * (pos_Error)};
+//     frc::SmartDashboard::PutNumber("wrapped cA", currentAngle);
+//     frc::SmartDashboard::PutNumber("wrapped dA", desiredAngle);
 
-    auto states = kSwerveKinematics.ToSwerveModuleStates(s_speeds);
+//     auto states = kSwerveKinematics.ToSwerveModuleStates(s_speeds);
 
-    kSwerveKinematics.DesaturateWheelSpeeds(
-        &states, s_speeds, units::meters_per_second_t{ModuleConstants::kMaxSpeed},
-        DriveConstants::kMaxTranslationalVelocity, units::radians_per_second_t{0.5});
+//     kSwerveKinematics.DesaturateWheelSpeeds(
+//         &states, s_speeds, units::meters_per_second_t{ModuleConstants::kMaxSpeed},
+//         DriveConstants::kMaxTranslationalVelocity, units::radians_per_second_t{0.5});
 
-    for(int i = 0; i < 4; i++)
-    {
-        modules[i].SetDesiredState(states[i]);
-    }
+//     for(int i = 0; i < 4; i++)
+//     {
+//         modules[i].SetDesiredState(states[i]);
+//     }
 
-    priorSpeeds = s_speeds;
-}
+//     priorSpeeds = s_speeds;
+// }
 
 void SwerveDrive::SetFast() {}
 
