@@ -16,80 +16,110 @@ ElevatorSubsystem::ElevatorSubsystem()
           frc::TrapezoidProfile<units::meter>::Constraints(ElevatorConstants::kMaxVelocity,
                                                            ElevatorConstants::kMaxAcceleration),
           5_ms))
-    , m_motor(ElevatorConstants::kAngleMotorId, rev::CANSparkLowLevel::MotorType::kBrushless)
+    , m_motor(ElevatorConstants::kMotorId, rev::CANSparkLowLevel::MotorType::kBrushless)
     , m_feedforward(ElevatorConstants::kFFks, ElevatorConstants::kFFkg, ElevatorConstants::kFFkV,
                     ElevatorConstants::kFFkA)
     , Linear{1}
     , m_encoder{m_motor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor,
-                                   ElevatorConstants::kAngleEncoderPulsePerRev)}
-    , m_elevatorSim(m_elevatorGearbox, ElevatorConstants::kElevatorGearing,
+                                   ElevatorConstants::kEncoderPulsePerRev)}
+    , m_elevatorSim(frc::DCMotor::NeoVortex(1), ElevatorConstants::kElevatorGearing,
                     ElevatorConstants::kCarriageMass, ElevatorConstants::kElevatorDrumRadius,
                     ElevatorConstants::lowerLimit, ElevatorConstants::upperLimit, true, 0_m, {0.01})
 {
-    m_encoder.SetDistancePerPulse(0.0);
-    // m_encoder.Reset();
+    wpi::log::DataLog& log = frc::DataLogManager::GetLog();
+    m_HeightLog            = wpi::log::DoubleLogEntry(log, "/Elevator/Angle");
+    m_SetPointLog          = wpi::log::DoubleLogEntry(log, "/Elevator/Setpoint");
+    m_StateLog             = wpi::log::IntegerLogEntry(log, "/Elevator/State");
+    m_MotorCurrentLog      = wpi::log::DoubleLogEntry(log, "/Elevator/MotorCurrent");
+    m_MotorVoltageLog      = wpi::log::DoubleLogEntry(log, "/Elevator/MotorVoltage");
+
+    // m_encoder.SetDistancePerPulse(0.0);
+    //  m_encoder.Reset();
     ElevatorConstants::m_holdHeight    = 0.0;
     ElevatorConstants::m_ElevatorState = ElevatorConstants::ElevatorState::HOLD;
 }
 
-void Elevator::Periodic()
+void ElevatorSubsystem::Periodic()
 {
     // This method will be called once per scheduler run.
-    switch(m_ElevatorState)
+    switch(ElevatorConstants::m_ElevatorState)
     {
         case ElevatorConstants::LIFT:
             break;
         case ElevatorConstants::LOWER:
+            break;
+        case ElevatorConstants::MANUAL:
             break;
         case ElevatorConstants::HOLD:
             break;
     }
 }
 
-void Elevator::SetHeight(double height)
+void ElevatorSubsystem::SetHeight(double height)
 {
-    if(m_ElevatorState != LIFT && m_ElevatorState != LOWER)
+    if(ElevatorConstants::m_ElevatorState != ElevatorConstants::ElevatorState::LIFT &&
+       ElevatorConstants::m_ElevatorState != ElevatorConstants::ElevatorState::LOWER)
     {
         if(GetHeight() > height)
         {
-            m_ElevatorState = LOWER;
+            ElevatorConstants::m_ElevatorState = ElevatorConstants::ElevatorState::LOWER;
             m_controller.Reset(units::meter_t{GetHeight()});
-            m_controller.SetTolerance(kTolerancePos, kToleranceVel);
+            m_controller.SetTolerance(ElevatorConstants::kTolerancePos,
+                                      ElevatorConstants::kToleranceVel);
             m_controller.SetGoal(units::meter_t{height});
         }
         else if(GetHeight() < height)
         {
-            m_ElevatorState = LIFT;
+            ElevatorConstants::m_ElevatorState = ElevatorConstants::ElevatorState::LIFT;
             m_controller.Reset(units::meter_t{GetHeight()});
-            m_controller.SetTolerance(kTolerancePos, kToleranceVel);
+            m_controller.SetTolerance(ElevatorConstants::kTolerancePos,
+                                      ElevatorConstants::kToleranceVel);
             m_controller.SetGoal(units::meter_t{height});
         }
         else
         {
-            m_ElevatorState = HOLD;
+            ElevatorConstants::m_ElevatorState = ElevatorConstants::ElevatorState::HOLD;
         }
     }
 }
 
-void Elevator::SetSpeed(double speed)
+void ElevatorSubsystem::SetSpeed(double speed)
 {
-    if(m_state == MANUAL_MOVING)
+    if(ElevatorConstants::m_ElevatorState == ElevatorConstants::ElevatorState::MANUAL)
     {
-        m_linearMotor.Set(speed);
+        m_motor.Set(speed);
     }
 }
 
-double Elevator::GetHeight()
+double ElevatorSubsystem::GetHeight()
 {
-    return m_linearEncoder.GetDistance() + m_offset;
+    if constexpr(frc::RobotBase::IsSimulation())
+    {
+        return m_elevatorSim.GetPosition().value();
+    }
+    return m_encoder.GetPosition() + ElevatorConstants::m_offset;
 }
 
-bool Elevator::CheckGoal()
+bool ElevatorSubsystem::CheckGoal()
 {
-    return m_state == HOLD;
+    return ElevatorConstants::m_ElevatorState == ElevatorConstants::ElevatorState::HOLD;
 }
 
-void Elevator::printLog() {}
-void Elevator::handle_Setpoint() {}
-void Elevator::Emergency_Stop() {}
-void Elevator::SimulationPeriodic() {}
+void ElevatorSubsystem::printLog()
+{
+    frc::SmartDashboard::PutNumber("ELEVATOR_ENC_ABS", GetMeasurement().value());
+    frc::SmartDashboard::PutNumber("elevatorGoal_POS", GetController().GetGoal().position.value());
+    frc::SmartDashboard::PutNumber("ELEVATOR_setpoint",
+                                   GetController().GetSetpoint().position.value());
+    m_HeightLog.Append(GetMeasurement().value());
+    m_SetPointLog.Append(GetController().GetSetpoint().position.value());
+    m_StateLog.Append(ElevatorConstants::m_ElevatorState);
+    m_MotorCurrentLog.Append(m_motor.GetOutputCurrent());
+    m_MotorVoltageLog.Append(m_motor.GetAppliedOutput());
+}
+void ElevatorSubsystem::handle_Setpoint() {}
+void ElevatorSubsystem::Emergency_Stop() {}
+void ElevatorSubsystem::SimulationPeriodic()
+{
+    m_elevatorSim.Update(5_ms);
+}

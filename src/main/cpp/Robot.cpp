@@ -146,6 +146,28 @@ void Robot::BindCommands()
                 frc::SmartDashboard::PutBoolean("kicking", false);
                 return;
             }))));
+
+    frc2::JoystickButton(&m_driverController, 9)
+        .OnTrue(frc2::CommandPtr(frc2::InstantCommand(
+            [this]
+            {
+                frc::SmartDashboard::PutBoolean("elevatoring", true);
+                if(m_elevator.GetHeight() <= ElevatorConstants::lowerLimit)
+                {
+                    m_elevator.SetHeight(ElevatorConstants::upperLimit);
+                }
+                else if(m_elevator.GetHeight() >= ElevatorConstants::upperLimit)
+                {
+                    m_elevator.SetHeight(ElevatorConstants::lowerLimit);
+                }
+                return;
+            })))
+        .OnFalse((frc2::CommandPtr(frc2::InstantCommand(
+            [this]
+            {
+                frc::SmartDashboard::PutBoolean("elevatoring", false);
+                return;
+            }))));
 }
 
 frc2::CommandPtr Robot::GetAutonomousCommand()
