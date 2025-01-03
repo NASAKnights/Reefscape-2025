@@ -49,7 +49,7 @@ static constexpr auto                               kA = 0.0_V / 0.28_mps_sq;
 static constexpr units::meter_t             kTolerancePos = 0.001_m;
 static constexpr units::meters_per_second_t kToleranceVel = 0.001_mps;
 
-const int kMotorId            = 5;
+const int kMotorId            = 6;
 const int kEncoderPulsePerRev = 42;
 
 static constexpr auto kFFks = 0.23_V;              // Volts static (motor)
@@ -90,7 +90,7 @@ private:
     wpi::log::IntegerLogEntry         m_StateLog;
     wpi::log::DoubleLogEntry          m_MotorCurrentLog;
     wpi::log::DoubleLogEntry          m_MotorVoltageLog;
-    ctre::phoenix6::hardware::Pigeon2 elevator_pigeon{9}; //, "NKCANivore"};
+    ctre::phoenix6::hardware::Pigeon2 elevator_pigeon{10}; //, "NKCANivore"};
     frc::Timer*                       m_timer;
     frc::PWM                          Linear;
     rev::SparkRelativeEncoder         m_encoder;
