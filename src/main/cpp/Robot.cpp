@@ -152,13 +152,13 @@ void Robot::BindCommands()
             [this]
             {
                 frc::SmartDashboard::PutBoolean("elevatoring", true);
-                if(m_elevator.GetHeight() <= ElevatorConstants::lowerLimit)
+                if(m_elevator.GetHeight() <= ElevatorConstants::lowerLimit.value())
                 {
-                    m_elevator.SetHeight(ElevatorConstants::upperLimit);
+                    m_elevator.SetHeight(ElevatorConstants::upperLimit.value());
                 }
-                else if(m_elevator.GetHeight() >= ElevatorConstants::upperLimit)
+                else if(m_elevator.GetHeight() >= ElevatorConstants::upperLimit.value())
                 {
-                    m_elevator.SetHeight(ElevatorConstants::lowerLimit);
+                    m_elevator.SetHeight(ElevatorConstants::lowerLimit.value());
                 }
                 return;
             })))

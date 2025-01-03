@@ -100,6 +100,11 @@ double ElevatorSubsystem::GetHeight()
     return m_encoder.GetPosition() + ElevatorConstants::m_offset;
 }
 
+units::meter_t ElevatorSubsystem::GetMeasurement()
+{
+    return units::meter_t{GetHeight()};
+}
+
 bool ElevatorSubsystem::CheckGoal()
 {
     return ElevatorConstants::m_ElevatorState == ElevatorConstants::ElevatorState::HOLD;
@@ -118,8 +123,20 @@ void ElevatorSubsystem::printLog()
     m_MotorVoltageLog.Append(m_motor.GetAppliedOutput());
 }
 void ElevatorSubsystem::handle_Setpoint() {}
+
 void ElevatorSubsystem::Emergency_Stop() {}
+
 void ElevatorSubsystem::SimulationPeriodic()
 {
     m_elevatorSim.Update(5_ms);
+}
+void ElevatorSubsystem::UseOutput(double output, State setpoint)
+{
+    // Calculate the feedforward from the sepoint
+    units::volt_t feedforward = m_feedforward.Calculate(setpoint.position, setpoint.velocity);
+    if constexpr(frc::RobotBase::IsSimulation())
+    {
+        m_elevatorSim.SetInputVoltage(units::volt_t{output} + feedforward);
+    }
+    m_motor.SetVoltage(units::volt_t{output} + feedforward);
 }

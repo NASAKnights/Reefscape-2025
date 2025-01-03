@@ -12,6 +12,7 @@
 #include <frc2/command/ProfiledPIDSubsystem.h>
 #include <rev/CANSparkFlex.h>
 #include <units/angle.h>
+#include <units/length.h>
 #include <units/mass.h>
 #include <units/time.h>
 
@@ -51,10 +52,10 @@ double                                      m_offset            = 0.0;
 const int                                   kMotorId            = 5;
 const int                                   kEncoderPulsePerRev = 42;
 
-const auto kFFks = units::volt_t(0.23);       // Volts static (motor)
-const auto kFFkg = units::volt_t(0.28);       // Volts
-const auto kFFkV = 1.01_V / 1.0_rad_per_s;    // volts*s/rad
-const auto kFFkA = 0.01_V / 1.0_rad_per_s_sq; // volts*s^2/rad
+const auto kFFks = units::volt_t(0.23); // Volts static (motor)
+const auto kFFkg = units::volt_t(0.28); // Volts
+const auto kFFkV = 1.01_V / 1.0_mps;    // volts*s/rad
+const auto kFFkA = 0.01_V / 1.0_mps_sq; // volts*s^2/rad
 
 static constexpr units::second_t kDt = 20_ms;
 
@@ -74,19 +75,21 @@ auto   kElevatorDrumRadius = 0.1_m;
 
 class ElevatorSubsystem : public frc2::ProfiledPIDSubsystem<units::meter>
 {
-    using State = frc::TrapezoidProfile<units::degrees>::State;
+    using State = frc::TrapezoidProfile<units::meter>::State;
 
 public:
     ElevatorSubsystem();
-    void   printLog();
-    void   handle_Setpoint();
-    void   Emergency_Stop();
-    void   SimulationPeriodic();
-    double GetHeight();
-    void   SetSpeed(double speed);
-    void   SetHeight(double height);
-    bool   CheckGoal();
-    void   Periodic();
+    void           printLog();
+    void           handle_Setpoint();
+    void           Emergency_Stop();
+    void           SimulationPeriodic();
+    double         GetHeight();
+    void           UseOutput(double output, State setpoint) override;
+    units::meter_t GetMeasurement() override;
+    void           SetSpeed(double speed);
+    void           SetHeight(double height);
+    bool           CheckGoal();
+    void           Periodic();
 
 private:
     rev::CANSparkFlex                 m_motor;
