@@ -18,8 +18,6 @@ ElevatorSubsystem::ElevatorSubsystem()
                                                            ElevatorConstants::kMaxAcceleration),
           5_ms))
     , m_motor(ElevatorConstants::kMotorId, rev::CANSparkLowLevel::MotorType::kBrushless)
-    , m_feedforwardElevator(ElevatorConstants::kFFks, ElevatorConstants::kFFkg,
-                            ElevatorConstants::kFFkV, ElevatorConstants::kFFkA)
     , Linear{1}
     , m_encoder{m_motor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor,
                                    ElevatorConstants::kEncoderPulsePerRev)}
