@@ -106,7 +106,7 @@ private:
     frc::ProfiledPIDController<units::meters> m_controller{
         ElevatorConstants::kP, ElevatorConstants::kI, ElevatorConstants::kD, m_constraints,
         ElevatorConstants::kDt};
-    frc::SimpleMotorFeedforward<units::meters> m_feedforwardElevator{
+    frc::ElevatorFeedforward<units::meters> m_feedforwardElevator{
         ElevatorConstants::kS, ElevatorConstants::kV, ElevatorConstants::kA};
 
     double m_holdHeight;
