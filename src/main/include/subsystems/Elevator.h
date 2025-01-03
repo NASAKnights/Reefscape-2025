@@ -92,7 +92,6 @@ private:
     wpi::log::DoubleLogEntry          m_MotorVoltageLog;
     ctre::phoenix6::hardware::Pigeon2 elevator_pigeon{10}; //, "NKCANivore"};
     frc::Timer*                       m_timer;
-    frc::PWM                          Linear;
     rev::SparkRelativeEncoder         m_encoder;
 
     frc::Timer m_simTimer;

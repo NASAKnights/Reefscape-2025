@@ -18,7 +18,6 @@ ElevatorSubsystem::ElevatorSubsystem()
                                                            ElevatorConstants::kMaxAcceleration),
           5_ms))
     , m_motor(ElevatorConstants::kMotorId, rev::CANSparkLowLevel::MotorType::kBrushless)
-    , Linear{1}
     , m_encoder{m_motor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor,
                                    ElevatorConstants::kEncoderPulsePerRev)}
     , m_elevatorSim(frc::DCMotor::NeoVortex(1), ElevatorConstants::kElevatorGearing,
@@ -52,6 +51,7 @@ void ElevatorSubsystem::Periodic()
         case ElevatorConstants::HOLD:
             break;
     }
+    printLog();
 }
 
 void ElevatorSubsystem::SetHeight(double height)

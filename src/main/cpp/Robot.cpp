@@ -147,7 +147,7 @@ void Robot::BindCommands()
                 return;
             }))));
 
-    frc2::JoystickButton(&m_driverController, 9)
+    frc2::JoystickButton(&m_driverController, 3)
         .OnTrue(frc2::CommandPtr(frc2::InstantCommand(
             [this]
             {
