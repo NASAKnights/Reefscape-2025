@@ -6,7 +6,7 @@
 #include <ctre/phoenix6/TalonFX.hpp>
 #include <frc/DutyCycleEncoder.h>
 #include <frc/Encoder.h>
-#include <frc/controller/ArmFeedforward.h>
+#include <frc/controller/ElevatorFeedforward.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc/system/plant/DCMotor.h>
 #include <frc2/command/ProfiledPIDSubsystem.h>
@@ -93,13 +93,13 @@ public:
 
 private:
     rev::CANSparkFlex                 m_motor;
-    frc::ArmFeedforward               m_feedforward;
+    frc::ElevatorFeedforward          m_feedforward;
     wpi::log::DoubleLogEntry          m_HeightLog;
     wpi::log::DoubleLogEntry          m_SetPointLog;
     wpi::log::IntegerLogEntry         m_StateLog;
     wpi::log::DoubleLogEntry          m_MotorCurrentLog;
     wpi::log::DoubleLogEntry          m_MotorVoltageLog;
-    ctre::phoenix6::hardware::Pigeon2 arm_pigeon{9}; //, "NKCANivore"};
+    ctre::phoenix6::hardware::Pigeon2 elevator_pigeon{9}; //, "NKCANivore"};
     frc::Timer*                       m_timer;
     frc::PWM                          Linear;
     rev::SparkRelativeEncoder         m_encoder;
