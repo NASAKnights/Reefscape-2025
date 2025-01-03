@@ -36,14 +36,14 @@ ElevatorSubsystem::ElevatorSubsystem()
 
     // m_encoder.SetDistancePerPulse(0.0);
     //  m_encoder.Reset();
-    ElevatorConstants::m_holdHeight    = 0.0;
-    ElevatorConstants::m_ElevatorState = ElevatorConstants::ElevatorState::HOLD;
+    m_holdHeight    = 0.0;
+    m_ElevatorState = ElevatorConstants::ElevatorState::HOLD;
 }
 
 void ElevatorSubsystem::Periodic()
 {
     // This method will be called once per scheduler run.
-    switch(ElevatorConstants::m_ElevatorState)
+    switch(m_ElevatorState)
     {
         case ElevatorConstants::LIFT:
             break;
@@ -58,12 +58,12 @@ void ElevatorSubsystem::Periodic()
 
 void ElevatorSubsystem::SetHeight(double height)
 {
-    if(ElevatorConstants::m_ElevatorState != ElevatorConstants::ElevatorState::LIFT &&
-       ElevatorConstants::m_ElevatorState != ElevatorConstants::ElevatorState::LOWER)
+    if(m_ElevatorState != ElevatorConstants::ElevatorState::LIFT &&
+       m_ElevatorState != ElevatorConstants::ElevatorState::LOWER)
     {
         if(GetHeight() > height)
         {
-            ElevatorConstants::m_ElevatorState = ElevatorConstants::ElevatorState::LOWER;
+            m_ElevatorState = ElevatorConstants::ElevatorState::LOWER;
             m_controller.Reset(units::meter_t{GetHeight()});
             m_controller.SetTolerance(ElevatorConstants::kTolerancePos,
                                       ElevatorConstants::kToleranceVel);
@@ -71,7 +71,7 @@ void ElevatorSubsystem::SetHeight(double height)
         }
         else if(GetHeight() < height)
         {
-            ElevatorConstants::m_ElevatorState = ElevatorConstants::ElevatorState::LIFT;
+            m_ElevatorState = ElevatorConstants::ElevatorState::LIFT;
             m_controller.Reset(units::meter_t{GetHeight()});
             m_controller.SetTolerance(ElevatorConstants::kTolerancePos,
                                       ElevatorConstants::kToleranceVel);
@@ -79,14 +79,14 @@ void ElevatorSubsystem::SetHeight(double height)
         }
         else
         {
-            ElevatorConstants::m_ElevatorState = ElevatorConstants::ElevatorState::HOLD;
+            m_ElevatorState = ElevatorConstants::ElevatorState::HOLD;
         }
     }
 }
 
 void ElevatorSubsystem::SetSpeed(double speed)
 {
-    if(ElevatorConstants::m_ElevatorState == ElevatorConstants::ElevatorState::MANUAL)
+    if(m_ElevatorState == ElevatorConstants::ElevatorState::MANUAL)
     {
         m_motor.Set(speed);
     }
@@ -108,7 +108,7 @@ units::meter_t ElevatorSubsystem::GetMeasurement()
 
 bool ElevatorSubsystem::CheckGoal()
 {
-    return ElevatorConstants::m_ElevatorState == ElevatorConstants::ElevatorState::HOLD;
+    return m_ElevatorState == ElevatorConstants::ElevatorState::HOLD;
 }
 
 void ElevatorSubsystem::printLog()
@@ -119,7 +119,7 @@ void ElevatorSubsystem::printLog()
                                    GetController().GetSetpoint().position.value());
     m_HeightLog.Append(GetMeasurement().value());
     m_SetPointLog.Append(GetController().GetSetpoint().position.value());
-    m_StateLog.Append(ElevatorConstants::m_ElevatorState);
+    m_StateLog.Append(m_ElevatorState);
     m_MotorCurrentLog.Append(m_motor.GetOutputCurrent());
     m_MotorVoltageLog.Append(m_motor.GetAppliedOutput());
 }

@@ -59,18 +59,9 @@ const auto kFFkA = 0.01_V / 1.0_mps_sq; // volts*s^2/rad
 
 static constexpr units::second_t kDt = 20_ms;
 
-frc::TrapezoidProfile<units::meters>::Constraints m_constraints{kMaxVelocity, kMaxAcceleration};
-
-frc::ProfiledPIDController<units::meters>  m_controller{kP, kI, kD, m_constraints, kDt};
-frc::SimpleMotorFeedforward<units::meters> m_feedforwardElevator{kS, kV, kA};
-
-double m_holdHeight;
-
-ElevatorConstants::ElevatorState m_ElevatorState;
-
-double kElevatorGearing    = 5;
-auto   kCarriageMass       = 10_kg;
-auto   kElevatorDrumRadius = 0.1_m;
+static constexpr double kElevatorGearing    = 5;
+static constexpr auto   kCarriageMass       = 10_kg;
+static constexpr auto   kElevatorDrumRadius = 0.1_m;
 }
 
 class ElevatorSubsystem : public frc2::ProfiledPIDSubsystem<units::meter>
@@ -108,4 +99,17 @@ private:
 
     frc::sim::ElevatorSim m_elevatorSim;
     double                m_offset = 0.0;
+
+    frc::TrapezoidProfile<units::meters>::Constraints m_constraints{
+        ElevatorConstants::kMaxVelocity, ElevatorConstants::kMaxAcceleration};
+
+    frc::ProfiledPIDController<units::meters> m_controller{
+        ElevatorConstants::kP, ElevatorConstants::kI, ElevatorConstants::kD, m_constraints,
+        ElevatorConstants::kDt};
+    frc::SimpleMotorFeedforward<units::meters> m_feedforwardElevator{
+        ElevatorConstants::kS, ElevatorConstants::kV, ElevatorConstants::kA};
+
+    double m_holdHeight;
+
+    ElevatorConstants::ElevatorState m_ElevatorState;
 };
