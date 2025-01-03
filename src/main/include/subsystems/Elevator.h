@@ -46,11 +46,11 @@ static constexpr units::volt_t                      kS = 0.2_V; // minimum volta
 static constexpr auto                               kV = 0.0_V / 0.28_mps;
 static constexpr auto                               kA = 0.0_V / 0.28_mps_sq;
 
-static constexpr units::meter_t             kTolerancePos       = 0.001_m;
-static constexpr units::meters_per_second_t kToleranceVel       = 0.001_mps;
-double                                      m_offset            = 0.0;
-const int                                   kMotorId            = 5;
-const int                                   kEncoderPulsePerRev = 42;
+static constexpr units::meter_t             kTolerancePos = 0.001_m;
+static constexpr units::meters_per_second_t kToleranceVel = 0.001_mps;
+
+const int kMotorId            = 5;
+const int kEncoderPulsePerRev = 42;
 
 const auto kFFks = units::volt_t(0.23); // Volts static (motor)
 const auto kFFkg = units::volt_t(0.28); // Volts
@@ -62,7 +62,7 @@ static constexpr units::second_t kDt = 20_ms;
 frc::TrapezoidProfile<units::meters>::Constraints m_constraints{kMaxVelocity, kMaxAcceleration};
 
 frc::ProfiledPIDController<units::meters>  m_controller{kP, kI, kD, m_constraints, kDt};
-frc::SimpleMotorFeedforward<units::meters> m_feedforward{kS, kV, kA};
+frc::SimpleMotorFeedforward<units::meters> m_feedforwardElevator{kS, kV, kA};
 
 double m_holdHeight;
 
@@ -93,7 +93,7 @@ public:
 
 private:
     rev::CANSparkFlex                 m_motor;
-    frc::ElevatorFeedforward          m_feedforward;
+    frc::ElevatorFeedforward          m_feedforwardElevator;
     wpi::log::DoubleLogEntry          m_HeightLog;
     wpi::log::DoubleLogEntry          m_SetPointLog;
     wpi::log::IntegerLogEntry         m_StateLog;
@@ -107,4 +107,5 @@ private:
     frc::Timer m_simTimer;
 
     frc::sim::ElevatorSim m_elevatorSim;
+    double                m_offset = 0.0;
 };

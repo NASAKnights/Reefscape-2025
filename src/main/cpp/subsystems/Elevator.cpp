@@ -18,8 +18,8 @@ ElevatorSubsystem::ElevatorSubsystem()
                                                            ElevatorConstants::kMaxAcceleration),
           5_ms))
     , m_motor(ElevatorConstants::kMotorId, rev::CANSparkLowLevel::MotorType::kBrushless)
-    , m_feedforward(ElevatorConstants::kFFks, ElevatorConstants::kFFkg, ElevatorConstants::kFFkV,
-                    ElevatorConstants::kFFkA)
+    , m_feedforwardElevator(ElevatorConstants::kFFks, ElevatorConstants::kFFkg,
+                            ElevatorConstants::kFFkV, ElevatorConstants::kFFkA)
     , Linear{1}
     , m_encoder{m_motor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor,
                                    ElevatorConstants::kEncoderPulsePerRev)}
@@ -98,7 +98,7 @@ double ElevatorSubsystem::GetHeight()
     {
         return m_elevatorSim.GetPosition().value();
     }
-    return m_encoder.GetPosition() + ElevatorConstants::m_offset;
+    return m_encoder.GetPosition() + m_offset;
 }
 
 units::meter_t ElevatorSubsystem::GetMeasurement()
@@ -134,7 +134,7 @@ void ElevatorSubsystem::SimulationPeriodic()
 void ElevatorSubsystem::UseOutput(double output, State setpoint)
 {
     // Calculate the feedforward from the sepoint
-    units::volt_t feedforward = m_feedforward.Calculate(setpoint.position, setpoint.velocity);
+    units::volt_t feedforward = m_feedforwardElevator.Calculate(setpoint.velocity);
     if constexpr(frc::RobotBase::IsSimulation())
     {
         m_elevatorSim.SetInputVoltage(units::volt_t{output} + feedforward);
