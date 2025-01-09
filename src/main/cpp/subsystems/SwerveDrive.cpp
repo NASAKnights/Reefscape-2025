@@ -46,8 +46,10 @@ SwerveDrive::SwerveDrive()
 
     baseLinkPublisher = poseTable->GetDoubleArrayTopic(baseLink).Publish();
 
+    // TODO: PathPlanner
+    pathplanner::RobotConfig pathplannerConfig = pathplanner::RobotConfig::fromGUISettings();
     // Configure Auto Swerve
-    pathplanner::AutoBuilder::configureHolonomic(
+    pathplanner::AutoBuilder::configure(
         [this]() { return this->GetPose(); }, // Robot pose supplier
         [this](frc::Pose2d poseReset)
         {
@@ -62,15 +64,12 @@ SwerveDrive::SwerveDrive()
         {
             this->Drive(speedsRelative);
         }, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
-        pathplanner::HolonomicPathFollowerConfig( // HolonomicPathFollowerConfig, this should likely
-                                                  // live in your Constants class
+        std::make_shared<pathplanner::PPHolonomicDriveController>( // PPHolonomicController is the built in path following 
+                                                      //controller for holonomic drive trains
             pathplanner::PIDConstants(5, 0.0, 0.0), // Translation PID constants
-            pathplanner::PIDConstants(5, 0.0, 0.0), // Rotation PID constants
-            0.5_mps,                                // Max module speed, in m/s
-            0.4_m, // Drive base radius in meters. Distance from robot center to furthest module.
-            pathplanner::ReplanningConfig() // Default path replanning config. See the API for the
-                                            // options here
-            ),
+            pathplanner::PIDConstants(5, 0.0, 0.0) // Rotation PID constants
+            ),  
+        pathplannerConfig,
         []()
         {
             // Boolean supplier that controls when the path will be mirrored for the red alliance

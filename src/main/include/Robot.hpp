@@ -22,7 +22,6 @@
 #include <pathplanner/lib/auto/AutoBuilder.h>
 #include <pathplanner/lib/auto/NamedCommands.h>
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
-#include <pathplanner/lib/util/HolonomicPathFollowerConfig.h>
 
 #include "subsystems/SwerveDrive.hpp"
 

@@ -38,16 +38,15 @@ SwerveModule::SwerveModule(int driveMotorID, int steerMotorID, int steerEncoderI
     configs::CANcoderConfiguration CANcoderConfig{};
 
     configs::ClosedLoopRampsConfigs driveClosedRamps{};
-    driveClosedRamps.WithVoltageClosedLoopRampPeriod(0.4);
-    driveClosedRamps.WithDutyCycleClosedLoopRampPeriod(0.4);
-    driveClosedRamps.WithTorqueClosedLoopRampPeriod(0.4);
+    driveClosedRamps.WithVoltageClosedLoopRampPeriod(0.4_s);
+    driveClosedRamps.WithDutyCycleClosedLoopRampPeriod(0.4_s);
+    driveClosedRamps.WithTorqueClosedLoopRampPeriod(0.4_s);
     driveConfig.ClosedLoopRamps = driveClosedRamps;
 
-    CANcoderConfig.MagnetSensor.AbsoluteSensorRange =
-        signals::AbsoluteSensorRangeValue::Signed_PlusMinusHalf;
+    CANcoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = units::turn_t{.5};
     CANcoderConfig.MagnetSensor.SensorDirection =
         signals::SensorDirectionValue::CounterClockwise_Positive;
-    CANcoderConfig.MagnetSensor.MagnetOffset = units::turn_t{m_angleOffset.Degrees()}.value();
+    CANcoderConfig.MagnetSensor.MagnetOffset = units::turn_t{m_angleOffset.Degrees()};
 
     configs::Slot0Configs driveSlot0Configs{};
     configs::Slot0Configs steerSlot0Configs{};
@@ -65,14 +64,17 @@ SwerveModule::SwerveModule(int driveMotorID, int steerMotorID, int steerEncoderI
 
     configs::CurrentLimitsConfigs driveCurrentLimitConfig{};
     configs::CurrentLimitsConfigs steerCurrentLimitConfig{};
+    // TODO: Check this
     driveCurrentLimitConfig.SupplyCurrentLimitEnable = kDriveEnableCurrentLimit;
-    driveCurrentLimitConfig.SupplyCurrentLimit       = kDriveContinuousCurrentLimit;
-    driveCurrentLimitConfig.SupplyCurrentThreshold   = kDrivePeakCurrentLimit;
-    driveCurrentLimitConfig.SupplyTimeThreshold      = kDrivePeakCurrentDuration;
+    driveCurrentLimitConfig.SupplyCurrentLimit       = units::ampere_t{kDrivePeakCurrentLimit};
+    driveCurrentLimitConfig.SupplyCurrentLowerLimit  = units::ampere_t{kDriveContinuousCurrentLimit};
+    driveCurrentLimitConfig.SupplyCurrentLowerTime   = units::second_t{kDrivePeakCurrentDuration};
+
     steerCurrentLimitConfig.SupplyCurrentLimitEnable = kSteerEnableCurrentLimit;
-    steerCurrentLimitConfig.SupplyCurrentLimit       = kSteerContinuousCurrentLimit;
-    steerCurrentLimitConfig.SupplyCurrentThreshold   = kSteerPeakCurrentLimit;
-    steerCurrentLimitConfig.SupplyTimeThreshold      = kSteerPeakCurrentDuration;
+    steerCurrentLimitConfig.SupplyCurrentLimit       = units::ampere_t{kSteerPeakCurrentLimit};
+    steerCurrentLimitConfig.SupplyCurrentLowerLimit  = units::ampere_t{kSteerContinuousCurrentLimit};
+    steerCurrentLimitConfig.SupplyCurrentLowerTime   = units::second_t{kSteerPeakCurrentDuration};
+
     driveConfig.CurrentLimits                        = driveCurrentLimitConfig;
     steerConfig.CurrentLimits                        = steerCurrentLimitConfig;
 
