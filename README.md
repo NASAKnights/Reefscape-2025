@@ -9,17 +9,23 @@ TBD: ???
 
 ## Changelog
 
-###### Updated 1/11/25
+### Updated 1/11/25
 
-- Will be updated to the new WPILib version 2025.2.1
+- Updated to the new WPILib version 2025.2.1
 - Removed the Util folder due to NKTrajectory and NKTrajectoryManager not working with the gradle build
+- **Note:** New WPILib with cpp needs 17.9+ compiler, please update accordingly
 - Updated Vendor libraries
 - **Note:** Navx vendor library has changed to Studica
 - Calibrate Function has been removed due to library changes
 - How the Navx is instantiated is changed as well
 **CTRE Changes**
 - Pigeon has changed to GetYaw(), read specs as rotation direction has changed
+- CurrentSupplyConfig values have changed definition, updated accordingly
+- SupplyCurrentLowerLimit seems to be the new ContinuousCurrentLimit **TODO: CHECK**
+- SupplyCurrentLimit seems to be the new PeakLimit **TODO: CHECK BEFORE RUNNING**
+- SupplyCurrentLowerTime seems to be the new SupplyTimeThreshold **TODO: CHECK BEFORE RUNNING**
 **SwerveDriveModule**
 - Optimize function has changed
 **Pathplanner**
 - Changes to how the SwerveAutoBuilder is instantiated
+- File paths for include have been updated and removed as necessary
