@@ -2,12 +2,12 @@
 
 This is the code base for FRC 2025 Reefscape Game for Team 122 NASA Knights
 
-## General Robot Specs
+# General Robot Specs
 
 TBD: ???
 
 
-## Changelog
+# Changelog
 
 ### Updated 1/11/25
 
@@ -18,14 +18,14 @@ TBD: ???
 - **Note:** Navx vendor library has changed to Studica
 - Calibrate Function has been removed due to library changes
 - How the Navx is instantiated is changed as well
-**CTRE Changes**
+#### CTRE Changes
 - Pigeon has changed to GetYaw(), read specs as rotation direction has changed
 - CurrentSupplyConfig values have changed definition, updated accordingly
 - SupplyCurrentLowerLimit seems to be the new ContinuousCurrentLimit **TODO: CHECK**
 - SupplyCurrentLimit seems to be the new PeakLimit **TODO: CHECK BEFORE RUNNING**
 - SupplyCurrentLowerTime seems to be the new SupplyTimeThreshold **TODO: CHECK BEFORE RUNNING**
-**SwerveDriveModule**
+#### SwerveDriveModule
 - Optimize function has changed
-**Pathplanner**
+#### Pathplanner
 - Changes to how the SwerveAutoBuilder is instantiated
 - File paths for include have been updated and removed as necessary
