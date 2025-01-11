@@ -20,6 +20,7 @@
 using namespace ctre::phoenix6;
 using namespace ModuleConstants;
 
+
 SwerveModule::SwerveModule(int driveMotorID, int steerMotorID,
                            int steerEncoderId, frc::Rotation2d angleOffset)
     : m_id{driveMotorID / 10}, m_driveMotor{driveMotorID, "NKCANivore"},
@@ -118,16 +119,19 @@ void SwerveModule::Periodic()
   frc::SmartDashboard::PutNumber(
       "Module " + std::to_string(m_id) + "/" + " Rotations",
       (m_driveMotor.GetPosition()).GetValue().value());
+
 }
 
 void SwerveModule::SimulationPeriodic()
 {
+
   units::second_t dt = m_simTimer.Get();
   m_simTimer.Reset();
   m_driveSimPosition.Set(m_driveSimPosition.Get() +
                          m_driveSimVelocity.Get() * dt.value());
   frc::SmartDashboard::PutNumber(std::to_string(m_id) + "Module Position",
                                  m_driveSimPosition.Get());
+
 }
 
 frc::SwerveModuleState SwerveModule::GetCurrentState()
@@ -146,14 +150,15 @@ void SwerveModule::SetDesiredState(frc::SwerveModuleState state)
 {
   frc::Rotation2d rotation = GetRotation();
 
-  state = frc::SwerveModuleState::Optimize(state, rotation);
 
-  auto steerRequest = controls::PositionVoltage{0_tr}.WithSlot(0);
-  auto driveRequest = controls::VelocityVoltage{0_tps}.WithSlot(0);
+    state = frc::SwerveModuleState::Optimize(state, rotation);
 
-  m_steerMotor.SetControl(steerRequest.WithPosition(state.angle.Radians()));
-  m_driveMotor.SetControl(
-      driveRequest.WithVelocity(state.speed / kDriveConversion));
+    auto steerRequest = controls::PositionVoltage{0_tr}.WithSlot(0);
+    auto driveRequest = controls::VelocityVoltage{0_tps}.WithSlot(0);
+
+    m_steerMotor.SetControl(steerRequest.WithPosition(state.angle.Radians()));
+    m_driveMotor.SetControl(driveRequest.WithVelocity(state.speed / kDriveConversion));
+
 
   if constexpr (frc::RobotBase::IsSimulation())
   {
@@ -175,3 +180,4 @@ frc::Rotation2d SwerveModule::GetAbsoluteRotation()
 {
   return units::radian_t{m_steerEncoder.GetAbsolutePosition().GetValue()};
 }
+

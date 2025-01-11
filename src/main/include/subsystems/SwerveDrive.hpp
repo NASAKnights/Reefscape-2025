@@ -4,7 +4,7 @@
 
 #include <array>
 
-#include <AHRS.h>
+#include <studica/AHRS.h>
 #include <ctre/phoenix6/Pigeon2.hpp>
 #include <frc/SPI.h>
 #include <frc/controller/PIDController.h>
@@ -35,9 +35,10 @@
 #include <frc/trajectory/constraint/SwerveDriveKinematicsConstraint.h>
 
 #include <pathplanner/lib/auto/AutoBuilder.h>
-#include <pathplanner/lib/util/HolonomicPathFollowerConfig.h>
-#include <pathplanner/lib/util/PIDConstants.h>
-#include <pathplanner/lib/util/ReplanningConfig.h>
+// #include <pathplanner/lib/util/PIDConstants.h>
+// #include <pathplanner/lib/util/ReplanningConfig.h>
+#include <pathplanner/lib/config/RobotConfig.h>
+#include <pathplanner/lib/controllers/PPHolonomicDriveController.h>
 
 #include "Constants.hpp"
 #include "SwerveModule.hpp"
@@ -46,6 +47,7 @@ class SwerveDrive : public frc2::SubsystemBase
 {
 public:
   SwerveDrive();
+
 
   /**
    * Will be called periodically whenever the CommandScheduler runs.
@@ -90,9 +92,10 @@ public:
   void ShuffleboardInit();
 
 private:
-  // Components (e.g. motor controllers and sensors) should generally be
-  // declared private and exposed only through public methods.
-  AHRS navx{frc::SPI::Port::kMXP};
+    // Components (e.g. motor controllers and sensors) should generally be
+    // declared private and exposed only through public methods.
+    // studica::AHRS m_gyro{frc::SPI::Port::kMXP};
+    studica::AHRS navx{studica::AHRS::NavXComType::kMXP_SPI};
 
   ctre::phoenix6::hardware::Pigeon2 m_pigeon{2, "NKCANivore"};
 

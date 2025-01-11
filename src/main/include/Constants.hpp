@@ -12,17 +12,17 @@
 #include <frc/kinematics/SwerveDriveKinematics.h>
 #include <frc/kinematics/SwerveModuleState.h>
 #include <units/acceleration.h>
-#include <units/velocity.h>
 #include <units/angular_velocity.h>
 #include <units/math.h>
 #include <units/time.h>
+
 #include <frc/Preferences.h>
+#include <units/velocity.h>
 
 #include "SDSModuleType.hpp"
 
 namespace ElectricalConstants
 {
-
     const int kFrontLeftDriveMotorID = 10;
     const int kFrontLeftTurnMotorID = 11;
     const int kFrontLeftEncoderID = 12;
@@ -43,7 +43,6 @@ namespace ElectricalConstants
 
 namespace DriveConstants
 {
-
     const int kDriverPort = 0;
     const int kOperatorPort = 1;
 
@@ -56,11 +55,11 @@ namespace DriveConstants
     const SDSModuleType mk4i_l3{0.10033,
                                 (14.0 / 50.0) * (28.0 / 16.0) * (15.0 / 45.0), true,
                                 (14.0 / 50.0) * (10.0 / 60.0), false};
-
     // const std::map<std::string, SDSModuleType> moduleMap{{"mk4i_l1", mk4i_l1}, {"mk4i_l2", mk4i_l2}, {"mk4i_l3", mk4i_l3}};
     // inline constexpr std::string_view mk4i_l1 = "mk4i_l1";
     // inline constexpr std::string_view mk4i_l2 = "mk4i_l2";
     // inline constexpr std::string_view mk4i_l3 = "mk4i_l3";
+
 
     const SDSModuleType kSDSModule = mk4i_l3;
 
@@ -103,7 +102,6 @@ namespace DriveConstants
     const frc::Translation2d kBackRightPosition =
         frc::Translation2d(units::meter_t{-kTrackwidthMeters / 2.0},
                            units::meter_t{-kWheelbaseMeters / 2.0});
-
 } // namespace DriveConstants
 
 namespace ModuleConstants
@@ -177,5 +175,6 @@ namespace MathUtilNK
             return 0.0;
         }
     }
+}
 
 } // namespace MathUtilNK
