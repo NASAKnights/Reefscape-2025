@@ -48,7 +48,6 @@ class SwerveDrive : public frc2::SubsystemBase
 public:
   SwerveDrive();
 
-
   /**
    * Will be called periodically whenever the CommandScheduler runs.
    */
@@ -64,8 +63,8 @@ public:
   void ResetDriveEncoders();
   void EnableDrive();
   void DisableDrive();
-  void InitPreferences();
-  void GetPrefernces();
+  // void InitPreferences();
+  // void GetPrefernces();
 
   std::array<frc::SwerveModulePosition, 4> GetModulePositions();
 
@@ -90,17 +89,18 @@ public:
   void TurnVisionOff();
   void PeriodicShuffleboard();
   void ShuffleboardInit();
+  void SetOffsets();
 
 private:
-    // Components (e.g. motor controllers and sensors) should generally be
-    // declared private and exposed only through public methods.
-    // studica::AHRS m_gyro{frc::SPI::Port::kMXP};
-    studica::AHRS navx{studica::AHRS::NavXComType::kMXP_SPI};
+  // Components (e.g. motor controllers and sensors) should generally be
+  // declared private and exposed only through public methods.
+  // studica::AHRS m_gyro{frc::SPI::Port::kMXP};
+  studica::AHRS navx{studica::AHRS::NavXComType::kMXP_SPI};
 
   ctre::phoenix6::hardware::Pigeon2 m_pigeon{2, "NKCANivore"};
 
   std::array<SwerveModule, 4> modules;
-  frc::SwerveDriveKinematics<4> kSwerveKinematics;
+  frc::SwerveDriveKinematics<4U> kSwerveKinematics;
 
   frc::ChassisSpeeds speeds;
   frc::Field2d m_field;

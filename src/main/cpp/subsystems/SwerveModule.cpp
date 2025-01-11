@@ -20,7 +20,6 @@
 using namespace ctre::phoenix6;
 using namespace ModuleConstants;
 
-
 SwerveModule::SwerveModule(int driveMotorID, int steerMotorID,
                            int steerEncoderId, frc::Rotation2d angleOffset)
     : m_id{driveMotorID / 10}, m_driveMotor{driveMotorID, "NKCANivore"},
@@ -41,12 +40,11 @@ SwerveModule::SwerveModule(int driveMotorID, int steerMotorID,
   // driveClosedRamps.WithTorqueClosedLoopRampPeriod(0.4);
   // driveConfig.ClosedLoopRamps = driveClosedRamps;
 
-  CANcoderConfig.MagnetSensor.AbsoluteSensorRange =
-      signals::AbsoluteSensorRangeValue::Signed_PlusMinusHalf;
+  CANcoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = units::turn_t{.5};
   CANcoderConfig.MagnetSensor.SensorDirection =
       signals::SensorDirectionValue::CounterClockwise_Positive;
   CANcoderConfig.MagnetSensor.MagnetOffset =
-      units::turn_t{m_angleOffset.Degrees()}.value();
+      units::turn_t{m_angleOffset.Degrees()};
 
   configs::Slot0Configs driveSlot0Configs{};
   configs::Slot0Configs steerSlot0Configs{};
@@ -65,13 +63,13 @@ SwerveModule::SwerveModule(int driveMotorID, int steerMotorID,
   configs::CurrentLimitsConfigs driveCurrentLimitConfig{};
   configs::CurrentLimitsConfigs steerCurrentLimitConfig{};
   driveCurrentLimitConfig.SupplyCurrentLimitEnable = kDriveEnableCurrentLimit;
-  driveCurrentLimitConfig.SupplyCurrentLimit = kDriveContinuousCurrentLimit;
-  driveCurrentLimitConfig.SupplyCurrentThreshold = kDrivePeakCurrentLimit;
-  driveCurrentLimitConfig.SupplyTimeThreshold = kDrivePeakCurrentDuration;
+  driveCurrentLimitConfig.SupplyCurrentLimit = units::ampere_t{kDrivePeakCurrentLimit};
+  driveCurrentLimitConfig.SupplyCurrentLowerLimit = units::ampere_t{kDriveContinuousCurrentLimit};
+  driveCurrentLimitConfig.SupplyCurrentLowerTime = units::second_t{kDrivePeakCurrentDuration};
   steerCurrentLimitConfig.SupplyCurrentLimitEnable = kSteerEnableCurrentLimit;
-  steerCurrentLimitConfig.SupplyCurrentLimit = kSteerContinuousCurrentLimit;
-  steerCurrentLimitConfig.SupplyCurrentThreshold = kSteerPeakCurrentLimit;
-  steerCurrentLimitConfig.SupplyTimeThreshold = kSteerPeakCurrentDuration;
+  steerCurrentLimitConfig.SupplyCurrentLimit = units::ampere_t{kSteerPeakCurrentLimit};
+  steerCurrentLimitConfig.SupplyCurrentLowerLimit = units::ampere_t{kSteerContinuousCurrentLimit};
+  steerCurrentLimitConfig.SupplyCurrentLowerTime = units::second_t{kSteerPeakCurrentDuration};
   driveConfig.CurrentLimits = driveCurrentLimitConfig;
   steerConfig.CurrentLimits = steerCurrentLimitConfig;
 
@@ -119,7 +117,6 @@ void SwerveModule::Periodic()
   frc::SmartDashboard::PutNumber(
       "Module " + std::to_string(m_id) + "/" + " Rotations",
       (m_driveMotor.GetPosition()).GetValue().value());
-
 }
 
 void SwerveModule::SimulationPeriodic()
@@ -131,7 +128,6 @@ void SwerveModule::SimulationPeriodic()
                          m_driveSimVelocity.Get() * dt.value());
   frc::SmartDashboard::PutNumber(std::to_string(m_id) + "Module Position",
                                  m_driveSimPosition.Get());
-
 }
 
 frc::SwerveModuleState SwerveModule::GetCurrentState()
@@ -150,15 +146,13 @@ void SwerveModule::SetDesiredState(frc::SwerveModuleState state)
 {
   frc::Rotation2d rotation = GetRotation();
 
+  state = frc::SwerveModuleState::Optimize(state, rotation);
 
-    state = frc::SwerveModuleState::Optimize(state, rotation);
+  auto steerRequest = controls::PositionVoltage{0_tr}.WithSlot(0);
+  auto driveRequest = controls::VelocityVoltage{0_tps}.WithSlot(0);
 
-    auto steerRequest = controls::PositionVoltage{0_tr}.WithSlot(0);
-    auto driveRequest = controls::VelocityVoltage{0_tps}.WithSlot(0);
-
-    m_steerMotor.SetControl(steerRequest.WithPosition(state.angle.Radians()));
-    m_driveMotor.SetControl(driveRequest.WithVelocity(state.speed / kDriveConversion));
-
+  m_steerMotor.SetControl(steerRequest.WithPosition(state.angle.Radians()));
+  m_driveMotor.SetControl(driveRequest.WithVelocity(state.speed / kDriveConversion));
 
   if constexpr (frc::RobotBase::IsSimulation())
   {
@@ -181,3 +175,13 @@ frc::Rotation2d SwerveModule::GetAbsoluteRotation()
   return units::radian_t{m_steerEncoder.GetAbsolutePosition().GetValue()};
 }
 
+void SwerveModule::SetOffset(frc::Rotation2d offset)
+{
+  m_angleOffset = offset;
+  configs::CANcoderConfiguration CANcoderConfig{};
+  CANcoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = units::turn_t{.5};
+  CANcoderConfig.MagnetSensor.SensorDirection = signals::SensorDirectionValue::CounterClockwise_Positive;
+  CANcoderConfig.MagnetSensor.MagnetOffset = units::turn_t{m_angleOffset.Degrees()};
+
+  m_steerEncoder.GetConfigurator().Apply(CANcoderConfig);
+}

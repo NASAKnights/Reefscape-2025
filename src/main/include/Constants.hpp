@@ -60,7 +60,6 @@ namespace DriveConstants
     // inline constexpr std::string_view mk4i_l2 = "mk4i_l2";
     // inline constexpr std::string_view mk4i_l3 = "mk4i_l3";
 
-
     const SDSModuleType kSDSModule = mk4i_l3;
 
     const auto kTrackwidthMeters = 0.4_m; // Add to shuffleboard
@@ -175,6 +174,5 @@ namespace MathUtilNK
             return 0.0;
         }
     }
-}
 
 } // namespace MathUtilNK
