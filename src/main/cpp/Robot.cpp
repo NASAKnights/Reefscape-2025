@@ -124,7 +124,6 @@ void Robot::BindCommands()
     Example Button */
 }
 
-frc2::CommandPtr Robot::GetAutonomousCommand() {}
 
 void Robot::DisabledPeriodic() {}
 

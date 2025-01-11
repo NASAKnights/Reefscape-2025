@@ -26,12 +26,13 @@ SwerveDrive::SwerveDrive()
     , pidRot{0.15, 0, 0}
     , networkTableInst(nt::NetworkTableInstance::GetDefault())
     , m_poseEstimator{kSwerveKinematics,
-                      frc::Rotation2d(units::degree_t{m_pigeon.GetAngle()}),
+                      frc::Rotation2d(m_pigeon.GetYaw().GetValue()), //TODO: YAW is CCW+ whereas this API is CW+ (Check if need to reverse)
                       {modules[0].GetPosition(), modules[1].GetPosition(), modules[2].GetPosition(),
                        modules[3].GetPosition()},
                       frc::Pose2d()}
 {
-    navx.Calibrate();
+    // navx.Calibrate();
+    navx.Reset();
     speeds = frc::ChassisSpeeds();
     networkTableInst.StartServer();
     frc::SmartDashboard::PutData("Field", &m_field);

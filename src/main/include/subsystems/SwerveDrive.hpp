@@ -4,7 +4,7 @@
 
 #include <array>
 
-#include <AHRS.h>
+#include <studica/AHRS.h>
 #include <ctre/phoenix6/Pigeon2.hpp>
 #include <frc/SPI.h>
 #include <frc/controller/PIDController.h>
@@ -89,7 +89,8 @@ public:
 private:
     // Components (e.g. motor controllers and sensors) should generally be
     // declared private and exposed only through public methods.
-    AHRS navx{frc::SPI::Port::kMXP};
+    // studica::AHRS m_gyro{frc::SPI::Port::kMXP};
+    studica::AHRS navx{studica::AHRS::NavXComType::kMXP_SPI};
 
     ctre::phoenix6::hardware::Pigeon2 m_pigeon{2, "NKCANivore"};
 
