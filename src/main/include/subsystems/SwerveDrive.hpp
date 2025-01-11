@@ -46,45 +46,50 @@
 class SwerveDrive : public frc2::SubsystemBase
 {
 public:
-    SwerveDrive();
+  SwerveDrive();
 
-    /**
-     * Will be called periodically whenever the CommandScheduler runs.
-     */
-    void Periodic() override;
 
-    void Drive(frc::ChassisSpeeds);
+  /**
+   * Will be called periodically whenever the CommandScheduler runs.
+   */
+  void Periodic() override;
 
-    void SetFast();
-    void SetSlow();
+  void Drive(frc::ChassisSpeeds);
 
-    frc::Rotation2d GetHeading();
-    void            ResetHeading();
-    void            ResetDriveEncoders();
-    void            EnableDrive();
-    void            DisableDrive();
+  void SetFast();
+  void SetSlow();
 
-    std::array<frc::SwerveModulePosition, 4> GetModulePositions();
+  frc::Rotation2d GetHeading();
+  void ResetHeading();
+  void ResetDriveEncoders();
+  void EnableDrive();
+  void DisableDrive();
+  void InitPreferences();
+  void GetPrefernces();
 
-    void ResetPose(frc::Pose2d position);
+  std::array<frc::SwerveModulePosition, 4> GetModulePositions();
 
-    frc::Pose2d GetPose();
+  void ResetPose(frc::Pose2d position);
 
-    void               UpdateOdometry();
-    frc::ChassisSpeeds getRobotRelativeSpeeds();
+  frc::Pose2d GetPose();
 
-    void InitializePID();
-    void SetReference(frc::Pose2d);
-    void Strafe(frc::ChassisSpeeds speeds, double angle);
+  void UpdateOdometry();
+  frc::ChassisSpeeds getRobotRelativeSpeeds();
 
-    void        UpdatePoseEstimate();
-    void        PublishOdometry(frc::Pose2d);
-    void        PrintNetworkTablseValues();
-    void        SetVision();
-    bool        atSetpoint();
-    frc::Pose2d GetVision();
-    void        TurnVisionOn();
-    void        TurnVisionOff();
+  void InitializePID();
+  void SetReference(frc::Pose2d);
+  void Strafe(frc::ChassisSpeeds speeds, double angle);
+
+  void UpdatePoseEstimate();
+  void PublishOdometry(frc::Pose2d);
+  void PrintNetworkTablseValues();
+  void SetVision();
+  bool atSetpoint();
+  frc::Pose2d GetVision();
+  void TurnVisionOn();
+  void TurnVisionOff();
+  void PeriodicShuffleboard();
+  void ShuffleboardInit();
 
 private:
     // Components (e.g. motor controllers and sensors) should generally be
@@ -92,36 +97,36 @@ private:
     // studica::AHRS m_gyro{frc::SPI::Port::kMXP};
     studica::AHRS navx{studica::AHRS::NavXComType::kMXP_SPI};
 
-    ctre::phoenix6::hardware::Pigeon2 m_pigeon{2, "NKCANivore"};
+  ctre::phoenix6::hardware::Pigeon2 m_pigeon{2, "NKCANivore"};
 
-    std::array<SwerveModule, 4>   modules;
-    frc::SwerveDriveKinematics<4> kSwerveKinematics;
+  std::array<SwerveModule, 4> modules;
+  frc::SwerveDriveKinematics<4> kSwerveKinematics;
 
-    frc::ChassisSpeeds speeds;
-    frc::Field2d       m_field;
-    frc::PIDController pidX;
-    frc::PIDController pidY;
-    frc::PIDController pidRot;
+  frc::ChassisSpeeds speeds;
+  frc::Field2d m_field;
+  frc::PIDController pidX;
+  frc::PIDController pidY;
+  frc::PIDController pidRot;
 
-    bool   hasRun = false;
-    bool   enable = true;
-    double pos_Error;
+  bool hasRun = false;
+  bool enable = true;
+  double pos_Error;
 
-    bool useVision = false;
+  bool useVision = false;
 
-    frc::ChassisSpeeds priorSpeeds = frc::ChassisSpeeds();
+  frc::ChassisSpeeds priorSpeeds = frc::ChassisSpeeds();
 
-    nt::NetworkTableInstance networkTableInst;
+  nt::NetworkTableInstance networkTableInst;
 
-    std::string_view                  baseLink1 = "base_link_1";
-    std::string_view                  baseLink2 = "base_link_2";
-    std::string_view                  baseLink  = "base_link";
-    std::shared_ptr<nt::NetworkTable> poseTable;
+  std::string_view baseLink1 = "base_link_1";
+  std::string_view baseLink2 = "base_link_2";
+  std::string_view baseLink = "base_link";
+  std::shared_ptr<nt::NetworkTable> poseTable;
 
-    nt::DoubleArraySubscriber        baseLink1Subscribe;
-    nt::DoubleArraySubscriber        baseLink2Subscribe;
-    frc::Quaternion                  rotation_q; // w, x, y, z
-    frc::SwerveDrivePoseEstimator<4> m_poseEstimator;
+  nt::DoubleArraySubscriber baseLink1Subscribe;
+  nt::DoubleArraySubscriber baseLink2Subscribe;
+  frc::Quaternion rotation_q; // w, x, y, z
+  frc::SwerveDrivePoseEstimator<4> m_poseEstimator;
 
-    nt::DoubleArrayPublisher baseLinkPublisher;
+  nt::DoubleArrayPublisher baseLinkPublisher;
 };

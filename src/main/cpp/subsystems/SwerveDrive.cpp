@@ -31,8 +31,21 @@ SwerveDrive::SwerveDrive()
                        modules[3].GetPosition()},
                       frc::Pose2d()}
 {
+
+    // Add a function that loads the Robot Preferences, including
+    // offsets, Module positions, max speed, wheel diameter
+
+    kSwerveKinematics = frc::SwerveDriveKinematics<4U>{
+        {DriveConstants::kFrontLeftPosition, DriveConstants::kFrontRightPosition,
+         DriveConstants::kBackLeftPosition, DriveConstants::kBackRightPosition}};
+    // Function should
+    // frc::Preferences::InitDouble(kArmPositionKey, number);
+    // double x =  frc::Preferences::GetDouble(kArmPositionKey, m_armSetpoint.value())}
+    // degrees_t x_deg = degrees_t{x} (Psuedo code)
+
     // navx.Calibrate();
     navx.Reset();
+
     speeds = frc::ChassisSpeeds();
     networkTableInst.StartServer();
     frc::SmartDashboard::PutData("Field", &m_field);
@@ -47,11 +60,13 @@ SwerveDrive::SwerveDrive()
 
     baseLinkPublisher = poseTable->GetDoubleArrayTopic(baseLink).Publish();
 
-    // TODO: PathPlanner
+    ShuffleboardInit();
+
     pathplanner::RobotConfig pathplannerConfig = pathplanner::RobotConfig::fromGUISettings();
     // Configure Auto Swerve
     pathplanner::AutoBuilder::configure(
         [this]() { return this->GetPose(); }, // Robot pose supplier
+
         [this](frc::Pose2d poseReset)
         {
             this->ResetPose(poseReset);
@@ -64,6 +79,7 @@ SwerveDrive::SwerveDrive()
         [this](frc::ChassisSpeeds speedsRelative)
         {
             this->Drive(speedsRelative);
+
         }, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
         std::make_shared<pathplanner::PPHolonomicDriveController>( // PPHolonomicController is the built in path following 
                                                       //controller for holonomic drive trains
@@ -88,6 +104,34 @@ SwerveDrive::SwerveDrive()
     );
 }
 
+void SwerveDrive::InitPreferences()
+{
+    frc::Preferences::InitDouble(DriveConstants::kBackLeftOffsetKey,
+                                 DriveConstants::kBackRightOffset.Radians().value());
+}
+
+void SwerveDrive::GetPrefernces()
+{
+    auto kBackLeftOffsetDouble = frc::Preferences::GetDouble(DriveConstants::kBackLeftOffsetKey,
+                                                             DriveConstants::kBackRightOffset.Radians().value());
+
+    modules = std::array<SwerveModule, 4>{
+        {SwerveModule(ElectricalConstants::kFrontLeftDriveMotorID, ElectricalConstants::kFrontLeftTurnMotorID,
+                      ElectricalConstants::kFrontLeftEncoderID, DriveConstants::kFrontLeftOffset),
+         SwerveModule(ElectricalConstants::kFrontRightDriveMotorID, ElectricalConstants::kFrontRightTurnMotorID,
+                      ElectricalConstants::kFrontRightEncoderID, DriveConstants::kFrontRightOffset),
+         SwerveModule(ElectricalConstants::kBackLeftDriveMotorID, ElectricalConstants::kBackLeftTurnMotorID,
+                      ElectricalConstants::kBackLeftEncoderID, kBackLeftOffsetDouble),
+         SwerveModule(ElectricalConstants::kBackRightDriveMotorID, ElectricalConstants::kBackRightTurnMotorID,
+                      ElectricalConstants::kBackRightEncoderID, DriveConstants::kBackRightOffset)}};
+
+    m_poseEstimator = frc::SwerveDrivePoseEstimator<4U>{
+        kSwerveKinematics,
+        frc::Rotation2d(units::degree_t{m_pigeon.GetAngle()}),
+        {modules[0].GetPosition(), modules[1].GetPosition(), modules[2].GetPosition(), modules[3].GetPosition()},
+        frc::Pose2d()};
+}
+
 // This method will be called once per scheduler run
 void SwerveDrive::Periodic()
 {
@@ -101,6 +145,7 @@ void SwerveDrive::Periodic()
 
     frc::SmartDashboard::PutNumber("Heading", GetHeading().Degrees().value());
     // UpdateOdometry();
+    PeriodicShuffleboard();
 }
 
 void SwerveDrive::Drive(frc::ChassisSpeeds speeds)
@@ -348,4 +393,21 @@ void SwerveDrive::TurnVisionOff()
 void SwerveDrive::TurnVisionOn()
 {
     useVision = true;
+}
+
+void SwerveDrive::PeriodicShuffleboard()
+{
+    // auto VariableName = frc::SmartDashboard::GetString("SmartDashboard/Swerve/kFrontLeftOffset", "kFrontLeftOffset");
+    // frc::SmartDashboard::PutString("SmartDashboard/Swerve/kFrontLeftOffset", VariableName);
+    // frc::SmartDashboard::GetNumber("SmartDashboard/Swerve/WidthMeters", 0);
+    // frc::SmartDashboard::GetNumber("SmartDashboard/Swerve/BaseMeters", 0);
+    // frc::SmartDashboard::GetNumber("SmartDashboard/Swerve/MaxTranslationalVelocity", 0);
+}
+
+void SwerveDrive::ShuffleboardInit()
+{
+    // frc::SmartDashboard::SetDefaultNumber("SmartDashboard/Swerve/ModuleGearRatio", 0);
+    // frc::SmartDashboard::SetPersistent("SmartDashboard/Swerve/WidthMeters");
+    // frc::SmartDashboard::SetPersistent("SmartDashboard/Swerve/BaseMeters");
+    // frc::SmartDashboard::SetPersistent("SmartDashboard/Swerve/MaxTranslationalVelocity");
 }
