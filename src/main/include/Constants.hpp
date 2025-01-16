@@ -55,12 +55,22 @@ namespace DriveConstants
     const SDSModuleType mk4i_l3{0.10033,
                                 (14.0 / 50.0) * (28.0 / 16.0) * (15.0 / 45.0), true,
                                 (14.0 / 50.0) * (10.0 / 60.0), false};
+    const SDSModuleType mk4i_l1plus{0.10033,
+                                    (16.0 / 50.0) * (25.0 / 19.0) * (15.0 / 45.0), true,
+                                    (14.0 / 50.0) * (10.0 / 60.0), false};
+    const SDSModuleType mk4i_l2plus{0.10033,
+                                    (16.0 / 50.0) * (27.0 / 17.0) * (15.0 / 45.0), true,
+                                    (14.0 / 50.0) * (10.0 / 60.0), false};
+    const SDSModuleType mk4i_l3plus{0.10033,
+                                    (16.0 / 50.0) * (28.0 / 16.0) * (15.0 / 45.0), true,
+                                    (14.0 / 50.0) * (10.0 / 60.0), false};
     // const std::map<std::string, SDSModuleType> moduleMap{{"mk4i_l1", mk4i_l1}, {"mk4i_l2", mk4i_l2}, {"mk4i_l3", mk4i_l3}};
     // inline constexpr std::string_view mk4i_l1 = "mk4i_l1";
     // inline constexpr std::string_view mk4i_l2 = "mk4i_l2";
     // inline constexpr std::string_view mk4i_l3 = "mk4i_l3";
 
-    const SDSModuleType kSDSModule = mk4i_l3;
+    // const SDSModuleType kSDSModule = mk4i_l3;
+    const SDSModuleType kSDSModule = mk4i_l1plus;
 
     const auto kTrackwidthMeters = 0.4_m; // Add to shuffleboard
     const auto kWheelbaseMeters = 0.4_m;  // Add to shuffleboard
