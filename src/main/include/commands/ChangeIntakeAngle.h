@@ -14,13 +14,19 @@
  * directly; this is crucially important, or else the decorator functions in
  * Command will *not* work!
  */
-class PlaceAlgae
-    : public frc2::CommandHelper<frc2::Command, PlaceAlgae> {
- public:
+class ChangeIntakeAngle
+    : public frc2::CommandHelper<frc2::Command, ChangeIntakeAngle>
+{
+public:
   /* You should consider using the more terse Command factories API instead
    * https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands
    */
-  PlaceAlgae();
+
+  /*This command would be used to change the angle of the wrist if we include one.
+  They said that the wrist would most likely only have 2-3 angles for the wrist.
+  One for L4, one horizontal, and one other angle for L2/L3.*/
+
+  ChangeIntakeAngle();
 
   void Initialize() override;
 
