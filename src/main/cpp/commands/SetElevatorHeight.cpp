@@ -2,22 +2,22 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-#include "commands/PlaceAlgaeInProcessor.h"
+#include "commands/SetElevatorHeight.h"
 
-PlaceAlgaeInProcessor::PlaceAlgaeInProcessor() {
+SetElevatorHeight::SetElevatorHeight() {
   // Use addRequirements() here to declare subsystem dependencies.
 }
 
 // Called when the command is initially scheduled.
-void PlaceAlgaeInProcessor::Initialize() {}
+void SetElevatorHeight::Initialize() {}
 
 // Called repeatedly when this Command is scheduled to run
-void PlaceAlgaeInProcessor::Execute() {}
+void SetElevatorHeight::Execute() {}
 
 // Called once the command ends or is interrupted.
-void PlaceAlgaeInProcessor::End(bool interrupted) {}
+void SetElevatorHeight::End(bool interrupted) {}
 
 // Returns true when the command should end.
-bool PlaceAlgaeInProcessor::IsFinished() {
+bool SetElevatorHeight::IsFinished() {
   return false;
 }

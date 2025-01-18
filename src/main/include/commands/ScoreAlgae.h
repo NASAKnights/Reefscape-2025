@@ -14,13 +14,18 @@
  * directly; this is crucially important, or else the decorator functions in
  * Command will *not* work!
  */
-class PlaceAlgaeInProcessor
-    : public frc2::CommandHelper<frc2::Command, PlaceAlgaeInProcessor> {
- public:
+class ScoreAlgae
+    : public frc2::CommandHelper<frc2::Command, ScoreAlgae>
+{
+public:
   /* You should consider using the more terse Command factories API instead
    * https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands
    */
-  PlaceAlgaeInProcessor();
+
+  /*This command would be used to Score Algae in the processor.
+  This would require lowering down to the processor, dropping the algae, and then returning to a default position if we have one.*/
+
+  ScoreAlgae();
 
   void Initialize() override;
 
