@@ -15,11 +15,16 @@
  * Command will *not* work!
  */
 class DropAlgae
-    : public frc2::CommandHelper<frc2::Command, DropAlgae> {
- public:
+    : public frc2::CommandHelper<frc2::Command, DropAlgae>
+{
+public:
   /* You should consider using the more terse Command factories API instead
    * https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands
    */
+
+  /*This commmand is used to drop algae when we need to.
+  This would be used to drop algae if we need to and when we need to for scoring in the processor.*/
+
   DropAlgae();
 
   void Initialize() override;

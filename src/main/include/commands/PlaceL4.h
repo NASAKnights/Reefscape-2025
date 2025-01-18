@@ -15,11 +15,16 @@
  * Command will *not* work!
  */
 class PlaceL4
-    : public frc2::CommandHelper<frc2::Command, PlaceL4> {
- public:
+    : public frc2::CommandHelper<frc2::Command, PlaceL4>
+{
+public:
   /* You should consider using the more terse Command factories API instead
    * https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands
    */
+
+  /*This command would be used to score on L4.
+  This command would require raising the elevator to the Branch, Changing the wrist angle (ChangeIntakeAngle), Dropping the coral, and Returning to a default position if we have one.*/
+
   PlaceL4();
 
   void Initialize() override;

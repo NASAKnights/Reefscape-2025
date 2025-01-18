@@ -15,11 +15,15 @@
  * Command will *not* work!
  */
 class DropCoral
-    : public frc2::CommandHelper<frc2::Command, DropCoral> {
- public:
+    : public frc2::CommandHelper<frc2::Command, DropCoral>
+{
+public:
   /* You should consider using the more terse Command factories API instead
    * https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands
    */
+
+  /*This command would be used to drop the coral in case we need to and when we score in L1-L4.*/
+
   DropCoral();
 
   void Initialize() override;

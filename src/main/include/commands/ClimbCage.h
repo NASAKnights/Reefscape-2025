@@ -15,11 +15,16 @@
  * Command will *not* work!
  */
 class ClimbCage
-    : public frc2::CommandHelper<frc2::Command, ClimbCage> {
- public:
+    : public frc2::CommandHelper<frc2::Command, ClimbCage>
+{
+public:
   /* You should consider using the more terse Command factories API instead
    * https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands
    */
+
+  /*This command would be used to climb the cage.
+  It is hard to explain this command because of the fact that the climber is currently not decided entirely as of writing this.*/
+
   ClimbCage();
 
   void Initialize() override;

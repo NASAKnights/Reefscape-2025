@@ -15,11 +15,15 @@
  * Command will *not* work!
  */
 class GrabAlgae
-    : public frc2::CommandHelper<frc2::Command, GrabAlgae> {
- public:
+    : public frc2::CommandHelper<frc2::Command, GrabAlgae>
+{
+public:
   /* You should consider using the more terse Command factories API instead
    * https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands
    */
+
+  /*This command is used to grab Algae from the Reef.
+  It would raise the elevator to a desired level, run the Intake, and then return the elevator to a default position.*/
   GrabAlgae();
 
   void Initialize() override;

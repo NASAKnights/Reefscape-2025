@@ -15,11 +15,16 @@
  * Command will *not* work!
  */
 class GrabCoral
-    : public frc2::CommandHelper<frc2::Command, GrabCoral> {
- public:
+    : public frc2::CommandHelper<frc2::Command, GrabCoral>
+{
+public:
   /* You should consider using the more terse Command factories API instead
    * https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands
    */
+
+  /*This command would be used to get the Coral from the Coral Station.
+  If we need to, it would raise/lower to the level of the opening for the Coral Station, Running the Intake, and then return the elevator to a default position.*/
+
   GrabCoral();
 
   void Initialize() override;
