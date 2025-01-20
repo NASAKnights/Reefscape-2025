@@ -18,18 +18,14 @@ SwerveDrive::SwerveDrive()
                SwerveModule(ElectricalConstants::kBackRightDriveMotorID,
                             ElectricalConstants::kBackRightTurnMotorID,
                             ElectricalConstants::kBackRightEncoderID,
-                            DriveConstants::kBackRightOffset)}}
-    , kSwerveKinematics{{DriveConstants::kFrontLeftPosition, DriveConstants::kFrontRightPosition,
-                         DriveConstants::kBackLeftPosition, DriveConstants::kBackRightPosition}}
-    , pidX{0.9, 1e-4, 0}
-    , pidY{0.9, 1e-4, 0}
-    , pidRot{0.15, 0, 0}
-    , networkTableInst(nt::NetworkTableInstance::GetDefault())
-    , m_poseEstimator{kSwerveKinematics,
-                      frc::Rotation2d(m_pigeon.GetYaw().GetValue()), //TODO: YAW is CCW+ whereas this API is CW+ (Check if need to reverse)
-                      {modules[0].GetPosition(), modules[1].GetPosition(), modules[2].GetPosition(),
-                       modules[3].GetPosition()},
-                      frc::Pose2d()}
+                            DriveConstants::kBackRightOffset)}},
+      kSwerveKinematics{{DriveConstants::kFrontLeftPosition, DriveConstants::kFrontRightPosition,
+                         DriveConstants::kBackLeftPosition, DriveConstants::kBackRightPosition}},
+      pidX{0.9, 1e-4, 0}, pidY{0.9, 1e-4, 0}, pidRot{0.15, 0, 0}, networkTableInst(nt::NetworkTableInstance::GetDefault()), m_poseEstimator{kSwerveKinematics,
+                                                                                                                                            frc::Rotation2d(m_pigeon.GetYaw().GetValue()), // TODO: YAW is CCW+ whereas this API is CW+ (Check if need to reverse)
+                                                                                                                                            {modules[0].GetPosition(), modules[1].GetPosition(), modules[2].GetPosition(),
+                                                                                                                                             modules[3].GetPosition()},
+                                                                                                                                            frc::Pose2d()}
 {
 
     // Add a function that loads the Robot Preferences, including
@@ -52,7 +48,7 @@ SwerveDrive::SwerveDrive()
     auto visionStdDevs = wpi::array<double, 3U>{0.9, 0.9, 1.8};
     m_poseEstimator.SetVisionMeasurementStdDevs(visionStdDevs);
 
-    poseTable          = networkTableInst.GetTable("ROS2Bridge");
+    poseTable = networkTableInst.GetTable("ROS2Bridge");
     baseLink1Subscribe = poseTable->GetDoubleArrayTopic(baseLink1).Subscribe(
         {}, {.periodic = 0.01, .sendAll = true});
     baseLink2Subscribe = poseTable->GetDoubleArrayTopic(baseLink2).Subscribe(
@@ -65,7 +61,8 @@ SwerveDrive::SwerveDrive()
     pathplanner::RobotConfig pathplannerConfig = pathplanner::RobotConfig::fromGUISettings();
     // Configure Auto Swerve
     pathplanner::AutoBuilder::configure(
-        [this]() { return this->GetPose(); }, // Robot pose supplier
+        [this]()
+        { return this->GetPose(); }, // Robot pose supplier
 
         [this](frc::Pose2d poseReset)
         {
@@ -79,13 +76,12 @@ SwerveDrive::SwerveDrive()
         [this](frc::ChassisSpeeds speedsRelative)
         {
             this->Drive(speedsRelative);
-
-        }, // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
-        std::make_shared<pathplanner::PPHolonomicDriveController>( // PPHolonomicController is the built in path following 
-                                                      //controller for holonomic drive trains
-            pathplanner::PIDConstants(5, 0.0, 0.0), // Translation PID constants
-            pathplanner::PIDConstants(5, 0.0, 0.0) // Rotation PID constants
-            ),  
+        },                                                         // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
+        std::make_shared<pathplanner::PPHolonomicDriveController>( // PPHolonomicController is the built in path following
+                                                                   // controller for holonomic drive trains
+            pathplanner::PIDConstants(5, 0.0, 0.0),                // Translation PID constants
+            pathplanner::PIDConstants(5, 0.0, 0.0)                 // Rotation PID constants
+            ),
         pathplannerConfig,
         []()
         {
@@ -94,7 +90,7 @@ SwerveDrive::SwerveDrive()
             // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
 
             auto alliance = frc::DriverStation::GetAlliance();
-            if(alliance)
+            if (alliance)
             {
                 return alliance.value() == frc::DriverStation::Alliance::kRed;
             }
@@ -104,33 +100,33 @@ SwerveDrive::SwerveDrive()
     );
 }
 
-void SwerveDrive::InitPreferences()
-{
-    frc::Preferences::InitDouble(DriveConstants::kBackLeftOffsetKey,
-                                 DriveConstants::kBackRightOffset.Radians().value());
-}
+// void SwerveDrive::InitPreferences()
+// {
+//     frc::Preferences::InitDouble(DriveConstants::kBackLeftOffsetKey,
+//                                  DriveConstants::kBackLeftOffset.Radians().value());
+// }
 
-void SwerveDrive::GetPrefernces()
-{
-    auto kBackLeftOffsetDouble = frc::Preferences::GetDouble(DriveConstants::kBackLeftOffsetKey,
-                                                             DriveConstants::kBackRightOffset.Radians().value());
+// void SwerveDrive::GetPrefernces()
+// {
+//     auto kBackLeftOffsetDouble = frc::Preferences::GetDouble(DriveConstants::kBackLeftOffsetKey,
+//                                                              DriveConstants::kBackLeftOffset.Radians().value());
 
-    modules = std::array<SwerveModule, 4>{
-        {SwerveModule(ElectricalConstants::kFrontLeftDriveMotorID, ElectricalConstants::kFrontLeftTurnMotorID,
-                      ElectricalConstants::kFrontLeftEncoderID, DriveConstants::kFrontLeftOffset),
-         SwerveModule(ElectricalConstants::kFrontRightDriveMotorID, ElectricalConstants::kFrontRightTurnMotorID,
-                      ElectricalConstants::kFrontRightEncoderID, DriveConstants::kFrontRightOffset),
-         SwerveModule(ElectricalConstants::kBackLeftDriveMotorID, ElectricalConstants::kBackLeftTurnMotorID,
-                      ElectricalConstants::kBackLeftEncoderID, kBackLeftOffsetDouble),
-         SwerveModule(ElectricalConstants::kBackRightDriveMotorID, ElectricalConstants::kBackRightTurnMotorID,
-                      ElectricalConstants::kBackRightEncoderID, DriveConstants::kBackRightOffset)}};
+//     modules = std::array<SwerveModule, 4>{
+//         {SwerveModule(ElectricalConstants::kFrontLeftDriveMotorID, ElectricalConstants::kFrontLeftTurnMotorID,
+//                       ElectricalConstants::kFrontLeftEncoderID, DriveConstants::kFrontLeftOffset),
+//          SwerveModule(ElectricalConstants::kFrontRightDriveMotorID, ElectricalConstants::kFrontRightTurnMotorID,
+//                       ElectricalConstants::kFrontRightEncoderID, DriveConstants::kFrontRightOffset),
+//          SwerveModule(ElectricalConstants::kBackLeftDriveMotorID, ElectricalConstants::kBackLeftTurnMotorID,
+//                       ElectricalConstants::kBackLeftEncoderID, frc::Rotation2d(units::radian_t{kBackLeftOffsetDouble})),
+//          SwerveModule(ElectricalConstants::kBackRightDriveMotorID, ElectricalConstants::kBackRightTurnMotorID,
+//                       ElectricalConstants::kBackRightEncoderID, DriveConstants::kBackRightOffset)}};
 
-    m_poseEstimator = frc::SwerveDrivePoseEstimator<4U>{
-        kSwerveKinematics,
-        frc::Rotation2d(units::degree_t{m_pigeon.GetAngle()}),
-        {modules[0].GetPosition(), modules[1].GetPosition(), modules[2].GetPosition(), modules[3].GetPosition()},
-        frc::Pose2d()};
-}
+//     m_poseEstimator = frc::SwerveDrivePoseEstimator<4U>{
+//         kSwerveKinematics,
+//         frc::Rotation2d(units::degree_t{m_pigeon.GetAngle()}),
+//         {modules[0].GetPosition(), modules[1].GetPosition(), modules[2].GetPosition(), modules[3].GetPosition()},
+//         frc::Pose2d()};
+// }
 
 // This method will be called once per scheduler run
 void SwerveDrive::Periodic()
@@ -150,7 +146,7 @@ void SwerveDrive::Periodic()
 
 void SwerveDrive::Drive(frc::ChassisSpeeds speeds)
 {
-    if(enable)
+    if (enable)
     {
 
         auto states = kSwerveKinematics.ToSwerveModuleStates(speeds);
@@ -159,7 +155,7 @@ void SwerveDrive::Drive(frc::ChassisSpeeds speeds)
             &states, speeds, units::meters_per_second_t{ModuleConstants::kMaxSpeed},
             DriveConstants::kMaxTranslationalVelocity, DriveConstants::kMaxRotationalVelocity);
 
-        for(int i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++)
         {
             modules[i].SetDesiredState(states[i]);
         }
@@ -175,7 +171,7 @@ void SwerveDrive::Strafe(frc::ChassisSpeeds s_speeds, double desiredAngle)
     auto currentAngle = m_poseEstimator.GetEstimatedPosition().Rotation().Radians().value();
 
     double errorBand = (M_PI - (-M_PI)) / 2;
-    pos_Error        = frc::InputModulus(desiredAngle - currentAngle, -errorBand, errorBand);
+    pos_Error = frc::InputModulus(desiredAngle - currentAngle, -errorBand, errorBand);
 
     s_speeds.omega = units::angular_velocity::radians_per_second_t{9.5 * (pos_Error)};
     frc::SmartDashboard::PutNumber("wrapped cA", currentAngle);
@@ -187,7 +183,7 @@ void SwerveDrive::Strafe(frc::ChassisSpeeds s_speeds, double desiredAngle)
         &states, s_speeds, units::meters_per_second_t{ModuleConstants::kMaxSpeed},
         DriveConstants::kMaxTranslationalVelocity, units::radians_per_second_t{0.5});
 
-    for(int i = 0; i < 4; i++)
+    for (int i = 0; i < 4; i++)
     {
         modules[i].SetDesiredState(states[i]);
     }
@@ -206,7 +202,7 @@ frc::Rotation2d SwerveDrive::GetHeading()
 
 void SwerveDrive::ResetHeading()
 {
-    if(enable == true)
+    if (enable == true)
     {
         m_pigeon.Reset();
     }
@@ -214,7 +210,7 @@ void SwerveDrive::ResetHeading()
 
 void SwerveDrive::ResetDriveEncoders()
 {
-    for(auto& module : modules)
+    for (auto &module : modules)
     {
         module.ResetDriveEncoders();
     }
@@ -252,16 +248,16 @@ frc::Pose2d SwerveDrive::GetVision()
 {
     auto result2 = baseLink2Subscribe.GetAtomic();
     // auto time = result.time; // time stamp
-    if(result2.value.size() > 0)
+    if (result2.value.size() > 0)
     {
         auto compressedResults = result2.value;
-        rotation_q             = frc::Quaternion(compressedResults.at(6), compressedResults.at(3),
-                                                 compressedResults.at(4), compressedResults.at(5));
+        rotation_q = frc::Quaternion(compressedResults.at(6), compressedResults.at(3),
+                                     compressedResults.at(4), compressedResults.at(5));
 
-        auto        posTranslation = frc::Translation3d(units::meter_t{compressedResults.at(0)},
-                                                        units::meter_t{compressedResults.at(1)},
-                                                        units::meter_t{compressedResults.at(2)});
-        frc::Pose3d cameraPose     = frc::Pose3d(posTranslation, frc::Rotation3d(rotation_q));
+        auto posTranslation = frc::Translation3d(units::meter_t{compressedResults.at(0)},
+                                                 units::meter_t{compressedResults.at(1)},
+                                                 units::meter_t{compressedResults.at(2)});
+        frc::Pose3d cameraPose = frc::Pose3d(posTranslation, frc::Rotation3d(rotation_q));
         frc::Pose2d visionMeasurement2d = cameraPose.ToPose2d();
         return visionMeasurement2d;
     }
@@ -283,8 +279,8 @@ frc::ChassisSpeeds SwerveDrive::getRobotRelativeSpeeds()
 
 void SwerveDrive::InitializePID()
 {
-    pidX   = frc::PIDController(0.9, 1e-4, 0);
-    pidY   = frc::PIDController(0.9, 1e-4, 0);
+    pidX = frc::PIDController(0.9, 1e-4, 0);
+    pidY = frc::PIDController(0.9, 1e-4, 0);
     pidRot = frc::PIDController(0.15, 0, 0);
 
     pidX.SetTolerance(0.025);
@@ -296,7 +292,7 @@ void SwerveDrive::InitializePID()
 
 void SwerveDrive::SetReference(frc::Pose2d desiredPose)
 {
-    if((!pidX.AtSetpoint() && !pidY.AtSetpoint()) | !hasRun)
+    if ((!pidX.AtSetpoint() && !pidY.AtSetpoint()) | !hasRun)
     {
         speeds =
             frc::ChassisSpeeds{units::meters_per_second_t{
@@ -316,30 +312,30 @@ void SwerveDrive::UpdatePoseEstimate()
     auto result2 = baseLink2Subscribe.GetAtomic();
     // auto time = result.time; // time stamp
 
-    if(result1.value.size() > 0 && useVision)
+    if (result1.value.size() > 0 && useVision)
     {
         auto compressedResults = result1.value;
-        rotation_q             = frc::Quaternion(compressedResults.at(6), compressedResults.at(3),
-                                                 compressedResults.at(4), compressedResults.at(5));
+        rotation_q = frc::Quaternion(compressedResults.at(6), compressedResults.at(3),
+                                     compressedResults.at(4), compressedResults.at(5));
 
-        auto        posTranslation = frc::Translation3d(units::meter_t{compressedResults.at(0)},
-                                                        units::meter_t{compressedResults.at(1)},
-                                                        units::meter_t{compressedResults.at(2)});
-        frc::Pose3d cameraPose     = frc::Pose3d(posTranslation, frc::Rotation3d(rotation_q));
+        auto posTranslation = frc::Translation3d(units::meter_t{compressedResults.at(0)},
+                                                 units::meter_t{compressedResults.at(1)},
+                                                 units::meter_t{compressedResults.at(2)});
+        frc::Pose3d cameraPose = frc::Pose3d(posTranslation, frc::Rotation3d(rotation_q));
         frc::Pose2d visionMeasurement2d = cameraPose.ToPose2d();
         m_poseEstimator.AddVisionMeasurement(visionMeasurement2d,
                                              units::second_t{compressedResults.at(7)});
     }
-    if(result2.value.size() > 0 && useVision)
+    if (result2.value.size() > 0 && useVision)
     {
         auto compressedResults = result2.value;
-        rotation_q             = frc::Quaternion(compressedResults.at(6), compressedResults.at(3),
-                                                 compressedResults.at(4), compressedResults.at(5));
+        rotation_q = frc::Quaternion(compressedResults.at(6), compressedResults.at(3),
+                                     compressedResults.at(4), compressedResults.at(5));
 
-        auto        posTranslation = frc::Translation3d(units::meter_t{compressedResults.at(0)},
-                                                        units::meter_t{compressedResults.at(1)},
-                                                        units::meter_t{compressedResults.at(2)});
-        frc::Pose3d cameraPose     = frc::Pose3d(posTranslation, frc::Rotation3d(rotation_q));
+        auto posTranslation = frc::Translation3d(units::meter_t{compressedResults.at(0)},
+                                                 units::meter_t{compressedResults.at(1)},
+                                                 units::meter_t{compressedResults.at(2)});
+        frc::Pose3d cameraPose = frc::Pose3d(posTranslation, frc::Rotation3d(rotation_q));
         frc::Pose2d visionMeasurement2d = cameraPose.ToPose2d();
         m_poseEstimator.AddVisionMeasurement(visionMeasurement2d,
                                              units::second_t{compressedResults.at(7)});
@@ -351,18 +347,18 @@ void SwerveDrive::UpdatePoseEstimate()
 
 void SwerveDrive::PublishOdometry(frc::Pose2d odometryPose)
 {
-    double          time = nt::Now() / (1e6);
+    double time = nt::Now() / (1e6);
     Eigen::Vector3d odoRotation =
         Eigen::Vector3d(0.0, 0.0, double(odometryPose.Rotation().Radians()));
     frc::Quaternion odoPoseQ = frc::Quaternion::FromRotationVector(odoRotation);
-    double          poseDeconstruct[]{double{odometryPose.X()},
-                                      double{odometryPose.Y()},
-                                      0.0,
-                                      odoPoseQ.X(),
-                                      odoPoseQ.Y(),
-                                      odoPoseQ.Z(),
-                                      odoPoseQ.W(),
-                                      time};
+    double poseDeconstruct[]{double{odometryPose.X()},
+                             double{odometryPose.Y()},
+                             0.0,
+                             odoPoseQ.X(),
+                             odoPoseQ.Y(),
+                             odoPoseQ.Z(),
+                             odoPoseQ.W(),
+                             time};
     baseLinkPublisher.Set(poseDeconstruct, time);
 }
 
@@ -378,7 +374,7 @@ void SwerveDrive::DisableDrive()
 }
 bool SwerveDrive::atSetpoint()
 {
-    if(pos_Error < 0.05)
+    if (pos_Error < 0.05)
     {
         return true;
     }
@@ -410,4 +406,33 @@ void SwerveDrive::ShuffleboardInit()
     // frc::SmartDashboard::SetPersistent("SmartDashboard/Swerve/WidthMeters");
     // frc::SmartDashboard::SetPersistent("SmartDashboard/Swerve/BaseMeters");
     // frc::SmartDashboard::SetPersistent("SmartDashboard/Swerve/MaxTranslationalVelocity");
+}
+
+void SwerveDrive::SetOffsets()
+{
+    auto FrontLeftDegree = frc::SmartDashboard::GetNumber("FrontLeftDegree", 0);
+    frc::SmartDashboard::SetPersistent("FrontLeftDegree");
+    frc::Rotation2d kFrontLeftOffset(-units::degree_t{FrontLeftDegree});
+
+    auto FrontRightDegree = frc::SmartDashboard::GetNumber("FrontRightDegree", 0);
+    frc::SmartDashboard::SetPersistent("FrontRightDegree");
+    frc::Rotation2d kFrontRightOffset(-units::degree_t{FrontRightDegree});
+
+    auto BackLeftDegree = frc::SmartDashboard::GetNumber("BackLeftDegree", 0);
+    frc::SmartDashboard::SetPersistent("BackLeftDegree");
+    frc::Rotation2d kBackLeftOffset(-units::degree_t{BackLeftDegree});
+
+    auto BackRightDegree = frc::SmartDashboard::GetNumber("BackRightDegree", 0);
+    frc::SmartDashboard::SetPersistent("BackRightDegree");
+    frc::Rotation2d kBackRightOffset(-units::degree_t{BackRightDegree});
+
+    std::vector<frc::Rotation2d> offsets = {kFrontLeftOffset,
+                                            kFrontRightOffset,
+                                            kBackLeftOffset,
+                                            kBackRightOffset};
+
+    for (int i = 0; i < 4; i++)
+    {
+        modules[i].SetOffset(offsets[i]);
+    }
 }

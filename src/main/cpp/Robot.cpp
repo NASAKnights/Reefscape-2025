@@ -11,12 +11,12 @@ Robot::Robot()
 void Robot::RobotInit()
 {
     frc::DataLogManager::Start();
-    wpi::log::DataLog& log = frc::DataLogManager::GetLog();
-    m_VoltageLog           = wpi::log::DoubleLogEntry(log, "/PDP/Voltage");
-    m_CurrentLog           = wpi::log::DoubleLogEntry(log, "/PDP/Current");
-    m_PowerLog             = wpi::log::DoubleLogEntry(log, "/PDP/Power");
-    m_EnergyLog            = wpi::log::DoubleLogEntry(log, "/PDP/Energy");
-    m_TemperatureLog       = wpi::log::DoubleLogEntry(log, "/PDP/Temperature");
+    wpi::log::DataLog &log = frc::DataLogManager::GetLog();
+    m_VoltageLog = wpi::log::DoubleLogEntry(log, "/PDP/Voltage");
+    m_CurrentLog = wpi::log::DoubleLogEntry(log, "/PDP/Current");
+    m_PowerLog = wpi::log::DoubleLogEntry(log, "/PDP/Power");
+    m_EnergyLog = wpi::log::DoubleLogEntry(log, "/PDP/Energy");
+    m_TemperatureLog = wpi::log::DoubleLogEntry(log, "/PDP/Temperature");
 };
 
 // This function is called every 20 ms
@@ -39,7 +39,7 @@ void Robot::AutonomousInit()
     // m_autonomousCommand = this->GetAutonomousCommand();
     m_swerveDrive.TurnVisionOff(); // don't use vision during Auto
 
-    if(m_autonomousCommand)
+    if (m_autonomousCommand)
     {
         m_autonomousCommand->Schedule();
     }
@@ -53,7 +53,7 @@ void Robot::TeleopInit()
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-    if(m_autonomousCommand)
+    if (m_autonomousCommand)
     {
         m_autonomousCommand->Cancel();
     }
@@ -87,10 +87,10 @@ void Robot::CreateRobot()
     m_swerveDrive.SetDefaultCommand(frc2::RunCommand(
         [this]
         {
-            auto leftXAxis  = MathUtilNK::calculateAxis(m_driverController.GetRawAxis(1),
-                                                        DriveConstants::kDefaultAxisDeadband);
-            auto leftYAxis  = MathUtilNK::calculateAxis(m_driverController.GetRawAxis(0),
-                                                        DriveConstants::kDefaultAxisDeadband);
+            auto leftXAxis = MathUtilNK::calculateAxis(m_driverController.GetRawAxis(1),
+                                                       DriveConstants::kDefaultAxisDeadband);
+            auto leftYAxis = MathUtilNK::calculateAxis(m_driverController.GetRawAxis(0),
+                                                       DriveConstants::kDefaultAxisDeadband);
             auto rightXAxis = MathUtilNK::calculateAxis(m_driverController.GetRawAxis(2),
                                                         DriveConstants::kDefaultAxisDeadband);
 
@@ -115,7 +115,13 @@ void Robot::BindCommands()
     // --------------DRIVER BUTTONS----------------------------------
     frc2::JoystickButton(&m_driverController, 1)
         .OnTrue(frc2::CommandPtr(
-            frc2::InstantCommand([this] { return m_swerveDrive.ResetHeading(); })));
+            frc2::InstantCommand([this]
+                                 { return m_swerveDrive.ResetHeading(); })));
+
+    frc2::JoystickButton(&m_driverController, 2)
+        .OnTrue(frc2::CommandPtr(
+            frc2::InstantCommand([this]
+                                 { return m_swerveDrive.SetOffsets(); })));
 
     // --------------OPERATOR BUTTONS--------------------------------
     /* frc2::JoystickButton(&m_operatorController, 1)
@@ -123,7 +129,6 @@ void Robot::BindCommands()
                                                       { return exampleCommandHere(); })));
     Example Button */
 }
-
 
 void Robot::DisabledPeriodic() {}
 
