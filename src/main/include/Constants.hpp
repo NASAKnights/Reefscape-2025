@@ -82,16 +82,16 @@ namespace DriveConstants
     const bool kIsFieldRelative = true;
 
     // ------------------------- MODULE OFFSETS -------------------------
-    const frc::Rotation2d kFrontLeftOffset{-units::degree_t{-40 - 1.5 - 1.3}}; // Add to shuffleboard
+    const frc::Rotation2d kFrontLeftOffset{-units::degree_t{0}}; // Add to shuffleboard
     inline constexpr std::string_view kFrontLeftOffsetKey = "kFrontLeftOffset";
     // ^ Module 1 ^ //
-    const frc::Rotation2d kFrontRightOffset{-units::degree_t{75 + 2.5 + 1.3 - 1}}; // Add to shuffleboard
+    const frc::Rotation2d kFrontRightOffset{-units::degree_t{0}}; // Add to shuffleboard
     inline constexpr std::string_view kFrontRightOffsetKey = "kFrontRightOffset";
     // ^ Module 2 ^ //
-    const frc::Rotation2d kBackLeftOffset{-units::degree_t{-129 - 30 + 24 + 2}}; // Add to shuffleboard
-    inline constexpr std::string_view kBackLeftOffsetKey = "kBakLeftOffset";
+    const frc::Rotation2d kBackLeftOffset{-units::degree_t{0}}; // Add to shuffleboard
+    inline constexpr std::string_view kBackLeftOffsetKey = "kBackLeftOffset";
     // ^ Module 3 ^ //
-    const frc::Rotation2d kBackRightOffset{-units::degree_t{178 - 5.5 - 27 - 1 - 1.5}}; // Add to shuffleboard
+    const frc::Rotation2d kBackRightOffset{-units::degree_t{0}}; // Add to shuffleboard
     inline constexpr std::string_view kBackRightOffsetKey = "kBackRightOffset";
     // ^ Module 4 ^ //
 
