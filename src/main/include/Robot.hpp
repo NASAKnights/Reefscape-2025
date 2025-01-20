@@ -74,8 +74,8 @@ private:
     wpi::log::DoubleLogEntry m_TemperatureLog;
 
     // Robot Container methods
-    void             CreateRobot();
-    void             BindCommands();
+    void CreateRobot();
+    void BindCommands();
     frc2::CommandPtr GetAutonomousCommand();
-    void             UpdateDashboard();
+    void UpdateDashboard();
 };
