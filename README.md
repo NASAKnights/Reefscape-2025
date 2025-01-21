@@ -9,6 +9,12 @@ TBD: ???
 
 # Changelog
 
+### Updated 1/21/25
+
+- Merged Persistent Constants branch into main
+- Robot is now able to change wheels to different offsets and stay persistant between restarts/reboots
+- Updated libraries
+
 ### Updated 1/11/25
 
 - Updated to the new WPILib version 2025.2.1
