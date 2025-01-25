@@ -2,7 +2,7 @@
 
 #include "Robot.hpp"
 
-Robot::Robot()
+Robot::Robot() : networkTableInst(nt::NetworkTableInstance::GetDefault())
 {
     this->CreateRobot();
 }
@@ -17,6 +17,9 @@ void Robot::RobotInit()
     m_PowerLog = wpi::log::DoubleLogEntry(log, "/PDP/Power");
     m_EnergyLog = wpi::log::DoubleLogEntry(log, "/PDP/Energy");
     m_TemperatureLog = wpi::log::DoubleLogEntry(log, "/PDP/Temperature");
+
+    auto poseTable = networkTableInst.GetTable("ROS2Bridge");
+    baseLinkSubscriber = poseTable->GetDoubleArrayTopic(baseLink).Subscribe({}, {.periodic = 0.01, .sendAll = true});
 };
 
 // This function is called every 20 ms
@@ -130,7 +133,9 @@ void Robot::BindCommands()
     Example Button */
 }
 
-void Robot::DisabledPeriodic() {}
+void Robot::DisabledPeriodic()
+{
+}
 
 void Robot::UpdateDashboard()
 {

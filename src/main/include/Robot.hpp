@@ -59,6 +59,8 @@ private:
     // Subsystems
     SwerveDrive m_swerveDrive;
 
+    std::string_view baseLink = "base_link";
+
     frc::PowerDistribution m_pdh =
         frc::PowerDistribution{1, frc::PowerDistribution::ModuleType::kRev};
 
