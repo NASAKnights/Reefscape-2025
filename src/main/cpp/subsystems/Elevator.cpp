@@ -12,13 +12,15 @@ using mps_sq_t =
     units::unit_t<units::compound_unit<units::velocity::mps, units::inverse<units::time::seconds>>>;
 
 ElevatorSubsystem::ElevatorSubsystem()
-    : frc2::ProfiledPIDSubsystem<units::meter>(frc::ProfiledPIDController<units::meter>(
+    : // frc2::ProfiledPIDSubsystem<units::meter>(
+      m_controller(
           ElevatorConstants::kP, ElevatorConstants::kI, ElevatorConstants::kD,
           frc::TrapezoidProfile<units::meter>::Constraints(ElevatorConstants::kMaxVelocity,
                                                            ElevatorConstants::kMaxAcceleration),
-          5_ms))
+          5_ms),
+
       //, m_motor(ElevatorConstants::kMotorId, rev::CANSparkLowLevel::MotorType::kBrushless)
-      ,
+
       m_motor(ElevatorConstants::kMotorId, rev::spark::SparkFlex::MotorType::kBrushless)
       //, m_encoder{m_motor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor,
       ,
@@ -110,11 +112,11 @@ bool ElevatorSubsystem::CheckGoal()
 void ElevatorSubsystem::printLog()
 {
     frc::SmartDashboard::PutNumber("ELEVATOR_ENC_ABS", GetMeasurement().value());
-    frc::SmartDashboard::PutNumber("elevatorGoal_POS", GetController().GetGoal().position.value());
+    frc::SmartDashboard::PutNumber("elevatorGoal_POS", m_controller.GetGoal().position.value());
     frc::SmartDashboard::PutNumber("ELEVATOR_setpoint",
-                                   GetController().GetSetpoint().position.value());
+                                   m_controller.GetSetpoint().position.value());
     m_HeightLog.Append(GetMeasurement().value());
-    m_SetPointLog.Append(GetController().GetSetpoint().position.value());
+    m_SetPointLog.Append(m_controller.GetSetpoint().position.value());
     m_StateLog.Append(m_ElevatorState);
     m_MotorCurrentLog.Append(m_motor.GetOutputCurrent());
     m_MotorVoltageLog.Append(m_motor.GetAppliedOutput());
@@ -127,7 +129,7 @@ void ElevatorSubsystem::handle_Setpoint()
         m_ElevatorState = ElevatorConstants::ElevatorState::HOLD;
     }
     frc::SmartDashboard::PutNumber("Elevator Goal Height",
-                                   GetController().GetGoal().position.value());
+                                   m_controller.GetGoal().position.value());
     frc::SmartDashboard::PutNumber("Elevator Actual Height", GetMeasurement().value());
     // This method will be called once per scheduler run.
     switch (m_ElevatorState)

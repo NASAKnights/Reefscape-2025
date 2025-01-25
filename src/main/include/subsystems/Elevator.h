@@ -24,6 +24,7 @@
 #include <frc/Timer.h>
 #include <frc/simulation/ElevatorSim.h>
 #include <frc/simulation/SimDeviceSim.h>
+#include <frc/controller/ProfiledPIDController.h>
 
 namespace ElevatorConstants
 {
@@ -65,7 +66,8 @@ namespace ElevatorConstants
     static constexpr auto kElevatorDrumRadius = 0.1_m;
 }
 
-class ElevatorSubsystem : public frc2::ProfiledPIDSubsystem<units::meter>
+class ElevatorSubsystem : public frc2::SubsystemBase
+// class ElevatorSubsystem : public frc2::ProfiledPIDSubsystem<units::meter>
 {
     using State = frc::TrapezoidProfile<units::meter>::State;
 
@@ -76,8 +78,8 @@ public:
     void Emergency_Stop();
     void SimulationPeriodic();
     double GetHeight();
-    void UseOutput(double output, State setpoint) override;
-    units::meter_t GetMeasurement() override;
+    void UseOutput(double output, State setpoint);
+    units::meter_t GetMeasurement();
     void HoldPosition();
     /*
     void           SetSpeed(double speed);
@@ -100,6 +102,8 @@ private:
     frc::Timer *m_timer;
     // rev::SparkRelativeEncoder m_encoder;
     rev::spark::SparkRelativeEncoder m_encoder;
+
+    frc::ProfiledPIDController<units::meter> m_controller;
 
     frc::Timer m_simTimer;
 
