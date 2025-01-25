@@ -21,6 +21,7 @@
 #include <frc/kinematics/SwerveModuleState.h>
 #include <frc/smartdashboard/Field2d.h>
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <frc/shuffleboard/Shuffleboard.h>
 #include <frc2/command/RunCommand.h>
 #include <frc2/command/SubsystemBase.h>
 #include <iostream>
