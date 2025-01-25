@@ -3,21 +3,16 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "commands/PlaceL3.h"
-
-PlaceL3::PlaceL3() {
-  // Use addRequirements() here to declare subsystem dependencies.
-}
-
-// Called when the command is initially scheduled.
-void PlaceL3::Initialize() {}
-
-// Called repeatedly when this Command is scheduled to run
-void PlaceL3::Execute() {}
-
-// Called once the command ends or is interrupted.
-void PlaceL3::End(bool interrupted) {}
-
-// Returns true when the command should end.
-bool PlaceL3::IsFinished() {
-  return false;
+#include <commands/SetElevatorHeight.h>
+#include <commands/DropCoral.h>
+#include <commands/Reset.h>
+#include <commands/ChangeIntakeAngle.h>
+// NOTE:  Consider using this command inline, rather than writing a subclass.
+// For more information, see:
+// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
+PlaceL3::PlaceL3()
+{
+  SetElevatorHeight{}, ChangeIntakeAngle{}, DropCoral{}, Reset{};
+  // Add your commands here, e.g.
+  // AddCommands(FooCommand{}, BarCommand{});
 }

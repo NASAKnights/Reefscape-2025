@@ -4,34 +4,15 @@
 
 #pragma once
 
-#include <frc2/command/Command.h>
 #include <frc2/command/CommandHelper.h>
+#include <frc2/command/SequentialCommandGroup.h>
 
-/**
- * An example command.
- *
- * <p>Note that this extends CommandHelper, rather extending Command
- * directly; this is crucially important, or else the decorator functions in
- * Command will *not* work!
- */
+// NOTE:  Consider using this command inline, rather than writing a subclass.
+// For more information, see:
+// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 class PlaceL3
-    : public frc2::CommandHelper<frc2::Command, PlaceL3>
-{
-public:
-  /* You should consider using the more terse Command factories API instead
-   * https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands
-   */
-
-  /*This command would be used to score on L3 (and could probably be merged with PlaceL2).
-  This command would require raising the elevator to the Branch, Changing the wrist angle (ChangeIntakeAngle), Dropping the coral, and Returning to a default position if we have one.*/
-
+    : public frc2::CommandHelper<frc2::SequentialCommandGroup,
+                                 PlaceL3> {
+ public:
   PlaceL3();
-
-  void Initialize() override;
-
-  void Execute() override;
-
-  void End(bool interrupted) override;
-
-  bool IsFinished() override;
 };

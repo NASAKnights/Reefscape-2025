@@ -3,21 +3,16 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "commands/GrabAlgae.h"
-
-GrabAlgae::GrabAlgae() {
-  // Use addRequirements() here to declare subsystem dependencies.
-}
-
-// Called when the command is initially scheduled.
-void GrabAlgae::Initialize() {}
-
-// Called repeatedly when this Command is scheduled to run
-void GrabAlgae::Execute() {}
-
-// Called once the command ends or is interrupted.
-void GrabAlgae::End(bool interrupted) {}
-
-// Returns true when the command should end.
-bool GrabAlgae::IsFinished() {
-  return false;
+#include <commands/SetElevatorHeight.h>
+#include <commands/Reset.h>
+#include <commands/ChangeIntakeAngle.h>
+#include <commands/RunIntake.h>
+// NOTE:  Consider using this command inline, rather than writing a subclass.
+// For more information, see:
+// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
+GrabAlgae::GrabAlgae()
+{
+  SetElevatorHeight{}, ChangeIntakeAngle{}, RunIntake{}, Reset{};
+  // Add your commands here, e.g.
+  // AddCommands(FooCommand{}, BarCommand{});
 }

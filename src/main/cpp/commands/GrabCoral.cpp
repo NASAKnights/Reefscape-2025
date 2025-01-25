@@ -3,21 +3,17 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "commands/GrabCoral.h"
+#include <commands/SetElevatorHeight.h>
+#include <commands/Reset.h>
+#include <commands/ChangeIntakeAngle.h>
+#include <commands/RunIntake.h>
 
-GrabCoral::GrabCoral() {
-  // Use addRequirements() here to declare subsystem dependencies.
-}
-
-// Called when the command is initially scheduled.
-void GrabCoral::Initialize() {}
-
-// Called repeatedly when this Command is scheduled to run
-void GrabCoral::Execute() {}
-
-// Called once the command ends or is interrupted.
-void GrabCoral::End(bool interrupted) {}
-
-// Returns true when the command should end.
-bool GrabCoral::IsFinished() {
-  return false;
+// NOTE:  Consider using this command inline, rather than writing a subclass.
+// For more information, see:
+// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
+GrabCoral::GrabCoral()
+{
+  SetElevatorHeight{}, ChangeIntakeAngle{}, RunIntake{}, Reset{};
+  // Add your commands here, e.g.
+  // AddCommands(FooCommand{}, BarCommand{});
 }

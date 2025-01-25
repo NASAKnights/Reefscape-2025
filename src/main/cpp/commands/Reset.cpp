@@ -3,21 +3,15 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "commands/Reset.h"
+#include <commands/ChangeIntakeAngle.h>
+#include <commands/SetElevatorHeight.h>
 
-Reset::Reset() {
-  // Use addRequirements() here to declare subsystem dependencies.
-}
-
-// Called when the command is initially scheduled.
-void Reset::Initialize() {}
-
-// Called repeatedly when this Command is scheduled to run
-void Reset::Execute() {}
-
-// Called once the command ends or is interrupted.
-void Reset::End(bool interrupted) {}
-
-// Returns true when the command should end.
-bool Reset::IsFinished() {
-  return false;
+// NOTE:  Consider using this command inline, rather than writing a subclass.
+// For more information, see:
+// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
+Reset::Reset()
+{
+  SetElevatorHeight{}, ChangeIntakeAngle{};
+  // Add your commands here, e.g.
+  // AddCommands(FooCommand{}, BarCommand{});
 }

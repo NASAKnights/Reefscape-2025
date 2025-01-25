@@ -3,21 +3,16 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "commands/ScoreAlgae.h"
-
-ScoreAlgae::ScoreAlgae() {
-  // Use addRequirements() here to declare subsystem dependencies.
-}
-
-// Called when the command is initially scheduled.
-void ScoreAlgae::Initialize() {}
-
-// Called repeatedly when this Command is scheduled to run
-void ScoreAlgae::Execute() {}
-
-// Called once the command ends or is interrupted.
-void ScoreAlgae::End(bool interrupted) {}
-
-// Returns true when the command should end.
-bool ScoreAlgae::IsFinished() {
-  return false;
+#include <commands/SetElevatorHeight.h>
+#include <commands/ChangeIntakeAngle.h>
+#include <commands/Reset.h>
+#include <commands/DropAlgae.h>
+// NOTE:  Consider using this command inline, rather than writing a subclass.
+// For more information, see:
+// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
+ScoreAlgae::ScoreAlgae()
+{
+  SetElevatorHeight{}, DropAlgae{}, Reset{};
+  // Add your commands here, e.g.
+  // AddCommands(FooCommand{}, BarCommand{});
 }
