@@ -28,6 +28,8 @@
 #include <networktables/NetworkTableInstance.h>
 #include <string>
 #include <wpi/array.h>
+#include <frc/Timer.h>
+#include "subsystems/PoseEstimator.h"
 
 #include <frc/DriverStation.h>
 #include <frc/estimator/PoseEstimator.h>
@@ -90,6 +92,7 @@ public:
   void PeriodicShuffleboard();
   void ShuffleboardInit();
   void SetOffsets();
+  void WeightedDriving(bool approach, double leftXAxis, double leftYAxis, double rightXAxis);
 
 private:
   // Components (e.g. motor controllers and sensors) should generally be
@@ -112,6 +115,8 @@ private:
   bool enable = true;
   double pos_Error;
 
+  double prevOError;
+
   bool useVision = false;
 
   frc::ChassisSpeeds priorSpeeds = frc::ChassisSpeeds();
@@ -127,6 +132,8 @@ private:
   nt::DoubleArraySubscriber baseLink2Subscribe;
   frc::Quaternion rotation_q; // w, x, y, z
   frc::SwerveDrivePoseEstimator<4> m_poseEstimator;
+  frc::Timer timer;
+  PoseEstimator m_visionPoseEstimator;
 
   nt::DoubleArrayPublisher baseLinkPublisher;
 };

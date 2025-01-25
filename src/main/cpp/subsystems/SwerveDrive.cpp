@@ -48,6 +48,10 @@ SwerveDrive::SwerveDrive()
     auto visionStdDevs = wpi::array<double, 3U>{0.9, 0.9, 1.8};
     m_poseEstimator.SetVisionMeasurementStdDevs(visionStdDevs);
 
+    m_visionPoseEstimator = PoseEstimator();
+
+    timer.Start();
+
     poseTable = networkTableInst.GetTable("ROS2Bridge");
     baseLink1Subscribe = poseTable->GetDoubleArrayTopic(baseLink1).Subscribe(
         {}, {.periodic = 0.01, .sendAll = true});
@@ -372,6 +376,60 @@ void SwerveDrive::DisableDrive()
     enable = false;
     // frc::SmartDashboard::PutBoolean("TestTestTest", enable);
 }
+
+void SwerveDrive::WeightedDriving(bool approach, double leftXAxis,
+                                  double leftYAxis, double rightXAxis)
+{
+
+    auto dT = timer.Get();
+    timer.Reset();
+
+    auto Po = frc::SmartDashboard::GetNumber("Note Po", 0.0);
+    auto Px = frc::SmartDashboard::GetNumber("Note Px", 0.0);
+    auto Py = frc::SmartDashboard::GetNumber("Note Py", 0.0);
+    auto Do = frc::SmartDashboard::GetNumber("Note Do", 0.0);
+
+    // TODO: Continue tuning
+
+    auto noteTransform = m_visionPoseEstimator.GetMeasurement();
+
+    auto noteXPos = noteTransform.X();
+    auto noteYPos = noteTransform.Y();
+    auto noteRotation = noteTransform.Rotation().Radians().value();
+
+    auto unsaturatedX = double(approach * noteXPos * Px);
+    auto unsaturatedY = double(approach * noteYPos * Py);
+    auto unsaturatedPO = double(approach * noteRotation * Po);
+    auto unsaturatedDO = double(approach * (noteRotation - prevOError) / dT * Do);
+
+    prevOError = noteRotation;
+
+    auto saturatedX = std::copysign(std::min(std::abs(unsaturatedX), 0.45), unsaturatedX);
+    auto saturatedY = std::copysign(std::min(std::abs(unsaturatedY), 0.1), unsaturatedY);
+
+    auto saturatedOmega = std::copysign(std::min(std::abs(unsaturatedPO - unsaturatedDO),
+                                                 frc::SmartDashboard::GetNumber("Note P", 0.4)),
+                                        unsaturatedPO - unsaturatedDO);
+
+    auto vx =
+        units::meters_per_second_t(saturatedX +
+                                   double(-leftXAxis * DriveConstants::kMaxTranslationalVelocity));
+
+    auto vy =
+        units::meters_per_second_t(saturatedY +
+                                   double(-leftYAxis * DriveConstants::kMaxTranslationalVelocity));
+
+    auto omega =
+        units::radians_per_second_t(saturatedOmega +
+                                    double(-rightXAxis * DriveConstants::kMaxRotationalVelocity));
+
+    Drive(frc::ChassisSpeeds::FromFieldRelativeSpeeds(
+        vx,
+        vy,
+        omega,
+        GetHeading()));
+}
+
 bool SwerveDrive::atSetpoint()
 {
     if (pos_Error < 0.05)
