@@ -402,6 +402,7 @@ void SwerveDrive::PeriodicShuffleboard()
 
 void SwerveDrive::ShuffleboardInit()
 {
+    // SetOffsets();
 }
 
 void SwerveDrive::SetOffsets()

@@ -21,9 +21,9 @@ void Robot::RobotInit()
     m_EnergyLog = wpi::log::DoubleLogEntry(log, "/PDP/Energy");
     m_TemperatureLog = wpi::log::DoubleLogEntry(log, "/PDP/Temperature");
 
-    std::string a4Name = "VrOoM";
-    auto a4 = pathplanner::PathPlannerAuto(a4Name);
-    auto a4Pose = pathplanner::PathPlannerAuto::getPathGroupFromAutoFile(a4Name)[0]->getPathPoses()[0];
+    std::string testAutoCalibration = "1mForward";
+    auto a4 = pathplanner::PathPlannerAuto(testAutoCalibration);
+    auto a4Pose = pathplanner::PathPlannerAuto::getPathGroupFromAutoFile(testAutoCalibration)[0]->getPathPoses()[0];
     auto entry4 = std::make_pair(std::move(a4), a4Pose);
     autoMap.emplace(1, std::move(entry4));
 };
@@ -47,14 +47,13 @@ void Robot::AutonomousInit()
 {
     // m_autonomousCommand = this->GetAutonomousCommand();
     m_swerveDrive.TurnVisionOff(); // don't use vision during Auto
-
-    // if (m_autonomousCommand)
-    // {
-    //     m_autonomousCommand->Schedule();
-    // }
-
-    // m_autonomousCommand =
-    std::move(std::move(autoMap.at(1)).first).ToPtr();
+    auto start = std::move(autoMap.at(1)).second;
+    m_autonomousCommand = std::move(std::move(autoMap.at(1)).first).ToPtr();
+    m_swerveDrive.ResetPose(start);
+    if (m_autonomousCommand)
+    {
+        m_autonomousCommand->Schedule();
+    }
 }
 
 void Robot::AutonomousPeriodic() {}
