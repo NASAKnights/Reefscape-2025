@@ -21,7 +21,7 @@ void Robot::RobotInit()
     m_EnergyLog = wpi::log::DoubleLogEntry(log, "/PDP/Energy");
     m_TemperatureLog = wpi::log::DoubleLogEntry(log, "/PDP/Temperature");
 
-    std::string testAutoCalibration = "1mForward";
+    std::string testAutoCalibration = "2mForward";
     auto a4 = pathplanner::PathPlannerAuto(testAutoCalibration);
     auto a4Pose = pathplanner::PathPlannerAuto::getPathGroupFromAutoFile(testAutoCalibration)[0]->getPathPoses()[0];
     auto entry4 = std::make_pair(std::move(a4), a4Pose);
