@@ -7,12 +7,14 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <networktables/DoubleArrayTopic.h>
 #include <networktables/NetworkTableInstance.h>
+#include <frc/geometry/Pose2d.h>
 
 class POIGenerator
 {
 public:
   POIGenerator();
-  void POIGenerator::MakePOI();
+  void MakePOI();
+  frc::Pose2d GetPOI(std::string poiKey);
 
 private:
   nt::NetworkTableInstance networkTableInst;

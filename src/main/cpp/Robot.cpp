@@ -2,7 +2,7 @@
 
 #include "Robot.hpp"
 
-Robot::Robot() : networkTableInst(nt::NetworkTableInstance::GetDefault())
+Robot::Robot()
 {
     this->CreateRobot();
 }
@@ -18,8 +18,8 @@ void Robot::RobotInit()
     m_EnergyLog = wpi::log::DoubleLogEntry(log, "/PDP/Energy");
     m_TemperatureLog = wpi::log::DoubleLogEntry(log, "/PDP/Temperature");
 
-    auto poseTable = networkTableInst.GetTable("ROS2Bridge");
-    baseLinkSubscriber = poseTable->GetDoubleArrayTopic(baseLink).Subscribe({}, {.periodic = 0.01, .sendAll = true});
+    frc::SmartDashboard::PutData("AddPOI", new frc2::InstantCommand([this]
+                                                                    { return m_poiGenerator.MakePOI(); }));
 };
 
 // This function is called every 20 ms

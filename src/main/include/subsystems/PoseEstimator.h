@@ -31,10 +31,14 @@ private:
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
   nt::NetworkTableInstance networkTableInst;
+
   std::string_view objectLink = "note";
   std::string_view robotPoseLink = "base_link";
+
   nt::DoubleArraySubscriber robot2ObjectSubscribe;
   nt::DoubleArraySubscriber robotPoseSubscribe;
+
   frc::Pose2d objectPose;
+
   std::vector<double> prevValue = {};
 };

@@ -11,6 +11,7 @@
 #include <frc/TimedRobot.h>
 #include <frc/shuffleboard/Shuffleboard.h>
 #include <frc/smartdashboard/SmartDashboard.h>
+#include "utils/POIGenerator.h"
 
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/CommandScheduler.h>
@@ -74,6 +75,8 @@ private:
     wpi::log::DoubleLogEntry m_PowerLog;
     wpi::log::DoubleLogEntry m_EnergyLog;
     wpi::log::DoubleLogEntry m_TemperatureLog;
+
+    POIGenerator m_poiGenerator;
 
     // Robot Container methods
     void CreateRobot();
