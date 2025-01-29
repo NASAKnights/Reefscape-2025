@@ -28,6 +28,8 @@
 #include <units/angular_velocity.h>
 #include <units/velocity.h>
 
+#include "subsystems/Elevator.h"
+
 #include <cmath>
 
 class Robot : public frc::TimedRobot
@@ -58,6 +60,7 @@ private:
 
     // Subsystems
     SwerveDrive m_swerveDrive;
+    ElevatorSubsystem m_elevator;
 
     frc::PowerDistribution m_pdh =
         frc::PowerDistribution{1, frc::PowerDistribution::ModuleType::kRev};
@@ -74,8 +77,8 @@ private:
     wpi::log::DoubleLogEntry m_TemperatureLog;
 
     // Robot Container methods
-    void             CreateRobot();
-    void             BindCommands();
+    void CreateRobot();
+    void BindCommands();
     frc2::CommandPtr GetAutonomousCommand();
-    void             UpdateDashboard();
+    void UpdateDashboard();
 };

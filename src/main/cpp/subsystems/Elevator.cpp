@@ -17,19 +17,19 @@ ElevatorSubsystem::ElevatorSubsystem()
           ElevatorConstants::kP, ElevatorConstants::kI, ElevatorConstants::kD,
           frc::TrapezoidProfile<units::meter>::Constraints(ElevatorConstants::kMaxVelocity,
                                                            ElevatorConstants::kMaxAcceleration),
-          5_ms),
+          ElevatorConstants::kDt),
 
       //, m_motor(ElevatorConstants::kMotorId, rev::CANSparkLowLevel::MotorType::kBrushless)
 
-      m_motor(ElevatorConstants::kMotorId, rev::spark::SparkFlex::MotorType::kBrushless)
+      m_motor(ElevatorConstants::kMotorId, rev::spark::SparkMax::MotorType::kBrushless)
       //, m_encoder{m_motor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor,
       ,
       m_encoder{m_motor.GetEncoder()}, m_feedforwardElevator{ElevatorConstants::kFFks, ElevatorConstants::kFFkg,
                                                              ElevatorConstants::kFFkV, ElevatorConstants::kFFkA},
-      m_elevatorSim(frc::DCMotor::NeoVortex(1), ElevatorConstants::kElevatorGearing,
+      m_elevatorSim(frc::DCMotor::NEO(ElevatorConstants::kNumMotors), ElevatorConstants::kElevatorGearing,
                     ElevatorConstants::kCarriageMass, ElevatorConstants::kElevatorDrumRadius,
-                    ElevatorConstants::simLowerLimit, ElevatorConstants::simUpperLimit, true, 0_m,
-                    {0.01})
+                    ElevatorConstants::simLowerLimit, ElevatorConstants::simUpperLimit, false, 0_m,
+                    {0.001})
 {
     wpi::log::DataLog &log = frc::DataLogManager::GetLog();
     m_HeightLog = wpi::log::DoubleLogEntry(log, "/Elevator/Angle");
@@ -111,9 +111,9 @@ bool ElevatorSubsystem::CheckGoal()
 */
 void ElevatorSubsystem::printLog()
 {
-    frc::SmartDashboard::PutNumber("ELEVATOR_ENC_ABS", GetMeasurement().value());
-    frc::SmartDashboard::PutNumber("elevatorGoal_POS", m_controller.GetGoal().position.value());
-    frc::SmartDashboard::PutNumber("ELEVATOR_setpoint",
+    frc::SmartDashboard::PutNumber("/Elevator/ELEVATOR_ENC_ABS", GetMeasurement().value());
+    frc::SmartDashboard::PutNumber("/Elevator/elevatorGoal_POS", m_controller.GetGoal().position.value());
+    frc::SmartDashboard::PutNumber("/Elevator/ELEVATOR_setpoint",
                                    m_controller.GetSetpoint().position.value());
     m_HeightLog.Append(GetMeasurement().value());
     m_SetPointLog.Append(m_controller.GetSetpoint().position.value());
@@ -121,52 +121,66 @@ void ElevatorSubsystem::printLog()
     m_MotorCurrentLog.Append(m_motor.GetOutputCurrent());
     m_MotorVoltageLog.Append(m_motor.GetAppliedOutput());
 }
-void ElevatorSubsystem::handle_Setpoint()
+/*
+void ElevatorSubsystem::Periodic()
 {
-    // check if at goal
-    if (m_ElevatorState != ElevatorConstants::ElevatorState::HOLD && m_controller.AtGoal())
+    if constexpr (frc::RobotBase::IsTeleop())
     {
-        m_ElevatorState = ElevatorConstants::ElevatorState::HOLD;
+        TeleopPeriodic();
     }
-    frc::SmartDashboard::PutNumber("Elevator Goal Height",
-                                   m_controller.GetGoal().position.value());
-    frc::SmartDashboard::PutNumber("Elevator Actual Height", GetMeasurement().value());
-    // This method will be called once per scheduler run.
-    switch (m_ElevatorState)
-    {
-    case ElevatorConstants::LIFT:
-        frc::SmartDashboard::PutString("ElevState", "LIFT");
-        break;
-    case ElevatorConstants::LOWER:
-        frc::SmartDashboard::PutString("ElevState", "LOWER");
-        break;
-    case ElevatorConstants::MANUAL:
-        frc::SmartDashboard::PutString("ElevState", "MANUAL");
-        break;
-    case ElevatorConstants::HOLD:
-        frc::SmartDashboard::PutString("ElevState", "HOLD");
-        break;
-    }
-    printLog();
 }
-
-void ElevatorSubsystem::Emergency_Stop() {}
-
-void ElevatorSubsystem::SimulationPeriodic()
+*/
+void ElevatorSubsystem::TeleopPeriodic()
 {
-    m_elevatorSim.Update(5_ms);
-}
-void ElevatorSubsystem::UseOutput(double output, State setpoint)
-{
-    // Calculate the feedforward from the sepoint
-    units::volt_t feedforward = m_feedforwardElevator.Calculate(setpoint.velocity);
-    units::volt_t v = units::volt_t{output} + feedforward;
+    double fb = m_controller.Calculate(units::meter_t{GetHeight()});
+    units::volt_t ff = m_feedforwardElevator.Calculate(m_controller.GetSetpoint().velocity);
+    units::volt_t v = units::volt_t{fb} + ff;
     if constexpr (frc::RobotBase::IsSimulation())
     {
         m_elevatorSim.SetInputVoltage(v);
     }
     m_motor.SetVoltage(v);
-    frc::SmartDashboard::PutNumber("Elev_UO_PID", output);
-    frc::SmartDashboard::PutNumber("Elev_UO_FF", feedforward.value());
-    frc::SmartDashboard::PutNumber("Elev_UO_Volt", v.value());
+    frc::SmartDashboard::PutNumber("/Elevator/Elev_UO_PID", fb);
+    frc::SmartDashboard::PutNumber("/Elevator/Elev_UO_FF", ff.value());
+    frc::SmartDashboard::PutNumber("/Elevator/Elev_UO_Volt", v.value());
+    // check if at goal
+    if (m_ElevatorState != ElevatorConstants::ElevatorState::HOLD && m_controller.AtGoal())
+    {
+        m_ElevatorState = ElevatorConstants::ElevatorState::HOLD;
+    }
+    frc::SmartDashboard::PutNumber("/Elevator/Elevator Goal Height",
+                                   m_controller.GetGoal().position.value());
+    frc::SmartDashboard::PutNumber("/Elevator/Elevator Actual Height", GetMeasurement().value());
+    // This method will be called once per scheduler run.
+    switch (m_ElevatorState)
+    {
+    case ElevatorConstants::LIFT:
+        frc::SmartDashboard::PutString("/Elevator/ElevState", "LIFT");
+        break;
+    case ElevatorConstants::LOWER:
+        frc::SmartDashboard::PutString("/Elevator/ElevState", "LOWER");
+        break;
+    case ElevatorConstants::MANUAL:
+        frc::SmartDashboard::PutString("/Elevator/ElevState", "MANUAL");
+        break;
+    case ElevatorConstants::HOLD:
+        frc::SmartDashboard::PutString("/Elevator/ElevState", "HOLD");
+        break;
+    }
+    printLog();
+}
+void ElevatorSubsystem::SimulationInit()
+{
+    m_simTimer.Reset();
+}
+void ElevatorSubsystem::Emergency_Stop() {}
+
+void ElevatorSubsystem::SimulationPeriodic()
+{
+    m_elevatorSim.Update(5_ms);
+    m_simTimer.Reset();
+}
+void ElevatorSubsystem::UseOutput(double output, State setpoint)
+{
+    // Calculate the feedforward from the sepoint
 }
