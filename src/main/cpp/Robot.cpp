@@ -122,12 +122,17 @@ void Robot::BindCommands()
             frc2::InstantCommand([this]
                                  { return m_swerveDrive.ResetHeading(); })));
 
+    frc2::JoystickButton(&m_driverController, 2)
+        .OnTrue(frc2::CommandPtr(
+            frc2::InstantCommand([this]
+                                 { return m_swerveDrive.SetOffsets(); })));
+
     // --------------OPERATOR BUTTONS--------------------------------
     /* frc2::JoystickButton(&m_operatorController, 1)
         .OnTrue(frc2::CommandPtr(frc2::InstantCommand([this]
                                                       { return exampleCommandHere(); })));
     Example Button */
-    frc2::JoystickButton(&m_driverController, 2)
+    frc2::JoystickButton(&m_driverController, 3)
         .OnTrue(frc2::CommandPtr(frc2::InstantCommand(
             [this]
             {
@@ -136,7 +141,7 @@ void Robot::BindCommands()
                 return;
             })));
 
-    frc2::JoystickButton(&m_driverController, 3)
+    frc2::JoystickButton(&m_driverController, 4)
         .OnTrue(frc2::CommandPtr(frc2::InstantCommand(
             [this]
             {

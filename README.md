@@ -9,6 +9,19 @@ TBD: ???
 
 # Changelog
 
+### Updated 1/28/25
+
+- Persistent Constants only work with the 2024 version of Shuffleboard, network tables are still intact but interaction with values differ between 2025 Shuffleboard and 2024 Shuffleboard
+- Skeleton code of various commands generated and added. Will need to modify in the future as robot develops
+- High level commands are written as sequential commands groups, state machines may still need to be implemented
+- Initial swerve drive offsets have been generated, will need more calibration for autos. PID values need to be tuned.
+
+### Updated 1/21/25
+
+- Merged Persistent Constants branch into main
+- Robot is now able to change wheels to different offsets and stay persistant between restarts/reboots
+- Updated libraries
+
 ### Updated 1/11/25
 
 - Updated to the new WPILib version 2025.2.1
