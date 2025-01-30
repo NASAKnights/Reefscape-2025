@@ -16,6 +16,7 @@
 #include <units/length.h>
 #include <units/mass.h>
 #include <units/time.h>
+#include <math.h>
 
 #include "Constants.hpp"
 #include <frc/DigitalInput.h>
@@ -37,7 +38,7 @@ namespace ElevatorConstants
         MANUAL
     };
 
-    static constexpr units::meter_t upperLimit = 57_in;
+    static constexpr units::meter_t upperLimit = 3_in; // 57
     static constexpr units::meter_t lowerLimit = 1_in;
     static constexpr units::meter_t simUpperLimit = 57.1_in;
     static constexpr units::meter_t simLowerLimit = -0.1_in;
@@ -51,7 +52,10 @@ namespace ElevatorConstants
     static constexpr units::meter_t kTolerancePos = 0.01_m;
     static constexpr units::meters_per_second_t kToleranceVel = 0.05_mps;
 
-    const int kMotorId = 6;
+    static constexpr units::meter_t kEmergencyTolerance = 0.25_in;
+
+    const int kMotorIdLeft = 6;
+    const int kMotorIdRight = 7;
     const int kEncoderPulsePerRev = 42;
 
     static constexpr auto kFFks = 0.23_V;                 // Volts static (motor)
@@ -97,19 +101,22 @@ public:
 private:
     frc::ProfiledPIDController<units::meter> m_controller;
 
-    // rev::CANSparkFlex m_motor;
-    rev::spark::SparkMax m_motor;
+    rev::spark::SparkMax m_motorLeft;
+    rev::spark::SparkMax m_motorRight;
+
     frc::ElevatorFeedforward m_feedforwardElevator;
+
     wpi::log::DoubleLogEntry m_HeightLog;
     wpi::log::DoubleLogEntry m_SetPointLog;
     wpi::log::IntegerLogEntry m_StateLog;
     wpi::log::DoubleLogEntry m_MotorCurrentLog;
     wpi::log::DoubleLogEntry m_MotorVoltageLog;
-    frc::Timer *m_timer;
-    // rev::SparkRelativeEncoder m_encoder;
-    rev::spark::SparkRelativeEncoder m_encoder;
+
+    rev::spark::SparkRelativeEncoder m_encoderLeft;
+    rev::spark::SparkRelativeEncoder m_encoderRight;
 
     frc::Timer m_simTimer;
+    frc::Timer *m_timer;
 
     frc::sim::ElevatorSim m_elevatorSim;
 
