@@ -166,9 +166,9 @@ namespace ModuleConstants
     // const double kDriveV = 0.20333; // Volts / (rot / s)
     // const double kDriveA = 0.02250; // Volts / (rot / s^2)
 
-    const double kSteerP = 35.0; // TODO: ensure this works with new inversion
+    const double kSteerP = 120.0; // TODO: ensure this works with new inversion
     const double kSteerI = 0.0;
-    const double kSteerD = 0.0;
+    const double kSteerD = 0.35;
 
 } // namespace ModuleConstants
 
