@@ -10,7 +10,7 @@
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc/system/plant/DCMotor.h>
 #include <frc2/command/ProfiledPIDSubsystem.h>
-// #include <rev/CANSparkFlex.h>flex
+// #include <rev/CANSparkMax.h>
 #include <rev/SparkMax.h>
 #include <units/angle.h>
 #include <units/length.h>
@@ -56,7 +56,7 @@ namespace ElevatorConstants
 
     const int kMotorIdLeft = 5;
     const int kMotorIdRight = 6;
-    const int kEncoderPulsePerRev = 42;
+    // const int kEncoderPulsePerRev = 42;
 
     static constexpr auto kFFks = 0.23_V;                 // Volts static (motor)
     static constexpr auto kFFkg = 0.0_V;                  // Volts
@@ -72,8 +72,9 @@ namespace ElevatorConstants
     // effective carriage mass: carriage mass = m
     // maths: 1 state = 1/1 * m1, 2 stage = 1/2 * m1 + 2/2 * m2, 3 stage = 1/3 * m1 + 2/3 * m2 + 3/3 * m3
     // highest number stage = carriage
-    static constexpr units::kilogram_t kCarriageMass = (17.5_lb + 0.5 * 5_lb);
+    static constexpr units::kilogram_t kCarriageMass = 0.5_lb; // chain only (17.5_lb + 0.5 * 5_lb);
     // effective drum radius = radius of first stage * number of stages
+    // pulses per rev must be set correctly in the SparkMax encoder - only reports revolutions
     static constexpr units::meter_t kElevatorDrumRadius = 1.432_in * 2;
 }
 
@@ -97,6 +98,7 @@ public:
     // bool           CheckGoal();
     // void Periodic();
     void TeleopPeriodic();
+    units::meter_t GetEncoderDistance(rev::spark::SparkRelativeEncoder);
 
 private:
     frc::ProfiledPIDController<units::meter> m_controller;

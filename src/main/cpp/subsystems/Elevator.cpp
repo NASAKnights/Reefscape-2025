@@ -41,8 +41,6 @@ ElevatorSubsystem::ElevatorSubsystem()
     m_MotorCurrentLog = wpi::log::DoubleLogEntry(log, "/Elevator/MotorCurrent");
     m_MotorVoltageLog = wpi::log::DoubleLogEntry(log, "/Elevator/MotorVoltage");
 
-    // m_encoder.SetDistancePerPulse(0.0);
-    //  m_encoder.Reset();
     m_holdHeight = 0.0;
     m_ElevatorState = ElevatorConstants::ElevatorState::HOLD;
 }
@@ -99,7 +97,7 @@ double ElevatorSubsystem::GetHeight()
         // frc::SmartDashboard::PutBoolean("isSim", true);
         return m_elevatorSim.GetPosition().value();
     }
-    return (m_encoderLeft.GetPosition() + m_encoderRight.GetPosition()) / 2.0;
+    return (GetEncoderDistance(m_encoderLeft) + GetEncoderDistance(m_encoderRight) / 2.0).value();
 }
 
 units::meter_t ElevatorSubsystem::GetMeasurement()
@@ -135,7 +133,7 @@ void ElevatorSubsystem::Periodic()
 */
 void ElevatorSubsystem::TeleopPeriodic()
 {
-    if (units::meter_t{abs(m_encoderLeft.GetPosition() - m_encoderRight.GetPosition())} > ElevatorConstants::kEmergencyTolerance)
+    if (abs((GetEncoderDistance(m_encoderLeft) - GetEncoderDistance(m_encoderRight)).value()) > ElevatorConstants::kEmergencyTolerance.value())
     {
         Emergency_Stop();
     }
@@ -198,4 +196,8 @@ void ElevatorSubsystem::SimulationPeriodic()
 void ElevatorSubsystem::UseOutput(double output, State setpoint)
 {
     // Calculate the feedforward from the sepoint
+}
+units::meter_t ElevatorSubsystem::GetEncoderDistance(rev::spark::SparkRelativeEncoder encoder)
+{
+    return encoder.GetPosition() * 2.0 * std::numbers::pi * ElevatorConstants::kElevatorDrumRadius;
 }
