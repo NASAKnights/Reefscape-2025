@@ -42,10 +42,10 @@ namespace ElevatorConstants
     static constexpr units::meter_t lowerLimit = 1_in;
     static constexpr units::meter_t simUpperLimit = 57.1_in;
     static constexpr units::meter_t simLowerLimit = -0.1_in;
-    static constexpr units::meters_per_second_t kMaxVelocity = 61.55_in / 1_s;
+    static constexpr units::meters_per_second_t kMaxVelocity = 10.0_in / 1_s; // 61.55
     static constexpr units::meters_per_second_squared_t kMaxAcceleration = 460_in / (1_s * 1_s);
-    static constexpr double kP = 15.0; // 0.6
-    static constexpr double kI = 0.0;  // 0.0
+    static constexpr double kP = 1.0; // 0.6 - 15
+    static constexpr double kI = 0.1; // 0.0
     static constexpr double kD = 0.0;
     static constexpr units::volt_t kS = 0.2_V; // minimum voltage to move motor
 
@@ -54,8 +54,8 @@ namespace ElevatorConstants
 
     static constexpr units::meter_t kEmergencyTolerance = 0.25_in;
 
-    const int kMotorIdLeft = 6;
-    const int kMotorIdRight = 7;
+    const int kMotorIdLeft = 5;
+    const int kMotorIdRight = 6;
     const int kEncoderPulsePerRev = 42;
 
     static constexpr auto kFFks = 0.23_V;                 // Volts static (motor)

@@ -22,9 +22,8 @@ ElevatorSubsystem::ElevatorSubsystem()
       //, m_motor(ElevatorConstants::kMotorId, rev::CANSparkLowLevel::MotorType::kBrushless)
 
       m_motorLeft(ElevatorConstants::kMotorIdLeft, rev::spark::SparkMax::MotorType::kBrushless),
-      m_motorRight(ElevatorConstants::kMotorIdRight, rev::spark::SparkMax::MotorType::kBrushless)
+      m_motorRight(ElevatorConstants::kMotorIdRight, rev::spark::SparkMax::MotorType::kBrushless),
       //, m_encoder{m_motor.GetEncoder(rev::SparkRelativeEncoder::Type::kHallSensor,
-      ,
       m_feedforwardElevator{ElevatorConstants::kFFks, ElevatorConstants::kFFkg,
                             ElevatorConstants::kFFkV, ElevatorConstants::kFFkA},
       m_encoderLeft{m_motorLeft.GetEncoder()},
@@ -34,6 +33,7 @@ ElevatorSubsystem::ElevatorSubsystem()
                     ElevatorConstants::simLowerLimit, ElevatorConstants::simUpperLimit, false, 0_m,
                     {0.001})
 {
+    m_motorRight.SetInverted(true);
     wpi::log::DataLog &log = frc::DataLogManager::GetLog();
     m_HeightLog = wpi::log::DoubleLogEntry(log, "/Elevator/Angle");
     m_SetPointLog = wpi::log::DoubleLogEntry(log, "/Elevator/Setpoint");
