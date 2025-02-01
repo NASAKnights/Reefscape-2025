@@ -53,6 +53,7 @@ void Robot::TeleopInit()
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
+    m_elevator.HoldPosition();
     if (m_autonomousCommand)
     {
         m_autonomousCommand->Cancel();
@@ -60,7 +61,10 @@ void Robot::TeleopInit()
     m_swerveDrive.TurnVisionOn(); // Turn Vision back on for Teleop
 }
 
-void Robot::TeleopPeriodic() {}
+void Robot::TeleopPeriodic()
+{
+    m_elevator.TeleopPeriodic();
+}
 
 void Robot::TeleopExit() {}
 
@@ -128,6 +132,23 @@ void Robot::BindCommands()
         .OnTrue(frc2::CommandPtr(frc2::InstantCommand([this]
                                                       { return exampleCommandHere(); })));
     Example Button */
+    frc2::JoystickButton(&m_driverController, 3)
+        .OnTrue(frc2::CommandPtr(frc2::InstantCommand(
+            [this]
+            {
+                frc::SmartDashboard::PutBoolean("lifting elevator", true);
+                m_elevator.SetHeight(ElevatorConstants::upperLimit.value());
+                return;
+            })));
+
+    frc2::JoystickButton(&m_driverController, 4)
+        .OnTrue(frc2::CommandPtr(frc2::InstantCommand(
+            [this]
+            {
+                frc::SmartDashboard::PutBoolean("lowering elevator", true);
+                m_elevator.SetHeight(ElevatorConstants::lowerLimit.value());
+                return;
+            })));
 }
 
 void Robot::DisabledPeriodic() {}
