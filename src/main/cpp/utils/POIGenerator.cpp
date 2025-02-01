@@ -4,7 +4,12 @@
 
 #include "utils/POIGenerator.h"
 
-POIGenerator::POIGenerator() = default;
+POIGenerator::POIGenerator() : networkTableInst(nt::NetworkTableInstance::GetDefault())
+{
+    auto poseTable = networkTableInst.GetTable("ROS2Bridge");
+
+    baseLinkSubscriber = poseTable->GetDoubleArrayTopic(robotPoseLink).Subscribe({}, {.periodic = 0.01, .sendAll = true});
+}
 
 void POIGenerator::MakePOI()
 {
@@ -12,12 +17,12 @@ void POIGenerator::MakePOI()
     auto baseLinkPose = baseLinkSubscriber.GetAtomic();
 
     frc::SmartDashboard::PutNumberArray(poiName, baseLinkPose.value);
-    frc::SmartDashboard::IsPersistent(poiName);
+    frc::SmartDashboard::SetPersistent(poiName);
 }
 
-frc::Pose2d POIGenerator::GetPOI(std::string key)
+frc::Pose2d POIGenerator::GetPOI(std::string poiKey)
 {
-    auto numberArray = frc::SmartDashboard::GetNumberArray(key, {});
+    auto numberArray = frc::SmartDashboard::GetNumberArray(poiKey, {});
     if (numberArray.size() > 0)
     {
         auto x = units::length::meter_t(numberArray.at(0));
@@ -27,4 +32,11 @@ frc::Pose2d POIGenerator::GetPOI(std::string key)
         return frc::Pose2d(x, y, o);
     }
     return frc::Pose2d(0_m, 0_m, 0_rad);
+}
+
+void POIGenerator::RemovePOI()
+{
+    auto poiName = frc::SmartDashboard::GetString("POIName", "");
+
+    frc::SmartDashboard::ClearPersistent(poiName);
 }

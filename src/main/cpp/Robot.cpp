@@ -18,8 +18,9 @@ void Robot::RobotInit()
     m_EnergyLog = wpi::log::DoubleLogEntry(log, "/PDP/Energy");
     m_TemperatureLog = wpi::log::DoubleLogEntry(log, "/PDP/Temperature");
 
-    frc::SmartDashboard::PutData("AddPOI", new frc2::InstantCommand([this]
-                                                                    { return m_poiGenerator.MakePOI(); }));
+    frc::SmartDashboard::PutString("POIName", "");
+    frc::SmartDashboard::PutData("AddPOI", addPOICommand.get());
+    frc::SmartDashboard::PutData("RemovePOI", removePOICommand.get());
 };
 
 // This function is called every 20 ms

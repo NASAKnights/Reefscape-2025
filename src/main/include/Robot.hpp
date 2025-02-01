@@ -78,6 +78,14 @@ private:
 
     POIGenerator m_poiGenerator;
 
+    frc2::CommandPtr addPOICommand = frc2::CommandPtr(frc2::InstantCommand([this]
+                                                                           { return m_poiGenerator.MakePOI(); }))
+                                         .IgnoringDisable(true);
+
+    frc2::CommandPtr removePOICommand = frc2::CommandPtr(frc2::InstantCommand([this]
+                                                                              { return m_poiGenerator.RemovePOI(); }))
+                                            .IgnoringDisable(true);
+
     // Robot Container methods
     void CreateRobot();
     void BindCommands();

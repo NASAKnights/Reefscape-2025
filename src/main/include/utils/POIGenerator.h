@@ -15,8 +15,11 @@ public:
   POIGenerator();
   void MakePOI();
   frc::Pose2d GetPOI(std::string poiKey);
+  void RemovePOI();
 
 private:
+  std::string_view robotPoseLink = "base_link";
+
   nt::NetworkTableInstance networkTableInst;
   nt::DoubleArraySubscriber baseLinkSubscriber;
 };
