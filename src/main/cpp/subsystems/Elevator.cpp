@@ -30,10 +30,11 @@ ElevatorSubsystem::ElevatorSubsystem()
       m_encoderRight{m_motorRight.GetEncoder()},
       m_elevatorSim(frc::DCMotor::NEO(ElevatorConstants::kNumMotors), ElevatorConstants::kElevatorGearing,
                     ElevatorConstants::kCarriageMass, ElevatorConstants::kElevatorDrumRadius,
-                    ElevatorConstants::simLowerLimit, ElevatorConstants::simUpperLimit, false, 0_m,
+                    ElevatorConstants::simLowerLimit, ElevatorConstants::simUpperLimit, true, 0_m,
                     {0.001})
 {
     m_motorRight.SetInverted(true);
+
     wpi::log::DataLog &log = frc::DataLogManager::GetLog();
     m_HeightLog = wpi::log::DoubleLogEntry(log, "/Elevator/Angle");
     m_SetPointLog = wpi::log::DoubleLogEntry(log, "/Elevator/Setpoint");
@@ -51,7 +52,7 @@ void ElevatorSubsystem::HoldPosition()
     m_controller.SetGoal(units::meter_t{GetHeight()});
     m_ElevatorState = ElevatorConstants::ElevatorState::HOLD;
 }
-
+// height in meters
 void ElevatorSubsystem::SetHeight(double height)
 {
     if (m_ElevatorState != ElevatorConstants::ElevatorState::LIFT &&
@@ -190,7 +191,7 @@ void ElevatorSubsystem::Emergency_Stop()
 
 void ElevatorSubsystem::SimulationPeriodic()
 {
-    m_elevatorSim.Update(5_ms);
+    m_elevatorSim.Update(ElevatorConstants::kDt);
     m_simTimer.Reset();
 }
 void ElevatorSubsystem::UseOutput(double output, State setpoint)
