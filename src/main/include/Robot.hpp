@@ -28,6 +28,8 @@
 #include <units/angular_velocity.h>
 #include <units/velocity.h>
 
+#include "subsystems/Elevator.h"
+
 #include <cmath>
 
 class Robot : public frc::TimedRobot
@@ -56,8 +58,11 @@ private:
     // doesn't have undefined behavior and potentially crash.
     std::optional<frc2::CommandPtr> m_autonomousCommand;
 
+    std::map<int, std::pair<pathplanner::PathPlannerAuto, frc::Pose2d>> autoMap;
+
     // Subsystems
     SwerveDrive m_swerveDrive;
+    ElevatorSubsystem m_elevator;
 
     frc::PowerDistribution m_pdh =
         frc::PowerDistribution{1, frc::PowerDistribution::ModuleType::kRev};

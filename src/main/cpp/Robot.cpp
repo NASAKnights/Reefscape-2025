@@ -1,6 +1,9 @@
 // Copyright (c) FRC Team 122. All Rights Reserved.
 
 #include "Robot.hpp"
+#include <pathplanner/lib/commands/PathPlannerAuto.h>
+#include <pathplanner/lib/auto/AutoBuilder.h>
+#include <pathplanner/lib/auto/NamedCommands.h>
 
 Robot::Robot()
 {
@@ -17,6 +20,12 @@ void Robot::RobotInit()
     m_PowerLog = wpi::log::DoubleLogEntry(log, "/PDP/Power");
     m_EnergyLog = wpi::log::DoubleLogEntry(log, "/PDP/Energy");
     m_TemperatureLog = wpi::log::DoubleLogEntry(log, "/PDP/Temperature");
+
+    std::string testAutoCalibration = "2mForward";
+    auto a4 = pathplanner::PathPlannerAuto(testAutoCalibration);
+    auto a4Pose = pathplanner::PathPlannerAuto::getPathGroupFromAutoFile(testAutoCalibration)[0]->getPathPoses()[0];
+    auto entry4 = std::make_pair(std::move(a4), a4Pose);
+    autoMap.emplace(1, std::move(entry4));
 };
 
 // This function is called every 20 ms
@@ -38,7 +47,9 @@ void Robot::AutonomousInit()
 {
     // m_autonomousCommand = this->GetAutonomousCommand();
     m_swerveDrive.TurnVisionOff(); // don't use vision during Auto
-
+    auto start = std::move(autoMap.at(1)).second;
+    m_autonomousCommand = std::move(std::move(autoMap.at(1)).first).ToPtr();
+    m_swerveDrive.ResetPose(start);
     if (m_autonomousCommand)
     {
         m_autonomousCommand->Schedule();
@@ -53,6 +64,7 @@ void Robot::TeleopInit()
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
+    m_elevator.HoldPosition();
     if (m_autonomousCommand)
     {
         m_autonomousCommand->Cancel();
@@ -60,7 +72,10 @@ void Robot::TeleopInit()
     m_swerveDrive.TurnVisionOn(); // Turn Vision back on for Teleop
 }
 
-void Robot::TeleopPeriodic() {}
+void Robot::TeleopPeriodic()
+{
+    m_elevator.TeleopPeriodic();
+}
 
 void Robot::TeleopExit() {}
 
@@ -128,6 +143,23 @@ void Robot::BindCommands()
         .OnTrue(frc2::CommandPtr(frc2::InstantCommand([this]
                                                       { return exampleCommandHere(); })));
     Example Button */
+    frc2::JoystickButton(&m_driverController, 3)
+        .OnTrue(frc2::CommandPtr(frc2::InstantCommand(
+            [this]
+            {
+                frc::SmartDashboard::PutBoolean("lifting elevator", true);
+                m_elevator.SetHeight(ElevatorConstants::upperLimit.value());
+                return;
+            })));
+
+    frc2::JoystickButton(&m_driverController, 4)
+        .OnTrue(frc2::CommandPtr(frc2::InstantCommand(
+            [this]
+            {
+                frc::SmartDashboard::PutBoolean("lowering elevator", true);
+                m_elevator.SetHeight(ElevatorConstants::lowerLimit.value());
+                return;
+            })));
 }
 
 void Robot::DisabledPeriodic() {}
