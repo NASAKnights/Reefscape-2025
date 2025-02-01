@@ -2,22 +2,22 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-#include "commands/SetElevatorHeight.h"
+#include "commands/RunAlgaeIntake.h"
 
-SetElevatorHeight::SetElevatorHeight() {
+RunAlgaeIntake::RunAlgaeIntake() {
   // Use addRequirements() here to declare subsystem dependencies.
 }
 
 // Called when the command is initially scheduled.
-void SetElevatorHeight::Initialize() {}
+void RunAlgaeIntake::Initialize() {}
 
 // Called repeatedly when this Command is scheduled to run
-void SetElevatorHeight::Execute() {}
+void RunAlgaeIntake::Execute() {}
 
 // Called once the command ends or is interrupted.
-void SetElevatorHeight::End(bool interrupted) {}
+void RunAlgaeIntake::End(bool interrupted) {}
 
 // Returns true when the command should end.
-bool SetElevatorHeight::IsFinished() {
+bool RunAlgaeIntake::IsFinished() {
   return false;
 }

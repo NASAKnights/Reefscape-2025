@@ -2,22 +2,26 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-#include "commands/RunIntake.h"
+// This Changes The Coral Intake Angle, It Would Be Used In Place L1-4, GrabAndPlace, GrabCoral, Etc
 
-RunIntake::RunIntake() {
+#include "commands/ChangeCoralAngle.h"
+
+ChangeCoralAngle::ChangeCoralAngle()
+{
   // Use addRequirements() here to declare subsystem dependencies.
 }
 
 // Called when the command is initially scheduled.
-void RunIntake::Initialize() {}
+void ChangeCoralAngle::Initialize() {}
 
 // Called repeatedly when this Command is scheduled to run
-void RunIntake::Execute() {}
+void ChangeCoralAngle::Execute() {}
 
 // Called once the command ends or is interrupted.
-void RunIntake::End(bool interrupted) {}
+void ChangeCoralAngle::End(bool interrupted) {}
 
 // Returns true when the command should end.
-bool RunIntake::IsFinished() {
+bool ChangeCoralAngle::IsFinished()
+{
   return false;
 }

@@ -3,8 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "commands/ScoreAlgae.h"
-#include <commands/SetElevatorHeight.h>
-#include <commands/ChangeIntakeAngle.h>
+#include <commands/MoveElevatorTo.h>
 #include <commands/Reset.h>
 #include <commands/DropAlgae.h>
 // NOTE:  Consider using this command inline, rather than writing a subclass.
@@ -12,7 +11,7 @@
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 ScoreAlgae::ScoreAlgae()
 {
-  SetElevatorHeight{}, DropAlgae{}, Reset{};
+  MoveElevatorTo{}, DropAlgae{}, Reset{};
   // Add your commands here, e.g.
   // AddCommands(FooCommand{}, BarCommand{});
 }

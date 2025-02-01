@@ -3,17 +3,17 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "commands/PlaceL2.h"
-#include <commands/SetElevatorHeight.h>
+#include <commands/MoveElevatorTo.h>
 #include <commands/DropCoral.h>
 #include <commands/Reset.h>
-#include <commands/ChangeIntakeAngle.h>
+#include <commands/ChangeCoralAngle.h>
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.
 // For more information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 PlaceL2::PlaceL2()
 {
-  SetElevatorHeight{}, ChangeIntakeAngle{}, DropCoral{}, Reset{};
+  MoveElevatorTo{}, ChangeCoralAngle{}, DropCoral{}, Reset{};
   // Add your commands here, e.g.
   // AddCommands(FooCommand{}, BarCommand{});
 }
