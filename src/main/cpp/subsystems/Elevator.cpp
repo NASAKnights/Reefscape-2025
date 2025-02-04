@@ -18,7 +18,7 @@ ElevatorSubsystem::ElevatorSubsystem()
           frc::TrapezoidProfile<units::meter>::Constraints(ElevatorConstants::kMaxVelocity,
                                                            ElevatorConstants::kMaxAcceleration),
           ElevatorConstants::kDt),
-
+      // m_holdController(ElevatorConstants::kP, ElevatorConstants::kI, ElevatorConstants::kD, ElevatorConstants::kDt),
       //, m_motor(ElevatorConstants::kMotorId, rev::CANSparkLowLevel::MotorType::kBrushless)
 
       m_motorLeft(ElevatorConstants::kMotorIdLeft, rev::spark::SparkMax::MotorType::kBrushless),
@@ -30,7 +30,7 @@ ElevatorSubsystem::ElevatorSubsystem()
       m_encoderRight{m_motorRight.GetEncoder()},
       m_elevatorSim(frc::DCMotor::NEO(ElevatorConstants::kNumMotors), ElevatorConstants::kElevatorGearing,
                     ElevatorConstants::kCarriageMass, ElevatorConstants::kElevatorDrumRadius,
-                    ElevatorConstants::simLowerLimit, ElevatorConstants::simUpperLimit, true, 0_m,
+                    ElevatorConstants::simLowerLimit, ElevatorConstants::simUpperLimit, false, 0_m,
                     {0.001})
 {
     m_motorRight.SetInverted(true);
@@ -43,41 +43,28 @@ ElevatorSubsystem::ElevatorSubsystem()
     m_MotorVoltageLog = wpi::log::DoubleLogEntry(log, "/Elevator/MotorVoltage");
 
     m_holdHeight = 0.0;
-    m_ElevatorState = ElevatorConstants::ElevatorState::HOLD;
+    m_ElevatorState = ElevatorConstants::ElevatorState::DISABLED;
 }
 
 void ElevatorSubsystem::HoldPosition()
 {
-    m_controller.SetTolerance(ElevatorConstants::kTolerancePos, ElevatorConstants::kToleranceVel);
-    m_controller.SetGoal(units::meter_t{GetHeight()});
-    m_ElevatorState = ElevatorConstants::ElevatorState::HOLD;
+    if (m_ElevatorState != ElevatorConstants::ElevatorState::START_HOLD &&
+        m_ElevatorState != ElevatorConstants::ElevatorState::START_MOVE &&
+        m_ElevatorState != ElevatorConstants::ElevatorState::HOLDING)
+    {
+        m_goal = units::meter_t{GetHeight()};
+        m_ElevatorState = ElevatorConstants::ElevatorState::START_HOLD;
+    }
 }
 // height in meters
 void ElevatorSubsystem::SetHeight(double height)
 {
-    if (m_ElevatorState != ElevatorConstants::ElevatorState::LIFT &&
-        m_ElevatorState != ElevatorConstants::ElevatorState::LOWER)
+    if (m_ElevatorState != ElevatorConstants::ElevatorState::DISABLED &&
+        m_ElevatorState != ElevatorConstants::ElevatorState::START_HOLD &&
+        m_ElevatorState != ElevatorConstants::ElevatorState::START_MOVE)
     {
-        if (GetHeight() > height)
-        {
-            m_ElevatorState = ElevatorConstants::ElevatorState::LOWER;
-            m_controller.Reset(units::meter_t{GetHeight()});
-            m_controller.SetTolerance(ElevatorConstants::kTolerancePos,
-                                      ElevatorConstants::kToleranceVel);
-            m_controller.SetGoal(units::meter_t{height});
-        }
-        else if (GetHeight() < height)
-        {
-            m_ElevatorState = ElevatorConstants::ElevatorState::LIFT;
-            m_controller.Reset(units::meter_t{GetHeight()});
-            m_controller.SetTolerance(ElevatorConstants::kTolerancePos,
-                                      ElevatorConstants::kToleranceVel);
-            m_controller.SetGoal(units::meter_t{height});
-        }
-        else
-        {
-            m_ElevatorState = ElevatorConstants::ElevatorState::HOLD;
-        }
+        m_goal = units::meter_t{height};
+        m_ElevatorState = ElevatorConstants::START_MOVE;
     }
 }
 
@@ -132,63 +119,91 @@ void ElevatorSubsystem::Periodic()
     }
 }
 */
-void ElevatorSubsystem::TeleopPeriodic()
+void ElevatorSubsystem::Periodic()
 {
-    if (abs((GetEncoderDistance(m_encoderLeft) - GetEncoderDistance(m_encoderRight)).value()) > ElevatorConstants::kEmergencyTolerance.value())
-    {
-        Emergency_Stop();
-    }
-
-    double fb = m_controller.Calculate(units::meter_t{GetHeight()});
-    units::volt_t ff = m_feedforwardElevator.Calculate(m_controller.GetSetpoint().velocity);
-    units::volt_t v = units::volt_t{fb} + ff;
-    if constexpr (frc::RobotBase::IsSimulation())
-    {
-        m_elevatorSim.SetInputVoltage(v);
-    }
-    m_motorLeft.SetVoltage(v);
-    m_motorRight.SetVoltage(v);
-
-    frc::SmartDashboard::PutNumber("/Elevator/Elev_UO_PID", fb);
-    frc::SmartDashboard::PutNumber("/Elevator/Elev_UO_FF", ff.value());
-    frc::SmartDashboard::PutNumber("/Elevator/Elev_UO_Volt", v.value());
-
-    // check if at goal
-    if (m_ElevatorState != ElevatorConstants::ElevatorState::HOLD && m_controller.AtGoal())
-    {
-        m_ElevatorState = ElevatorConstants::ElevatorState::HOLD;
-    }
-    frc::SmartDashboard::PutNumber("/Elevator/Elevator Goal Height",
-                                   m_controller.GetGoal().position.value());
-    frc::SmartDashboard::PutNumber("/Elevator/Elevator Actual Height", GetMeasurement().value());
-    // This method will be called once per scheduler run.
+    double fb;
+    units::volt_t ff;
+    units::volt_t v;
     switch (m_ElevatorState)
     {
-    case ElevatorConstants::LIFT:
-        frc::SmartDashboard::PutString("/Elevator/ElevState", "LIFT");
+    case ElevatorConstants::DISABLED:
+        frc::SmartDashboard::PutString("/Elevator/ElevState", "DISABLED");
         break;
-    case ElevatorConstants::LOWER:
-        frc::SmartDashboard::PutString("/Elevator/ElevState", "LOWER");
+    case ElevatorConstants::START_HOLD:
+        m_controller.SetTolerance(ElevatorConstants::kTolerancePos,
+                                  ElevatorConstants::kToleranceVel);
+        m_controller.Reset(units::meter_t{GetHeight()});
+        m_controller.SetGoal(m_goal);
+        m_ElevatorState = ElevatorConstants::HOLDING;
+        frc::SmartDashboard::PutString("/Elevator/ElevState", "HOLDING");
         break;
-    case ElevatorConstants::MANUAL:
-        frc::SmartDashboard::PutString("/Elevator/ElevState", "MANUAL");
+    case ElevatorConstants::HOLDING:
+        fb = m_controller.Calculate(units::meter_t{GetHeight()});
+        // units::volt_t ff = m_feedforwardElevator.Calculate(m_controller.GetSetpoint().velocity);
+        ff = 0_V;
+        v = units::volt_t{fb} + ff;
+        if constexpr (frc::RobotBase::IsSimulation())
+        {
+            m_elevatorSim.SetInputVoltage(v);
+        }
+        m_motorLeft.SetVoltage(v);
+        m_motorRight.SetVoltage(v);
+
+        frc::SmartDashboard::PutNumber("/Elevator/Elev_UO_PID", fb);
+        frc::SmartDashboard::PutNumber("/Elevator/Elev_UO_FF", ff.value());
+        frc::SmartDashboard::PutNumber("/Elevator/Elev_UO_Volt", v.value());
+        frc::SmartDashboard::PutString("/Elevator/ElevState", "HOLDING");
         break;
-    case ElevatorConstants::HOLD:
-        frc::SmartDashboard::PutString("/Elevator/ElevState", "HOLD");
+    case ElevatorConstants::START_MOVE:
+        m_controller.SetTolerance(ElevatorConstants::kTolerancePos,
+                                  ElevatorConstants::kToleranceVel);
+        m_controller.Reset(units::meter_t{GetHeight()});
+        m_controller.SetGoal(m_goal);
+        m_ElevatorState = ElevatorConstants::MOVING;
+        frc::SmartDashboard::PutString("/Elevator/ElevState", "MOVING");
+        break;
+    case ElevatorConstants::MOVING:
+        if (m_controller.AtGoal())
+        {
+            m_ElevatorState = ElevatorConstants::ElevatorState::HOLDING;
+            frc::SmartDashboard::PutString("/Elevator/ElevState", "HOLDING");
+        }
+        else
+        {
+            fb = m_controller.Calculate(units::meter_t{GetHeight()});
+            ff = m_feedforwardElevator.Calculate(m_controller.GetSetpoint().velocity);
+            // units::volt_t ff = 0_V;
+            v = units::volt_t{fb} + ff;
+            if constexpr (frc::RobotBase::IsSimulation())
+            {
+                m_elevatorSim.SetInputVoltage(v);
+            }
+            m_motorLeft.SetVoltage(v);
+            m_motorRight.SetVoltage(v);
+
+            frc::SmartDashboard::PutNumber("/Elevator/Elev_UO_PID", fb);
+            frc::SmartDashboard::PutNumber("/Elevator/Elev_UO_FF", ff.value());
+            frc::SmartDashboard::PutNumber("/Elevator/Elev_UO_Volt", v.value());
+            frc::SmartDashboard::PutString("/Elevator/ElevState", "MOVING");
+        }
         break;
     }
+
+    if (abs((GetEncoderDistance(m_encoderLeft) - GetEncoderDistance(m_encoderRight)).value()) > ElevatorConstants::kEmergencyTolerance.value())
+    {
+        Disable();
+    }
+
+    frc::SmartDashboard::PutNumber("/Elevator/Elevator Goal Height",
+                                   m_goal.value());
+    frc::SmartDashboard::PutNumber("/Elevator/Elevator Actual Height", GetHeight());
+    // This method will be called once per scheduler run.
     printLog();
 }
 void ElevatorSubsystem::SimulationInit()
 {
     m_simTimer.Reset();
 }
-void ElevatorSubsystem::Emergency_Stop()
-{
-    m_motorLeft.StopMotor();
-    m_motorRight.StopMotor();
-}
-
 void ElevatorSubsystem::SimulationPeriodic()
 {
     m_elevatorSim.Update(ElevatorConstants::kDt);
@@ -201,4 +216,14 @@ void ElevatorSubsystem::UseOutput(double output, State setpoint)
 units::meter_t ElevatorSubsystem::GetEncoderDistance(rev::spark::SparkRelativeEncoder encoder)
 {
     return encoder.GetPosition() * 2.0 * std::numbers::pi * ElevatorConstants::kElevatorDrumRadius;
+}
+void ElevatorSubsystem::Disable()
+{
+    m_ElevatorState = ElevatorConstants::ElevatorState::DISABLED;
+    m_motorLeft.StopMotor();
+    m_motorRight.StopMotor();
+}
+bool ElevatorSubsystem::IsHolding()
+{
+    return m_ElevatorState == ElevatorConstants::HOLDING;
 }

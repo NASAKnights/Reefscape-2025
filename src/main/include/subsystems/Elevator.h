@@ -32,10 +32,11 @@ namespace ElevatorConstants
 
     enum ElevatorState
     {
-        LIFT,
-        LOWER,
-        HOLD,
-        MANUAL
+        DISABLED,
+        START_HOLD,
+        HOLDING,
+        START_MOVE,
+        MOVING
     };
 
     static constexpr units::meter_t upperLimit = 3_in; // 57
@@ -58,10 +59,10 @@ namespace ElevatorConstants
     const int kMotorIdRight = 6;
     // const int kEncoderPulsePerRev = 42;
 
-    static constexpr auto kFFks = 0.0_V;               // Volts static (motor)
-    static constexpr auto kFFkg = 0.54_V;              // Volts
-    static constexpr auto kFFkV = 2.68_V / 1.0_mps;    // volts*s/meters //1.01 // 2.23
-    static constexpr auto kFFkA = 0.10_V / 1.0_mps_sq; // volts*s^2/meters //0.1
+    static constexpr auto kFFks = 0.0_V;                  // Volts static (motor)
+    static constexpr auto kFFkg = 0.54_V;                 // Volts
+    static constexpr auto kFFkV = 0.1 * 2.68_V / 1.0_mps; // volts*s/meters //1.01 // 2.23
+    static constexpr auto kFFkA = 0.10_V / 1.0_mps_sq;    // volts*s^2/meters //0.1
 
     static constexpr units::second_t kDt = 20_ms;
 
@@ -86,7 +87,7 @@ class ElevatorSubsystem : public frc2::SubsystemBase
 public:
     ElevatorSubsystem();
     void printLog();
-    void Emergency_Stop();
+    // void Emergency_Stop();
     void SimulationPeriodic();
     void SimulationInit();
     double GetHeight();
@@ -96,12 +97,16 @@ public:
     // void           SetSpeed(double speed);
     void SetHeight(double height);
     // bool           CheckGoal();
-    // void Periodic();
-    void TeleopPeriodic();
+    void Periodic();
+    void TeleopInit();
+    void AutonomousInit();
+    void Disable();
+    bool IsHolding();
     units::meter_t GetEncoderDistance(rev::spark::SparkRelativeEncoder);
 
 private:
     frc::ProfiledPIDController<units::meter> m_controller;
+    // frc::PIDController m_holdController;
 
     rev::spark::SparkMax m_motorLeft;
     rev::spark::SparkMax m_motorRight;
@@ -125,4 +130,6 @@ private:
     double m_holdHeight;
 
     ElevatorConstants::ElevatorState m_ElevatorState;
+
+    units::meter_t m_goal;
 };

@@ -37,8 +37,8 @@ void Robot::DisabledInit() {}
 void Robot::AutonomousInit()
 {
     // m_autonomousCommand = this->GetAutonomousCommand();
+    m_elevator.HoldPosition();
     m_swerveDrive.TurnVisionOff(); // don't use vision during Auto
-
     if (m_autonomousCommand)
     {
         m_autonomousCommand->Schedule();
@@ -46,6 +46,11 @@ void Robot::AutonomousInit()
 }
 
 void Robot::AutonomousPeriodic() {}
+
+void Robot::AutonomousExit()
+{
+    m_elevator.Disable();
+}
 
 void Robot::TeleopInit()
 {
@@ -61,12 +66,12 @@ void Robot::TeleopInit()
     m_swerveDrive.TurnVisionOn(); // Turn Vision back on for Teleop
 }
 
-void Robot::TeleopPeriodic()
-{
-    m_elevator.TeleopPeriodic();
-}
+void Robot::TeleopPeriodic() {}
 
-void Robot::TeleopExit() {}
+void Robot::TeleopExit()
+{
+    m_elevator.Disable();
+}
 
 /**
  * This function is called periodically during test mode.
