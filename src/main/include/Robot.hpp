@@ -24,11 +24,16 @@
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
 
 #include "subsystems/SwerveDrive.hpp"
+#include "subsystems/Elevator.h"
+
+// For testing
+#include <Commands/RunCoralIntake.h>
+#include <Commands/RunCoralOuttake.h>
+#include <Commands/RunAlgaeIntake.h>
+#include <Commands/RunAlgaeOuttake.h>
 
 #include <units/angular_velocity.h>
 #include <units/velocity.h>
-
-#include "subsystems/Elevator.h"
 
 #include <cmath>
 
@@ -52,6 +57,12 @@ public:
     void TestPeriodic() override;
     void SimulationInit() override;
     void SimulationPeriodic() override;
+
+    // For Testing
+    RunCoralIntake runCoralIntake;
+    RunCoralOuttake runCoralOuttake;
+    RunAlgaeIntake runAlgaeIntake;
+    RunAlgaeOuttake runAlgaeOuttake;
 
 private:
     // Have it empty by default so that if testing teleop it

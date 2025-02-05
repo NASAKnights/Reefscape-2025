@@ -138,11 +138,6 @@ void Robot::BindCommands()
             frc2::InstantCommand([this]
                                  { return m_swerveDrive.SetOffsets(); })));
 
-    // --------------OPERATOR BUTTONS--------------------------------
-    /* frc2::JoystickButton(&m_operatorController, 1)
-        .OnTrue(frc2::CommandPtr(frc2::InstantCommand([this]
-                                                      { return exampleCommandHere(); })));
-    Example Button */
     frc2::JoystickButton(&m_driverController, 3)
         .OnTrue(frc2::CommandPtr(frc2::InstantCommand(
             [this]
@@ -160,6 +155,32 @@ void Robot::BindCommands()
                 m_elevator.SetHeight(ElevatorConstants::lowerLimit.value());
                 return;
             })));
+
+    // --------------OPERATOR BUTTONS--------------------------------
+    /* frc2::JoystickButton(&m_operatorController, 1)
+        .OnTrue(frc2::CommandPtr(frc2::InstantCommand([this]
+                                                      { return exampleCommandHere(); })));
+    Example Button */
+
+    frc2::JoystickButton(&m_operatorController, 1)
+        .OnTrue(frc2::CommandPtr(
+            frc2::InstantCommand([this]
+                                 { return runCoralIntake; })));
+
+    frc2::JoystickButton(&m_operatorController, 2)
+        .OnTrue(frc2::CommandPtr(
+            frc2::InstantCommand([this]
+                                 { return runCoralOuttake; })));
+
+    frc2::JoystickButton(&m_operatorController, 3)
+        .OnTrue(frc2::CommandPtr(
+            frc2::InstantCommand([this]
+                                 { return runAlgaeIntake; })));
+
+    frc2::JoystickButton(&m_operatorController, 4)
+        .OnTrue(frc2::CommandPtr(
+            frc2::InstantCommand([this]
+                                 { return runAlgaeOuttake; })));
 }
 
 void Robot::DisabledPeriodic() {}
