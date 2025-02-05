@@ -136,6 +136,8 @@ void Robot::BindCommands()
 
 void Robot::DisabledPeriodic()
 {
+    std::string poiName = std::string("POI/") + frc::SmartDashboard::GetString("POIName", "");
+    frc::SmartDashboard::PutBoolean("IsPersist", frc::SmartDashboard::IsPersistent(poiName));
 }
 
 void Robot::UpdateDashboard()

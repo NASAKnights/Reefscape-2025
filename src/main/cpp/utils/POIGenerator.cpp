@@ -13,7 +13,7 @@ POIGenerator::POIGenerator() : networkTableInst(nt::NetworkTableInstance::GetDef
 
 void POIGenerator::MakePOI()
 {
-    auto poiName = frc::SmartDashboard::GetString("POIName", "");
+    std::string poiName = std::string("POI/") + frc::SmartDashboard::GetString("POIName", "");
     auto baseLinkPose = baseLinkSubscriber.GetAtomic();
 
     frc::SmartDashboard::PutNumberArray(poiName, baseLinkPose.value);
@@ -36,7 +36,7 @@ frc::Pose2d POIGenerator::GetPOI(std::string poiKey)
 
 void POIGenerator::RemovePOI()
 {
-    auto poiName = frc::SmartDashboard::GetString("POIName", "");
+    std::string poiName = std::string("POI/") + frc::SmartDashboard::GetString("POIName", "");
 
     frc::SmartDashboard::ClearPersistent(poiName);
 }
