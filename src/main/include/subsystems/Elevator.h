@@ -60,8 +60,8 @@ namespace ElevatorConstants
     // const int kEncoderPulsePerRev = 42;
 
     static constexpr auto kFFks = 0.0_V;                  // Volts static (motor)
-    static constexpr auto kFFkg = 0.54_V;                 // Volts
-    static constexpr auto kFFkV = 0.1 * 2.68_V / 1.0_mps; // volts*s/meters //1.01 // 2.23
+    static constexpr auto kFFkg = 0.0_V;                  // 0.54_V;                         // Volts
+    static constexpr auto kFFkV = 0.5 * 2.68_V / 1.0_mps; // volts*s/meters //1.01 // 2.23
     static constexpr auto kFFkA = 0.10_V / 1.0_mps_sq;    // volts*s^2/meters //0.1
 
     static constexpr units::second_t kDt = 20_ms;
