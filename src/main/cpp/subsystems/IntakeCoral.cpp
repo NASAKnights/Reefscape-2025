@@ -4,14 +4,17 @@
 
 #include "subsystems/IntakeCoral.h"
 
-IntakeCoral::IntakeCoral() : m_Motor(1) {};
+IntakeCoral::IntakeCoral() : m_Motor(1), limitSwitch(4) {};
 
 // This method will be called once per scheduler run
 void IntakeCoral::Periodic() {}
 
 void IntakeCoral::Intake(int Speed)
 {
-    m_Motor.Set(Speed);
+    if (!limitSwitch.Get())
+    {
+        m_Motor.Set(Speed);
+    }
 }
 
 void IntakeCoral::Outtake(int Speed)
