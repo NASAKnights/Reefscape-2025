@@ -34,6 +34,8 @@ ElevatorSubsystem::ElevatorSubsystem()
                     {0.001})
 {
     m_motorRight.SetInverted(true);
+    m_encoderLeft.SetPosition(0.0);
+    m_encoderRight.SetPosition(0.0);
 
     wpi::log::DataLog &log = frc::DataLogManager::GetLog();
     m_HeightLog = wpi::log::DoubleLogEntry(log, "/Elevator/Angle");
@@ -101,6 +103,8 @@ bool ElevatorSubsystem::CheckGoal()
 void ElevatorSubsystem::printLog()
 {
     frc::SmartDashboard::PutNumber("/Elevator/ELEVATOR_ENC_ABS", GetMeasurement().value());
+    frc::SmartDashboard::PutNumber("/Elevator/ELEVATOR_ENC_ABS_LEFT", m_encoderLeft.GetPosition());
+    frc::SmartDashboard::PutNumber("/Elevator/ELEVATOR_ENC_ABS_RIGHT", m_encoderRight.GetPosition());
     frc::SmartDashboard::PutNumber("/Elevator/elevatorGoal_POS", m_controller.GetGoal().position.value());
     frc::SmartDashboard::PutNumber("/Elevator/ELEVATOR_setpoint",
                                    m_controller.GetSetpoint().position.value());
@@ -189,10 +193,12 @@ void ElevatorSubsystem::Periodic()
         break;
     }
 
+    /*
     if (abs((GetEncoderDistance(m_encoderLeft) - GetEncoderDistance(m_encoderRight)).value()) > ElevatorConstants::kEmergencyTolerance.value())
     {
         Disable();
     }
+    */
 
     frc::SmartDashboard::PutNumber("/Elevator/Elevator Goal Height",
                                    m_goal.value());
@@ -215,7 +221,7 @@ void ElevatorSubsystem::UseOutput(double output, State setpoint)
 }
 units::meter_t ElevatorSubsystem::GetEncoderDistance(rev::spark::SparkRelativeEncoder encoder)
 {
-    return encoder.GetPosition() * 2.0 * std::numbers::pi * ElevatorConstants::kElevatorDrumRadius;
+    return encoder.GetPosition() * 2.0 * std::numbers::pi * ElevatorConstants::kElevatorDrumRadius / 5.0;
 }
 void ElevatorSubsystem::Disable()
 {
