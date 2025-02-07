@@ -378,7 +378,7 @@ void SwerveDrive::DisableDrive()
 }
 
 void SwerveDrive::WeightedDriving(bool approach, double leftXAxis,
-                                  double leftYAxis, double rightXAxis)
+                                  double leftYAxis, double rightXAxis, std::string poiKey)
 {
 
     auto dT = timer.Get();
@@ -391,18 +391,33 @@ void SwerveDrive::WeightedDriving(bool approach, double leftXAxis,
 
     // TODO: Continue tuning
 
-    auto noteTransform = m_visionPoseEstimator.GetMeasurement();
+    units::length::meter_t TargetX;
+    units::length::meter_t TargetY;
+    double TargetRotation;
 
-    auto noteXPos = noteTransform.X();
-    auto noteYPos = noteTransform.Y();
-    auto noteRotation = noteTransform.Rotation().Radians().value();
+    if (poiKey == "vision")
+    {
+        auto noteTransform = m_visionPoseEstimator.GetMeasurement();
 
-    auto unsaturatedX = double(approach * noteXPos * Px);
-    auto unsaturatedY = double(approach * noteYPos * Py);
-    auto unsaturatedPO = double(approach * noteRotation * Po);
-    auto unsaturatedDO = double(approach * (noteRotation - prevOError) / dT * Do);
+        TargetX = noteTransform.X();
+        TargetY = noteTransform.Y();
+        TargetRotation = noteTransform.Rotation().Radians().value();
+    }
+    else
+    {
+        frc::Pose2d POI = poiGenerator.GetPOI(poiKey);
 
-    prevOError = noteRotation;
+        TargetX = POI.X();
+        TargetY = POI.Y();
+        TargetRotation = POI.Rotation().Radians().value();
+    }
+
+    auto unsaturatedX = double(approach * TargetX * Px);
+    auto unsaturatedY = double(approach * TargetY * Py);
+    auto unsaturatedPO = double(approach * TargetRotation * Po);
+    auto unsaturatedDO = double(approach * (TargetRotation - prevOError) / dT * Do);
+
+    prevOError = TargetRotation;
 
     auto saturatedX = std::copysign(std::min(std::abs(unsaturatedX), 0.45), unsaturatedX);
     auto saturatedY = std::copysign(std::min(std::abs(unsaturatedY), 0.1), unsaturatedY);

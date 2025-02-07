@@ -31,6 +31,7 @@
 #include <wpi/array.h>
 #include <frc/Timer.h>
 #include "subsystems/PoseEstimator.h"
+#include "utils/POIGenerator.h"
 
 #include <frc/DriverStation.h>
 #include <frc/estimator/PoseEstimator.h>
@@ -93,7 +94,7 @@ public:
   void PeriodicShuffleboard();
   void ShuffleboardInit();
   void SetOffsets();
-  void WeightedDriving(bool approach, double leftXAxis, double leftYAxis, double rightXAxis);
+  void WeightedDriving(bool approach, double leftXAxis, double leftYAxis, double rightXAxis, std::string poiKey);
 
 private:
   // Components (e.g. motor controllers and sensors) should generally be
@@ -119,6 +120,8 @@ private:
   double prevOError;
 
   bool useVision = false;
+
+  POIGenerator poiGenerator;
 
   frc::ChassisSpeeds priorSpeeds = frc::ChassisSpeeds();
 
