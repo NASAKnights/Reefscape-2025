@@ -390,41 +390,36 @@ void SwerveDrive::WeightedDriving(bool approach, double leftXAxis,
     auto Do = frc::SmartDashboard::GetNumber("Note Do", 0.0);
 
     // TODO: Continue tuning
-
-    units::length::meter_t TargetX;
-    units::length::meter_t TargetY;
-    double TargetRotation;
+    frc::Pose2d Target;
 
     if (poiKey == "vision")
     {
-        auto noteTransform = m_visionPoseEstimator.GetMeasurement();
-
-        TargetX = noteTransform.X();
-        TargetY = noteTransform.Y();
-        TargetRotation = noteTransform.Rotation().Radians().value();
+        Target = m_visionPoseEstimator.GetMeasurement();
     }
     else
     {
         frc::Pose2d POI = poiGenerator.GetPOI(poiKey);
-
-        TargetX = POI.X();
-        TargetY = POI.Y();
-        TargetRotation = POI.Rotation().Radians().value();
+        Target = POI.RelativeTo(m_poseEstimator.GetEstimatedPosition());
     }
+
+    auto TargetX = Target.X();
+    auto TargetY = Target.Y();
+    auto TargetRotation = Target.Rotation().Radians().value();
 
     auto unsaturatedX = double(approach * TargetX * Px);
     auto unsaturatedY = double(approach * TargetY * Py);
     auto unsaturatedPO = double(approach * TargetRotation * Po);
-    auto unsaturatedDO = double(approach * (TargetRotation - prevOError) / dT * Do);
+    // auto unsaturatedDO = double(approach * (TargetRotation - prevOError) / dT * Do);
 
-    prevOError = TargetRotation;
-
+    // prevOError = TargetRotation;
     auto saturatedX = std::copysign(std::min(std::abs(unsaturatedX), 0.45), unsaturatedX);
     auto saturatedY = std::copysign(std::min(std::abs(unsaturatedY), 0.1), unsaturatedY);
+    auto saturatedOmega = std::copysign(std::min(std::abs(unsaturatedPO), 0.4), unsaturatedPO);
 
-    auto saturatedOmega = std::copysign(std::min(std::abs(unsaturatedPO - unsaturatedDO),
-                                                 frc::SmartDashboard::GetNumber("Note P", 0.4)),
-                                        unsaturatedPO - unsaturatedDO);
+    // Code with dampening
+    // auto saturatedOmega = std::copysign(std::min(std::abs(unsaturatedPO - unsaturatedDO),
+    //                                              frc::SmartDashboard::GetNumber("Note P", 0.4)),
+    //                                     unsaturatedPO - unsaturatedDO);
 
     auto vx =
         units::meters_per_second_t(saturatedX +
@@ -473,9 +468,7 @@ void SwerveDrive::PeriodicShuffleboard()
     // frc::SmartDashboard::GetNumber("SmartDashboard/Swerve/MaxTranslationalVelocity", 0);
 }
 
-void SwerveDrive::ShuffleboardInit()
-{
-}
+void SwerveDrive::ShuffleboardInit() {}
 
 void SwerveDrive::SetOffsets()
 {

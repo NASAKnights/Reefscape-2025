@@ -62,7 +62,7 @@ private:
 
     std::string_view baseLink = "base_link";
 
-    std::string targetKey = "";
+    std::string targetKey = "TestPersist";
 
     frc::PowerDistribution m_pdh =
         frc::PowerDistribution{1, frc::PowerDistribution::ModuleType::kRev};

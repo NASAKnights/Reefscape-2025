@@ -21,6 +21,11 @@ void Robot::RobotInit()
     frc::SmartDashboard::PutString("POIName", "");
     frc::SmartDashboard::PutData("AddPOI", addPOICommand.get());
     frc::SmartDashboard::PutData("RemovePOI", removePOICommand.get());
+
+    auto Po = frc::SmartDashboard::PutNumber("Note Po", 0.0);
+    auto Px = frc::SmartDashboard::PutNumber("Note Px", 0.0);
+    auto Py = frc::SmartDashboard::PutNumber("Note Py", 0.0);
+    auto Do = frc::SmartDashboard::PutNumber("Note Do", 0.0);
 };
 
 // This function is called every 20 ms
