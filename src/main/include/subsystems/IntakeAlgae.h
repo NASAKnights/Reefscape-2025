@@ -7,6 +7,7 @@
 #include <frc2/command/SubsystemBase.h>
 #include "ctre/phoenix6/TalonFX.hpp"
 #include <frc/DigitalInput.h>
+#include <ctre/phoenix/motorcontrol/can/TalonSRX.h>
 
 class IntakeAlgae : public frc2::SubsystemBase
 {
@@ -15,10 +16,9 @@ public:
   void Intake(int Speed);
   void Outtake(int Speed);
 
-  ctre::phoenix6::hardware::TalonFX m_Motor1;
-  ctre::phoenix6::hardware::TalonFX m_Motor2;
+  ctre::phoenix::motorcontrol::can::TalonSRX AlgaeMotors;
 
-  frc::DigitalInput limitSwitch;
+  // frc::DigitalInput limitSwitch;
 
   /**
    * Will be called periodically whenever the CommandScheduler runs.

@@ -4,22 +4,20 @@
 
 #include "subsystems/IntakeAlgae.h"
 
-IntakeAlgae::IntakeAlgae() : m_Motor1(2), m_Motor2(3), limitSwitch(4) {}
+IntakeAlgae::IntakeAlgae() : AlgaeMotors(3) {}
 
 // This method will be called once per scheduler run
 void IntakeAlgae::Periodic() {}
 
 void IntakeAlgae::Intake(int Speed)
 {
-    if (!limitSwitch.Get())
-    {
-        m_Motor1.Set(Speed);
-        m_Motor2.Set(Speed);
-    }
+    // if (!limitSwitch.Get())
+    // {
+    AlgaeMotors.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, Speed);
+    // }
 }
 
 void IntakeAlgae::Outtake(int Speed)
 {
-    m_Motor1.Set(-Speed);
-    m_Motor2.Set(-Speed);
+    AlgaeMotors.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, -Speed);
 }
