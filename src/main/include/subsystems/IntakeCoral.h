@@ -16,7 +16,7 @@ public:
   void Intake(int Speed);
   void Outtake(int Speed);
 
-  ctre::phoenix::motorcontrol::can::TalonSRX coralMotor;
+  ctre::phoenix::motorcontrol::can::TalonSRX coralMotorController;
 
   // frc::DigitalInput limitSwitch;
 

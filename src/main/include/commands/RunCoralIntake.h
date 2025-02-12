@@ -8,12 +8,12 @@
 #include <frc2/command/CommandHelper.h>
 #include <subsystems/IntakeCoral.h>
 
-IntakeCoral intakeCoral;
-
 class RunCoralIntake
     : public frc2::CommandHelper<frc2::Command, RunCoralIntake>
 {
 public:
+  IntakeCoral intakeCoral;
+
   /* You should consider using the more terse Command factories API instead
    * https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands
    */

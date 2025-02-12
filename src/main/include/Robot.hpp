@@ -31,6 +31,15 @@
 #include <Commands/RunCoralOuttake.h>
 #include <Commands/RunAlgaeIntake.h>
 #include <Commands/RunAlgaeOuttake.h>
+#include <Commands/PlaceL4.h>
+#include <Commands/PlaceL3.h>
+#include <Commands/PlaceL2.h>
+#include <Commands/PlaceL1.h>
+#include <commands/GrabAlgaeL2.h>
+#include <commands/GrabAlgaeL3.h>
+#include <commands/ScoreAlgae.h>
+#include <commands/DeployClimber.h>
+#include <commands/ClimbCage.h>
 
 #include <units/angular_velocity.h>
 #include <units/velocity.h>
@@ -59,10 +68,6 @@ public:
     void SimulationPeriodic() override;
 
     // For Testing
-    RunCoralIntake runCoralIntake;
-    RunCoralOuttake runCoralOuttake;
-    RunAlgaeIntake runAlgaeIntake;
-    RunAlgaeOuttake runAlgaeOuttake;
 
 private:
     // Have it empty by default so that if testing teleop it
@@ -72,6 +77,21 @@ private:
     std::map<int, std::pair<pathplanner::PathPlannerAuto, frc::Pose2d>> autoMap;
 
     // Subsystems
+
+    RunCoralIntake runCoralIntake;
+    RunCoralOuttake runCoralOuttake;
+    RunAlgaeIntake runAlgaeIntake;
+    RunAlgaeOuttake runAlgaeOuttake;
+    PlaceL4 placeL4;
+    PlaceL3 placeL3;
+    PlaceL2 placeL2;
+    PlaceL1 placeL1;
+    GrabAlgaeL2 grabAlgaeL2;
+    GrabAlgaeL3 grabAlgaeL3;
+
+    DeployClimber deployClimber;
+    ClimbCage climbCage;
+    ScoreAlgae scoreAlgae;
     SwerveDrive m_swerveDrive;
     ElevatorSubsystem m_elevator;
 

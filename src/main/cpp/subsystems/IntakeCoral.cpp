@@ -4,7 +4,7 @@
 
 #include "subsystems/IntakeCoral.h"
 
-IntakeCoral::IntakeCoral() : coralMotor(1) {};
+IntakeCoral::IntakeCoral() : coralMotorController(1) {};
 
 // This method will be called once per scheduler run
 void IntakeCoral::Periodic() {}
@@ -13,11 +13,11 @@ void IntakeCoral::Intake(int Speed)
 {
     // if (!limitSwitch.Get())
     // {
-    coralMotor.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, Speed);
+    coralMotorController.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, Speed);
     // }
 }
 
 void IntakeCoral::Outtake(int Speed)
 {
-    coralMotor.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, -Speed);
+    coralMotorController.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, -Speed);
 }

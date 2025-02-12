@@ -163,24 +163,40 @@ void Robot::BindCommands()
     Example Button */
 
     frc2::JoystickButton(&m_operatorController, 1)
-        .OnTrue(frc2::CommandPtr(
-            frc2::InstantCommand([this]
-                                 { return runCoralIntake; })));
+        .OnTrue(new PlaceL4);
 
     frc2::JoystickButton(&m_operatorController, 2)
-        .OnTrue(frc2::CommandPtr(
-            frc2::InstantCommand([this]
-                                 { return runCoralOuttake; })));
+        .OnTrue(new PlaceL3);
 
     frc2::JoystickButton(&m_operatorController, 3)
-        .OnTrue(frc2::CommandPtr(
-            frc2::InstantCommand([this]
-                                 { return runAlgaeIntake; })));
+        .OnTrue(new PlaceL2);
 
     frc2::JoystickButton(&m_operatorController, 4)
-        .OnTrue(frc2::CommandPtr(
-            frc2::InstantCommand([this]
-                                 { return runAlgaeOuttake; })));
+        .OnTrue(new PlaceL1);
+
+    frc2::JoystickButton(&m_operatorController, 5)
+        .OnTrue(new GrabAlgaeL2);
+
+    frc2::JoystickButton(&m_operatorController, 6)
+        .OnTrue(new GrabAlgaeL3);
+
+    frc2::JoystickButton(&m_operatorController, 7)
+        .OnTrue(new RunAlgaeOuttake);
+
+    frc2::JoystickButton(&m_operatorController, 8)
+        .OnTrue(new ScoreAlgae);
+
+    frc2::JoystickButton(&m_operatorController, 9)
+        .OnTrue(new DeployClimber);
+
+    frc2::JoystickButton(&m_operatorController, 10)
+        .OnTrue(new ClimbCage);
+
+    frc2::POVButton(&m_operatorController, 0)
+        .OnTrue(new RunCoralOuttake);
+
+    frc2::POVButton(&m_operatorController, 180)
+        .OnTrue(new RunCoralIntake);
 }
 
 void Robot::DisabledPeriodic() {}

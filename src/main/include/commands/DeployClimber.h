@@ -6,18 +6,23 @@
 
 #include <frc2/command/Command.h>
 #include <frc2/command/CommandHelper.h>
-#include <subsystems/IntakeAlgae.h>
+#include <frc/smartdashboard/SmartDashboard.h>
 
-class RunAlgaeIntake
-    : public frc2::CommandHelper<frc2::Command, RunAlgaeIntake>
+/**
+ * An example command.
+ *
+ * <p>Note that this extends CommandHelper, rather extending Command
+ * directly; this is crucially important, or else the decorator functions in
+ * Command will *not* work!
+ */
+class DeployClimber
+    : public frc2::CommandHelper<frc2::Command, DeployClimber>
 {
 public:
-  IntakeAlgae intakeAlgae;
-
   /* You should consider using the more terse Command factories API instead
    * https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands
    */
-  RunAlgaeIntake();
+  DeployClimber();
 
   void Initialize() override;
 
