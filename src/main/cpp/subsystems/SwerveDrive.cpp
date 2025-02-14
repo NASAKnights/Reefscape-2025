@@ -402,18 +402,20 @@ void SwerveDrive::WeightedDriving(bool approach, double leftXAxis,
         Target = POI.RelativeTo(m_poseEstimator.GetEstimatedPosition());
     }
 
-    auto TargetX = Target.X();
-    auto TargetY = Target.Y();
-    auto TargetRotation = Target.Rotation().Radians().value();
+    auto targetX = Target.X();
+    auto targetY = Target.Y();
+    auto targetRotation = Target.Rotation().Radians().value();
 
-    auto unsaturatedX = double(approach * TargetX * Px);
-    auto unsaturatedY = double(approach * TargetY * Py);
-    auto unsaturatedPO = double(approach * TargetRotation * Po);
+    frc::SmartDashboard::PutNumber("TargetRotation", targetRotation);
+
+    auto unsaturatedX = double(approach * targetX * Px);
+    auto unsaturatedY = double(approach * targetY * Py);
+    auto unsaturatedPO = double(approach * targetRotation * Po);
     // auto unsaturatedDO = double(approach * (TargetRotation - prevOError) / dT * Do);
 
-    // prevOError = TargetRotation;
-    auto saturatedX = std::copysign(std::min(std::abs(unsaturatedX), 0.45), unsaturatedX);
-    auto saturatedY = std::copysign(std::min(std::abs(unsaturatedY), 0.1), unsaturatedY);
+    // prevOError = targetRotation;
+    auto saturatedX = std::copysign(std::min(std::abs(unsaturatedX), 0.5), unsaturatedX);
+    auto saturatedY = std::copysign(std::min(std::abs(unsaturatedY), 0.5), unsaturatedY);
     auto saturatedOmega = std::copysign(std::min(std::abs(unsaturatedPO), 0.4), unsaturatedPO);
 
     // Code with dampening

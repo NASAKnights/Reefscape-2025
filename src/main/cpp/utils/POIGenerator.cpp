@@ -27,7 +27,15 @@ frc::Pose2d POIGenerator::GetPOI(std::string poiKey)
     {
         auto x = units::length::meter_t(numberArray.at(0));
         auto y = units::length::meter_t(numberArray.at(1));
-        auto o = units::angle::radian_t(numberArray.at(2));
+
+        auto o = units::angle::radian_t(
+            frc::Rotation3d(frc::Quaternion(numberArray.at(6),
+                                            numberArray.at(3),
+                                            numberArray.at(4),
+                                            numberArray.at(5)))
+                .ToRotation2d()
+                .Radians()
+                .value());
 
         return frc::Pose2d(x, y, o);
     }

@@ -23,8 +23,8 @@ void Robot::RobotInit()
     frc::SmartDashboard::PutData("RemovePOI", removePOICommand.get());
 
     auto Po = frc::SmartDashboard::PutNumber("Note Po", 0.0);
-    auto Px = frc::SmartDashboard::PutNumber("Note Px", 0.0);
-    auto Py = frc::SmartDashboard::PutNumber("Note Py", 0.0);
+    auto Px = frc::SmartDashboard::PutNumber("Note Px", 1);
+    auto Py = frc::SmartDashboard::PutNumber("Note Py", 1);
     auto Do = frc::SmartDashboard::PutNumber("Note Do", 0.0);
 };
 

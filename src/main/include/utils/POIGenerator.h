@@ -8,6 +8,8 @@
 #include <networktables/DoubleArrayTopic.h>
 #include <networktables/NetworkTableInstance.h>
 #include <frc/geometry/Pose2d.h>
+#include <frc/geometry/Quaternion.h>
+#include <frc/geometry/Rotation3d.h>
 
 class POIGenerator
 {
