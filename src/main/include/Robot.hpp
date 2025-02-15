@@ -24,6 +24,7 @@
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
 
 #include "subsystems/SwerveDrive.hpp"
+#include "subsystems/Wrist.h"
 
 #include <units/angular_velocity.h>
 #include <units/velocity.h>
@@ -58,6 +59,7 @@ private:
 
     // Subsystems
     SwerveDrive m_swerveDrive;
+    WristSubsystem m_wrist;
 
     frc::PowerDistribution m_pdh =
         frc::PowerDistribution{1, frc::PowerDistribution::ModuleType::kRev};

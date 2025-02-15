@@ -53,6 +53,9 @@ void Robot::TeleopInit()
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
+
+    m_wrist.Enable();
+
     if (m_autonomousCommand)
     {
         m_autonomousCommand->Cancel();
@@ -60,9 +63,15 @@ void Robot::TeleopInit()
     m_swerveDrive.TurnVisionOn(); // Turn Vision back on for Teleop
 }
 
-void Robot::TeleopPeriodic() {}
+void Robot::TeleopPeriodic()
+{
+    m_wrist.handle_Setpoint();
+}
 
-void Robot::TeleopExit() {}
+void Robot::TeleopExit()
+{
+    m_wrist.Disable();
+}
 
 /**
  * This function is called periodically during test mode.
@@ -122,6 +131,21 @@ void Robot::BindCommands()
         .OnTrue(frc2::CommandPtr(
             frc2::InstantCommand([this]
                                  { return m_swerveDrive.SetOffsets(); })));
+
+    frc2::JoystickButton(&m_driverController, 7)
+        .OnTrue(frc2::CommandPtr(frc2::InstantCommand(
+            [this]
+            {
+                frc::SmartDashboard::PutBoolean("kicking", true);
+                m_wrist.kick();
+                return;
+            })))
+        .OnFalse((frc2::CommandPtr(frc2::InstantCommand(
+            [this]
+            {
+                frc::SmartDashboard::PutBoolean("kicking", false);
+                return;
+            }))));
 
     // --------------OPERATOR BUTTONS--------------------------------
     /* frc2::JoystickButton(&m_operatorController, 1)
