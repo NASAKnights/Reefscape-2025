@@ -12,7 +12,10 @@
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 class GrabAlgaeL3
     : public frc2::CommandHelper<frc2::SequentialCommandGroup,
-                                 GrabAlgaeL3> {
- public:
-  GrabAlgaeL3();
+                                 GrabAlgaeL3>
+{
+public:
+  GrabAlgaeL3(IntakeAlgae *_intakeAlgae);
+
+  IntakeAlgae *m_intakeAlgae;
 };

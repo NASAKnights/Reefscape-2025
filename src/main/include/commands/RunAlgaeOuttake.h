@@ -12,12 +12,10 @@ class RunAlgaeOuttake
     : public frc2::CommandHelper<frc2::Command, RunAlgaeOuttake>
 {
 public:
-  IntakeAlgae intakeAlgae;
-
   /* You should consider using the more terse Command factories API instead
    * https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands
    */
-  RunAlgaeOuttake();
+  RunAlgaeOuttake(IntakeAlgae *_intakeAlgae);
 
   void Initialize() override;
 
@@ -26,4 +24,7 @@ public:
   void End(bool interrupted) override;
 
   bool IsFinished() override;
+
+private:
+  IntakeAlgae *m_intakeAlgae;
 };

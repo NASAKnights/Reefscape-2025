@@ -5,7 +5,6 @@
 #pragma once
 
 #include <frc2/command/SubsystemBase.h>
-#include "ctre/phoenix6/TalonFX.hpp"
 #include <frc/DigitalInput.h>
 #include <ctre/phoenix/motorcontrol/can/TalonSRX.h>
 
@@ -15,8 +14,7 @@ public:
   IntakeCoral();
   void Intake(int Speed);
   void Outtake(int Speed);
-
-  ctre::phoenix::motorcontrol::can::TalonSRX coralMotorController;
+  void SetConfig();
 
   // frc::DigitalInput limitSwitch;
 
@@ -26,6 +24,8 @@ public:
   void Periodic() override;
 
 private:
+  bool Configure = false;
+  ctre::phoenix::motorcontrol::can::TalonSRX coralIntakeMotor{1};
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
 };

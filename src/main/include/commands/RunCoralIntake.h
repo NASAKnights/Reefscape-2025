@@ -12,12 +12,10 @@ class RunCoralIntake
     : public frc2::CommandHelper<frc2::Command, RunCoralIntake>
 {
 public:
-  IntakeCoral intakeCoral;
-
   /* You should consider using the more terse Command factories API instead
    * https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands
    */
-  RunCoralIntake();
+  RunCoralIntake(IntakeCoral *_intakeCoral);
 
   void Initialize() override;
 
@@ -26,4 +24,7 @@ public:
   void End(bool interrupted) override;
 
   bool IsFinished() override;
+
+private:
+  IntakeCoral *m_intakeCoral;
 };

@@ -12,7 +12,11 @@
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 class GrabCoral
     : public frc2::CommandHelper<frc2::SequentialCommandGroup,
-                                 GrabCoral> {
- public:
-  GrabCoral();
+                                 GrabCoral>
+{
+public:
+  GrabCoral(IntakeCoral *_intakeCoral);
+
+private:
+  IntakeCoral *m_intakeCoral;
 };

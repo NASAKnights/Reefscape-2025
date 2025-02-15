@@ -4,9 +4,9 @@
 
 #include "commands/RunCoralIntake.h"
 
-RunCoralIntake::RunCoralIntake()
+RunCoralIntake::RunCoralIntake(IntakeCoral *_intakeCoral) : m_intakeCoral{_intakeCoral}
 {
-  // Use addRequirements() here to declare subsystem dependencies.
+  AddRequirements(m_intakeCoral);
 }
 
 // Called when the command is initially scheduled.
@@ -15,7 +15,7 @@ void RunCoralIntake::Initialize() {}
 // Called repeatedly when this Command is scheduled to run
 void RunCoralIntake::Execute()
 {
-  intakeCoral.Intake(0.5);
+  m_intakeCoral->Intake(0.5);
 }
 
 // Called once the command ends or is interrupted.

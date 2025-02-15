@@ -4,9 +4,9 @@
 
 #include "commands/RunAlgaeIntake.h"
 
-RunAlgaeIntake::RunAlgaeIntake()
+RunAlgaeIntake::RunAlgaeIntake(IntakeAlgae *_intakeAlgae) : m_intakeAlgae{_intakeAlgae}
 {
-  // Use addRequirements() here to declare subsystem dependencies.
+  AddRequirements(m_intakeAlgae);
 }
 
 // Called when the command is initially scheduled.
@@ -15,7 +15,7 @@ void RunAlgaeIntake::Initialize() {}
 // Called repeatedly when this Command is scheduled to run
 void RunAlgaeIntake::Execute()
 {
-  intakeAlgae.Intake(0.5);
+  m_intakeAlgae->Intake(0.5);
 }
 
 // Called once the command ends or is interrupted.

@@ -4,20 +4,33 @@
 
 #include "subsystems/IntakeCoral.h"
 
-IntakeCoral::IntakeCoral() : coralMotorController(1) {};
+IntakeCoral::IntakeCoral() {};
 
 // This method will be called once per scheduler run
 void IntakeCoral::Periodic() {}
+
+void IntakeCoral::SetConfig()
+{
+    if (!Configure)
+    {
+        ctre::phoenix::motorcontrol::can::TalonSRXConfiguration config;
+        config.peakCurrentLimit = 40;
+        config.peakCurrentDuration = 1500;
+        config.continuousCurrentLimit = 30;
+        coralIntakeMotor.ConfigAllSettings(config);
+        Configure = true;
+    }
+}
 
 void IntakeCoral::Intake(int Speed)
 {
     // if (!limitSwitch.Get())
     // {
-    coralMotorController.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, Speed);
+    // coralMotorController.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, Speed);
     // }
 }
 
 void IntakeCoral::Outtake(int Speed)
 {
-    coralMotorController.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, -Speed);
+    // coralMotorController.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, -Speed);
 }

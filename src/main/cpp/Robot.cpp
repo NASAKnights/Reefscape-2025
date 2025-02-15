@@ -5,7 +5,8 @@
 #include <pathplanner/lib/auto/AutoBuilder.h>
 #include <pathplanner/lib/auto/NamedCommands.h>
 
-Robot::Robot()
+Robot::Robot(RunCoralIntake _runCoralIntake, RunCoralOuttake _runCoralOuttake, RunAlgaeIntake _runAlgaeIntake, RunAlgaeOuttake _runAlgaeOuttake)
+    : m_runCoralIntake{_runCoralIntake}, m_runCoralOuttake{_runCoralOuttake}, m_runAlgaeIntake{_runAlgaeIntake}, m_runAlgaeOuttake{m_runAlgaeOuttake}
 {
     this->CreateRobot();
 }
@@ -181,7 +182,7 @@ void Robot::BindCommands()
         .OnTrue(new GrabAlgaeL3);
 
     frc2::JoystickButton(&m_operatorController, 7)
-        .OnTrue(new RunAlgaeOuttake);
+        .OnTrue(new RunAlgaeOuttake(m_runAlgaeOuttake));
 
     frc2::JoystickButton(&m_operatorController, 8)
         .OnTrue(new ScoreAlgae);
@@ -193,10 +194,10 @@ void Robot::BindCommands()
         .OnTrue(new ClimbCage);
 
     frc2::POVButton(&m_operatorController, 0)
-        .OnTrue(new RunCoralOuttake);
+        .OnTrue(new RunCoralOuttake(m_runCoralOuttake));
 
     frc2::POVButton(&m_operatorController, 180)
-        .OnTrue(new RunCoralIntake);
+        .OnTrue(new RunCoralIntake(m_runCoralIntake));
 }
 
 void Robot::DisabledPeriodic() {}

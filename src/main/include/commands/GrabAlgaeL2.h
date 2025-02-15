@@ -15,5 +15,8 @@ class GrabAlgaeL2
                                  GrabAlgaeL2>
 {
 public:
-  GrabAlgaeL2();
+  GrabAlgaeL2(IntakeAlgae *_intakeAlgae);
+
+private:
+  IntakeAlgae *m_intakeAlgae;
 };

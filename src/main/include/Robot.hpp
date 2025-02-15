@@ -49,7 +49,7 @@
 class Robot : public frc::TimedRobot
 {
 public:
-    Robot();
+    Robot(RunCoralIntake _runCoralIntake, RunCoralOuttake _runCoralOuttake, RunAlgaeIntake _runAlgaeIntake, RunAlgaeOuttake _runAlgaeOuttake);
 
     //
     // Robot Schedule methods
@@ -78,10 +78,10 @@ private:
 
     // Subsystems
 
-    RunCoralIntake runCoralIntake;
-    RunCoralOuttake runCoralOuttake;
-    RunAlgaeIntake runAlgaeIntake;
-    RunAlgaeOuttake runAlgaeOuttake;
+    RunCoralIntake m_runCoralIntake;
+    RunCoralOuttake m_runCoralOuttake;
+    RunAlgaeIntake m_runAlgaeIntake;
+    RunAlgaeOuttake m_runAlgaeOuttake;
     PlaceL4 placeL4;
     PlaceL3 placeL3;
     PlaceL2 placeL2;

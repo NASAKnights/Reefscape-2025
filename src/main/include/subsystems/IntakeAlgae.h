@@ -5,28 +5,24 @@
 #pragma once
 
 #include <frc2/command/SubsystemBase.h>
-#include "ctre/phoenix6/TalonFX.hpp"
-#include <frc/DigitalInput.h>
 #include <ctre/phoenix/motorcontrol/can/TalonSRX.h>
 
 class IntakeAlgae : public frc2::SubsystemBase
 {
 public:
   IntakeAlgae();
+  void SetConfig();
   void Intake(int Speed);
   void Outtake(int Speed);
-
-  ctre::phoenix::motorcontrol::can::TalonSRX AlgaeMotorController;
-
-  // frc::DigitalInput limitSwitch;
 
   /**
    * Will be called periodically whenever the CommandScheduler runs.
    */
-  void
-  Periodic() override;
+  void Periodic() override;
 
 private:
+  bool Configure = false;
+  ctre::phoenix::motorcontrol::can::TalonSRX AlgaeMotorController{1};
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
 };

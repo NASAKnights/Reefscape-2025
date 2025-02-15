@@ -4,9 +4,10 @@
 
 #include "commands/RunCoralOuttake.h"
 
-RunCoralOuttake::RunCoralOuttake()
+RunCoralOuttake::RunCoralOuttake(IntakeCoral *_intakeCoral)
+    : m_intakeCoral{_intakeCoral}
 {
-  // Use addRequirements() here to declare subsystem dependencies.
+  AddRequirements(m_intakeCoral);
 }
 
 // Called when the command is initially scheduled.
@@ -15,7 +16,7 @@ void RunCoralOuttake::Initialize() {}
 // Called repeatedly when this Command is scheduled to run
 void RunCoralOuttake::Execute()
 {
-  intakeCoral.Outtake(0.5);
+  m_intakeCoral->Outtake(0.5);
 }
 
 // Called once the command ends or is interrupted.
