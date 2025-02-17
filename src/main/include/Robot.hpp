@@ -29,6 +29,10 @@
 #include <units/velocity.h>
 
 #include "subsystems/Elevator.h"
+#include "subsystems/Climber.h"
+
+#include "commands/ClimbCage.h"
+#include "commands/DeployClimb.h"
 
 #include <cmath>
 
@@ -63,6 +67,7 @@ private:
     // Subsystems
     SwerveDrive m_swerveDrive;
     ElevatorSubsystem m_elevator;
+    Climber m_climber;
 
     frc::PowerDistribution m_pdh =
         frc::PowerDistribution{1, frc::PowerDistribution::ModuleType::kRev};
