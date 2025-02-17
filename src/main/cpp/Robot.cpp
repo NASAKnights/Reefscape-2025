@@ -1,12 +1,8 @@
 // Copyright (c) FRC Team 122. All Rights Reserved.
 
 #include "Robot.hpp"
-#include <pathplanner/lib/commands/PathPlannerAuto.h>
-#include <pathplanner/lib/auto/AutoBuilder.h>
-#include <pathplanner/lib/auto/NamedCommands.h>
 
-Robot::Robot(RunCoralIntake _runCoralIntake, RunCoralOuttake _runCoralOuttake, RunAlgaeIntake _runAlgaeIntake, RunAlgaeOuttake _runAlgaeOuttake)
-    : m_runCoralIntake{_runCoralIntake}, m_runCoralOuttake{_runCoralOuttake}, m_runAlgaeIntake{_runAlgaeIntake}, m_runAlgaeOuttake{m_runAlgaeOuttake}
+Robot::Robot()
 {
     this->CreateRobot();
 }
@@ -176,13 +172,13 @@ void Robot::BindCommands()
         .OnTrue(new PlaceL1);
 
     frc2::JoystickButton(&m_operatorController, 5)
-        .OnTrue(new GrabAlgaeL2);
+        .OnTrue(new GrabAlgaeL2(m_intakeAlgae));
 
     frc2::JoystickButton(&m_operatorController, 6)
-        .OnTrue(new GrabAlgaeL3);
+        .OnTrue(new GrabAlgaeL3(m_intakeAlgae));
 
     frc2::JoystickButton(&m_operatorController, 7)
-        .OnTrue(new RunAlgaeOuttake(m_runAlgaeOuttake));
+        .OnTrue(new RunAlgaeOuttake(*m_runAlgaeOuttake));
 
     frc2::JoystickButton(&m_operatorController, 8)
         .OnTrue(new ScoreAlgae);
@@ -194,10 +190,10 @@ void Robot::BindCommands()
         .OnTrue(new ClimbCage);
 
     frc2::POVButton(&m_operatorController, 0)
-        .OnTrue(new RunCoralOuttake(m_runCoralOuttake));
+        .OnTrue(new RunCoralOuttake(*m_runCoralOuttake));
 
     frc2::POVButton(&m_operatorController, 180)
-        .OnTrue(new RunCoralIntake(m_runCoralIntake));
+        .OnTrue(new RunCoralIntake(*m_runCoralIntake));
 }
 
 void Robot::DisabledPeriodic() {}

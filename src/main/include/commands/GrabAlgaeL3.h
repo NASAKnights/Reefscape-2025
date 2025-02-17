@@ -4,6 +4,11 @@
 
 #pragma once
 
+#include "commands/SetElevatorHeight.h"
+#include "commands/Reset.h"
+#include "commands/ChangeIntakeAngle.h"
+#include "commands/RunAlgaeIntake.h"
+#include <frc2/command/ParallelCommandGroup.h>
 #include <frc2/command/CommandHelper.h>
 #include <frc2/command/SequentialCommandGroup.h>
 
@@ -18,4 +23,6 @@ public:
   GrabAlgaeL3(IntakeAlgae *_intakeAlgae);
 
   IntakeAlgae *m_intakeAlgae;
+
+private:
 };

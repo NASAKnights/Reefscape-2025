@@ -26,20 +26,20 @@
 #include "subsystems/SwerveDrive.hpp"
 #include "subsystems/Elevator.h"
 
-// For testing
-#include <Commands/RunCoralIntake.h>
-#include <Commands/RunCoralOuttake.h>
-#include <Commands/RunAlgaeIntake.h>
-#include <Commands/RunAlgaeOuttake.h>
-#include <Commands/PlaceL4.h>
-#include <Commands/PlaceL3.h>
-#include <Commands/PlaceL2.h>
-#include <Commands/PlaceL1.h>
-#include <commands/GrabAlgaeL2.h>
-#include <commands/GrabAlgaeL3.h>
-#include <commands/ScoreAlgae.h>
-#include <commands/DeployClimber.h>
-#include <commands/ClimbCage.h>
+#include "Commands/RunCoralIntake.h"
+#include "Commands/RunCoralOuttake.h"
+#include "Commands/RunAlgaeIntake.h"
+#include "Commands/RunAlgaeOuttake.h"
+#include "Commands/PlaceL4.h"
+#include "Commands/PlaceL3.h"
+#include "Commands/PlaceL2.h"
+#include "Commands/PlaceL1.h"
+#include "commands/GrabAlgaeL2.h"
+#include "commands/GrabAlgaeL3.h"
+#include "commands/ScoreAlgae.h"
+#include "commands/DeployClimber.h"
+#include "commands/ClimbCage.h"
+#include "subsystems/IntakeAlgae.h"
 
 #include <units/angular_velocity.h>
 #include <units/velocity.h>
@@ -49,7 +49,7 @@
 class Robot : public frc::TimedRobot
 {
 public:
-    Robot(RunCoralIntake _runCoralIntake, RunCoralOuttake _runCoralOuttake, RunAlgaeIntake _runAlgaeIntake, RunAlgaeOuttake _runAlgaeOuttake);
+    Robot();
 
     //
     // Robot Schedule methods
@@ -78,16 +78,13 @@ private:
 
     // Subsystems
 
-    RunCoralIntake m_runCoralIntake;
-    RunCoralOuttake m_runCoralOuttake;
-    RunAlgaeIntake m_runAlgaeIntake;
-    RunAlgaeOuttake m_runAlgaeOuttake;
-    PlaceL4 placeL4;
-    PlaceL3 placeL3;
-    PlaceL2 placeL2;
-    PlaceL1 placeL1;
-    GrabAlgaeL2 grabAlgaeL2;
-    GrabAlgaeL3 grabAlgaeL3;
+    RunCoralIntake *m_runCoralIntake;
+    RunCoralOuttake *m_runCoralOuttake;
+    RunAlgaeIntake *m_runAlgaeIntake;
+    RunAlgaeOuttake *m_runAlgaeOuttake;
+    GrabAlgaeL2 *m_grabAlgaeL2;
+    GrabAlgaeL3 *m_grabAlgaeL3;
+    IntakeAlgae *m_intakeAlgae;
 
     DeployClimber deployClimber;
     ClimbCage climbCage;
