@@ -15,7 +15,7 @@ void RunAlgaeOuttake::Initialize() {}
 // Called repeatedly when this Command is scheduled to run
 void RunAlgaeOuttake::Execute()
 {
-  m_intakeAlgae->Outtake(0.5);
+  m_intakeAlgae->Outtake(-1.0);
 }
 
 // Called once the command ends or is interrupted.
