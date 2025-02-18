@@ -19,7 +19,10 @@ void RunAlgaeOuttake::Execute()
 }
 
 // Called once the command ends or is interrupted.
-void RunAlgaeOuttake::End(bool interrupted) {}
+void RunAlgaeOuttake::End(bool interrupted)
+{
+  m_intakeAlgae->stopMotors();
+}
 
 // Returns true when the command should end.
 bool RunAlgaeOuttake::IsFinished()

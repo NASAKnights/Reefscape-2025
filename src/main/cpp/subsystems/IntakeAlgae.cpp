@@ -4,7 +4,10 @@
 
 #include "subsystems/IntakeAlgae.h"
 
-IntakeAlgae::IntakeAlgae() = default;
+IntakeAlgae::IntakeAlgae()
+{
+    SetConfig();
+}
 
 // This method will be called once per scheduler run
 void IntakeAlgae::Periodic() {}
@@ -22,17 +25,24 @@ void IntakeAlgae::SetConfig()
     }
 }
 
-void IntakeAlgae::Intake(int Speed)
+void IntakeAlgae::Intake(double Speed)
 {
-    SetConfig();
-    // if (!limitSwitch.Get())
-    // {
-    // AlgaeMotorController.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, Speed);
-    // }
+    // SetConfig();
+    AlgaeMotorController.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, Speed);
 }
 
-void IntakeAlgae::Outtake(int Speed)
+void IntakeAlgae::Outtake(double Speed)
 {
-    SetConfig();
-    // AlgaeMotorController.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, -Speed);
+    // SetConfig();
+    AlgaeMotorController.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, Speed);
+}
+
+void IntakeAlgae::stopMotors()
+{
+    AlgaeMotorController.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0.0);
+}
+
+bool IntakeAlgae::hasAlgae()
+{
+    return AlgaeMotorController.IsFwdLimitSwitchClosed();
 }

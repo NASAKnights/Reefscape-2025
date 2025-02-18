@@ -12,9 +12,12 @@ class IntakeCoral : public frc2::SubsystemBase
 {
 public:
   IntakeCoral();
-  void Intake(int Speed);
-  void Outtake(int Speed);
+  void Intake(double Speed);
+  void Outtake(double Speed);
   void SetConfig();
+  void stopMotors();
+
+  bool hasCoral();
 
   // frc::DigitalInput limitSwitch;
 

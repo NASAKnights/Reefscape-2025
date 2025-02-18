@@ -12,8 +12,11 @@ class IntakeAlgae : public frc2::SubsystemBase
 public:
   IntakeAlgae();
   void SetConfig();
-  void Intake(int Speed);
-  void Outtake(int Speed);
+  void Intake(double Speed);
+  void Outtake(double Speed);
+  void stopMotors();
+
+  bool hasAlgae();
 
   /**
    * Will be called periodically whenever the CommandScheduler runs.

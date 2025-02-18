@@ -22,15 +22,22 @@ void IntakeCoral::SetConfig()
     }
 }
 
-void IntakeCoral::Intake(int Speed)
+void IntakeCoral::Intake(double Speed)
 {
-    // if (!limitSwitch.Get())
-    // {
-    // coralMotorController.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, Speed);
-    // }
+    coralIntakeMotor.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, Speed);
 }
 
-void IntakeCoral::Outtake(int Speed)
+void IntakeCoral::Outtake(double Speed)
 {
-    // coralMotorController.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, -Speed);
+    coralIntakeMotor.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, Speed);
+}
+
+void IntakeCoral::stopMotors()
+{
+    coralIntakeMotor.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0.0);
+}
+
+bool IntakeCoral::hasCoral()
+{
+    return coralIntakeMotor.IsFwdLimitSwitchClosed();
 }

@@ -19,7 +19,10 @@ void RunCoralIntake::Execute()
 }
 
 // Called once the command ends or is interrupted.
-void RunCoralIntake::End(bool interrupted) {}
+void RunCoralIntake::End(bool interrupted)
+{
+  m_intakeCoral->stopMotors();
+}
 
 // Returns true when the command should end.
 bool RunCoralIntake::IsFinished()
