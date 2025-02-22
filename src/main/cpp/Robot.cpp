@@ -160,6 +160,12 @@ void Robot::BindCommands()
                 m_elevator.SetHeight(ElevatorConstants::lowerLimit.value());
                 return;
             })));
+
+    frc2::JoystickButton(&m_operatorController, 9)
+        .WhileTrue(ClimbCage(&m_climber).ToPtr());
+
+    frc2::JoystickButton(&m_operatorController, 10)
+        .WhileTrue(DeployClimb(&m_climber).ToPtr());
 }
 
 void Robot::DisabledPeriodic() {}
