@@ -9,6 +9,20 @@ TBD: ???
 
 # Changelog
 
+### Updated 2/22/25
+
+- Intake for both Coral and Algae have been merged into main
+- LED Controller has been merged into main
+- Current version of Visual Servoing has been merged into main
+- Climber Subsystem has been merged into main
+
+### Updated 2/1/25
+
+- Elevator code has been merged into main
+- Elevator code works with running the elevator in the correct direction but with no load at the moment
+- PID values for swerve steering have been tuned
+- Some libraries have been updated to new version
+
 ### Updated 1/28/25
 
 - Persistent Constants only work with the 2024 version of Shuffleboard, network tables are still intact but interaction with values differ between 2025 Shuffleboard and 2024 Shuffleboard

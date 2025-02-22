@@ -11,6 +11,7 @@
 #include <frc/TimedRobot.h>
 #include <frc/shuffleboard/Shuffleboard.h>
 #include <frc/smartdashboard/SmartDashboard.h>
+#include "utils/POIGenerator.h"
 
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/CommandScheduler.h>
@@ -24,10 +25,35 @@
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
 
 #include "subsystems/SwerveDrive.hpp"
+#include "subsystems/Elevator.h"
 #include "subsystems/Wrist.h"
+
+#include "Commands/RunCoralIntake.h"
+#include "Commands/RunCoralOuttake.h"
+#include "Commands/RunAlgaeIntake.h"
+#include "Commands/RunAlgaeOuttake.h"
+#include "Commands/PlaceL4.h"
+#include "Commands/PlaceL3.h"
+#include "Commands/PlaceL2.h"
+#include "Commands/PlaceL1.h"
+#include "commands/GrabAlgaeL2.h"
+#include "commands/GrabAlgaeL3.h"
+#include "commands/ScoreAlgae.h"
+#include "commands/ClimbCage.h"
+#include "subsystems/IntakeAlgae.h"
 
 #include <units/angular_velocity.h>
 #include <units/velocity.h>
+
+#include "subsystems/Elevator.h"
+
+#include "subsystems/LEDController.h"
+#include "subsystems/Climber.h"
+#include "subsystems/IntakeAlgae.h"
+#include "subsystems/IntakeCoral.h"
+
+#include "commands/ClimbCage.h"
+#include "commands/DeployClimb.h"
 
 #include <cmath>
 
@@ -52,14 +78,30 @@ public:
     void SimulationInit() override;
     void SimulationPeriodic() override;
 
+    // For Testing
+
 private:
     // Have it empty by default so that if testing teleop it
     // doesn't have undefined behavior and potentially crash.
     std::optional<frc2::CommandPtr> m_autonomousCommand;
 
+    std::map<int, std::pair<pathplanner::PathPlannerAuto, frc::Pose2d>> autoMap;
+
+    LEDController m_LED_Controller;
+
     // Subsystems
+
+    IntakeCoral m_CoralIntake;
+    IntakeAlgae m_AlgaeIntake;
+
     SwerveDrive m_swerveDrive;
     WristSubsystem m_wrist;
+    ElevatorSubsystem m_elevator;
+    Climber m_climber;
+
+    std::string_view baseLink = "base_link";
+
+    std::string targetKey = "POI/TestPersist";
 
     frc::PowerDistribution m_pdh =
         frc::PowerDistribution{1, frc::PowerDistribution::ModuleType::kRev};
@@ -74,6 +116,16 @@ private:
     wpi::log::DoubleLogEntry m_PowerLog;
     wpi::log::DoubleLogEntry m_EnergyLog;
     wpi::log::DoubleLogEntry m_TemperatureLog;
+
+    POIGenerator m_poiGenerator;
+
+    frc2::CommandPtr addPOICommand = frc2::CommandPtr(frc2::InstantCommand([this]
+                                                                           { return m_poiGenerator.MakePOI(); }))
+                                         .IgnoringDisable(true);
+
+    frc2::CommandPtr removePOICommand = frc2::CommandPtr(frc2::InstantCommand([this]
+                                                                              { return m_poiGenerator.RemovePOI(); }))
+                                            .IgnoringDisable(true);
 
     // Robot Container methods
     void CreateRobot();

@@ -48,6 +48,10 @@ SwerveDrive::SwerveDrive()
     auto visionStdDevs = wpi::array<double, 3U>{0.9, 0.9, 1.8};
     m_poseEstimator.SetVisionMeasurementStdDevs(visionStdDevs);
 
+    m_visionPoseEstimator = PoseEstimator();
+
+    timer.Start();
+
     poseTable = networkTableInst.GetTable("ROS2Bridge");
     baseLink1Subscribe = poseTable->GetDoubleArrayTopic(baseLink1).Subscribe(
         {}, {.periodic = 0.01, .sendAll = true});
@@ -148,6 +152,23 @@ void SwerveDrive::Drive(frc::ChassisSpeeds speeds)
 {
     if (enable)
     {
+        auto dT = timer.Get();
+        timer.Reset();
+
+        auto prevVX = frc::SmartDashboard::GetNumber("drive/vx", 0.0);
+        auto prevVY = frc::SmartDashboard::GetNumber("drive/vy", 0.0);
+        double accelLimit = frc::SmartDashboard::GetNumber("drive/accelLim", 4.0);
+
+        double velocityCommanded = std::sqrt(std::pow(speeds.vx.value(), 2) + std::pow(speeds.vy.value(), 2));
+        double prevVelocity = std::sqrt(std::pow(prevVX, 2) + std::pow(prevVY, 2));
+
+        velocityCommanded = std::min(accelLimit * dT.value() + (prevVelocity), velocityCommanded);
+
+        Eigen::Vector2d prevVelocityVector(speeds.vx.value(), speeds.vy.value());
+        Eigen::Vector2d a = prevVelocityVector.Unit(0) * velocityCommanded;
+
+        speeds.vx = units::velocity::meters_per_second_t(a[0]);
+        speeds.vy = units::velocity::meters_per_second_t(a[1]);
 
         auto states = kSwerveKinematics.ToSwerveModuleStates(speeds);
 
@@ -372,6 +393,71 @@ void SwerveDrive::DisableDrive()
     enable = false;
     // frc::SmartDashboard::PutBoolean("TestTestTest", enable);
 }
+
+void SwerveDrive::WeightedDriving(bool approach, double leftXAxis,
+                                  double leftYAxis, double rightXAxis, std::string poiKey)
+{
+    auto dT = timer.Get();
+    timer.Reset();
+
+    auto Po = frc::SmartDashboard::GetNumber("Note Po", 0.0);
+    auto Px = frc::SmartDashboard::GetNumber("Note Px", 0.0);
+    auto Py = frc::SmartDashboard::GetNumber("Note Py", 0.0);
+    auto Do = frc::SmartDashboard::GetNumber("Note Do", 0.0);
+
+    // TODO: Continue tuning
+    frc::Pose2d Target;
+
+    if (poiKey == "vision")
+    {
+        Target = m_visionPoseEstimator.GetMeasurement();
+    }
+    else
+    {
+        frc::Pose2d POI = poiGenerator.GetPOI(poiKey);
+        Target = POI.RelativeTo(m_poseEstimator.GetEstimatedPosition());
+    }
+
+    auto targetX = Target.X();
+    auto targetY = Target.Y();
+    auto targetRotation = Target.Rotation().Radians().value();
+
+    frc::SmartDashboard::PutNumber("TargetRotation", targetRotation);
+
+    auto unsaturatedX = double(approach * targetX * Px);
+    auto unsaturatedY = double(approach * targetY * Py);
+    auto unsaturatedPO = double(approach * targetRotation * Po);
+    // auto unsaturatedDO = double(approach * (TargetRotation - prevOError) / dT * Do);
+
+    // prevOError = targetRotation;
+    auto saturatedX = std::copysign(std::min(std::abs(unsaturatedX), 0.5), unsaturatedX);
+    auto saturatedY = std::copysign(std::min(std::abs(unsaturatedY), 0.5), unsaturatedY);
+    auto saturatedOmega = std::copysign(std::min(std::abs(unsaturatedPO), 0.4), unsaturatedPO);
+
+    // Code with dampening
+    // auto saturatedOmega = std::copysign(std::min(std::abs(unsaturatedPO - unsaturatedDO),
+    //                                              frc::SmartDashboard::GetNumber("Note P", 0.4)),
+    //                                     unsaturatedPO - unsaturatedDO);
+
+    auto vx =
+        units::meters_per_second_t(saturatedX +
+                                   double(-leftXAxis * DriveConstants::kMaxTranslationalVelocity));
+
+    auto vy =
+        units::meters_per_second_t(saturatedY +
+                                   double(-leftYAxis * DriveConstants::kMaxTranslationalVelocity));
+
+    auto omega =
+        units::radians_per_second_t(saturatedOmega +
+                                    double(-rightXAxis * DriveConstants::kMaxRotationalVelocity));
+
+    Drive(frc::ChassisSpeeds::FromFieldRelativeSpeeds(
+        vx,
+        vy,
+        omega,
+        GetHeading()));
+}
+
 bool SwerveDrive::atSetpoint()
 {
     if (pos_Error < 0.05)
@@ -400,9 +486,9 @@ void SwerveDrive::PeriodicShuffleboard()
     // frc::SmartDashboard::GetNumber("SmartDashboard/Swerve/MaxTranslationalVelocity", 0);
 }
 
-void SwerveDrive::ShuffleboardInit()
-{
-}
+
+void SwerveDrive::ShuffleboardInit() {}
+
 
 void SwerveDrive::SetOffsets()
 {
