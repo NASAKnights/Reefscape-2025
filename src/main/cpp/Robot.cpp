@@ -18,7 +18,6 @@ void Robot::RobotInit()
     m_EnergyLog = wpi::log::DoubleLogEntry(log, "/PDP/Energy");
     m_TemperatureLog = wpi::log::DoubleLogEntry(log, "/PDP/Temperature");
 
-
     frc::SmartDashboard::PutString("POIName", "");
     frc::SmartDashboard::PutData("AddPOI", addPOICommand.get());
     frc::SmartDashboard::PutData("RemovePOI", removePOICommand.get());
@@ -33,7 +32,6 @@ void Robot::RobotInit()
     auto a4Pose = pathplanner::PathPlannerAuto::getPathGroupFromAutoFile(testAutoCalibration)[0]->getPathPoses()[0];
     auto entry4 = std::make_pair(std::move(a4), a4Pose);
     autoMap.emplace(1, std::move(entry4));
-
 };
 
 // This function is called every 20 ms
@@ -173,42 +171,41 @@ void Robot::BindCommands()
                 return;
             })));
 
-
     // --------------OPERATOR BUTTONS--------------------------------
     /* frc2::JoystickButton(&m_operatorController, 1)
         .OnTrue(frc2::CommandPtr(frc2::InstantCommand([this]
                                                       { return exampleCommandHere(); })));
     Example Button */
 
+    // frc2::JoystickButton(&m_operatorController, 1)
+    //     .OnTrue(new PlaceL4);
+
+    // frc2::JoystickButton(&m_operatorController, 2)
+    //     .OnTrue(new PlaceL3);
+
+    // frc2::JoystickButton(&m_operatorController, 3)
+    //     .OnTrue(new PlaceL2);
+
+    // frc2::JoystickButton(&m_operatorController, 4)
+    //     .OnTrue(new PlaceL1);
+
+    // frc2::JoystickButton(&m_operatorController, 5)
+    //     .OnTrue(new GrabAlgaeL2(m_intakeAlgae));
+
+    // frc2::JoystickButton(&m_operatorController, 6)
+    //     .OnTrue(new GrabAlgaeL3(m_intakeAlgae));
+
     frc2::JoystickButton(&m_operatorController, 1)
-        .OnTrue(new PlaceL4);
+        .WhileTrue(RunAlgaeOuttake(&m_AlgaeIntake).ToPtr());
 
     frc2::JoystickButton(&m_operatorController, 2)
-        .OnTrue(new PlaceL3);
+        .WhileTrue(RunAlgaeIntake(&m_AlgaeIntake).ToPtr());
 
     frc2::JoystickButton(&m_operatorController, 3)
-        .OnTrue(new PlaceL2);
+        .WhileTrue(RunCoralOuttake(&m_CoralIntake).ToPtr());
 
     frc2::JoystickButton(&m_operatorController, 4)
-        .OnTrue(new PlaceL1);
-
-    frc2::JoystickButton(&m_operatorController, 5)
-        .OnTrue(new GrabAlgaeL2(m_intakeAlgae));
-
-    frc2::JoystickButton(&m_operatorController, 6)
-        .OnTrue(new GrabAlgaeL3(m_intakeAlgae));
-
-    frc2::JoystickButton(&m_operatorController, 7)
-        .OnTrue(new RunAlgaeOuttake(*m_runAlgaeOuttake));
-
-    frc2::JoystickButton(&m_operatorController, 8)
-        .OnTrue(new ScoreAlgae);
-
-    frc2::POVButton(&m_operatorController, 0)
-        .OnTrue(new RunCoralOuttake(*m_runCoralOuttake));
-
-    frc2::POVButton(&m_operatorController, 180)
-        .OnTrue(new RunCoralIntake(*m_runCoralIntake));
+        .WhileTrue(RunCoralIntake(&m_CoralIntake).ToPtr());
 
     frc2::JoystickButton(&m_operatorController, 9)
         .WhileTrue(ClimbCage(&m_climber).ToPtr());

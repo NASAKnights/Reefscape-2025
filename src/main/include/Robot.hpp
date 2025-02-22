@@ -38,7 +38,6 @@
 #include "commands/GrabAlgaeL2.h"
 #include "commands/GrabAlgaeL3.h"
 #include "commands/ScoreAlgae.h"
-#include "commands/DeployClimber.h"
 #include "commands/ClimbCage.h"
 #include "subsystems/IntakeAlgae.h"
 
@@ -49,10 +48,11 @@
 
 #include "subsystems/LEDController.h"
 #include "subsystems/Climber.h"
+#include "subsystems/IntakeAlgae.h"
+#include "subsystems/IntakeCoral.h"
 
 #include "commands/ClimbCage.h"
 #include "commands/DeployClimb.h"
-
 
 #include <cmath>
 
@@ -90,17 +90,9 @@ private:
 
     // Subsystems
 
-    RunCoralIntake *m_runCoralIntake;
-    RunCoralOuttake *m_runCoralOuttake;
-    RunAlgaeIntake *m_runAlgaeIntake;
-    RunAlgaeOuttake *m_runAlgaeOuttake;
-    GrabAlgaeL2 *m_grabAlgaeL2;
-    GrabAlgaeL3 *m_grabAlgaeL3;
-    IntakeAlgae *m_intakeAlgae;
+    IntakeCoral m_CoralIntake;
+    IntakeAlgae m_AlgaeIntake;
 
-    DeployClimber deployClimber;
-    ClimbCage climbCage;
-    ScoreAlgae scoreAlgae;
     SwerveDrive m_swerveDrive;
     ElevatorSubsystem m_elevator;
     Climber m_climber;
