@@ -2,24 +2,30 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-#include "commands/ChangeIntakeAngle.h"
+#include "commands/RunAlgaeIntake.h"
 
-ChangeIntakeAngle::ChangeIntakeAngle()
+RunAlgaeIntake::RunAlgaeIntake(IntakeAlgae *_intakeAlgae) : m_intakeAlgae{_intakeAlgae}
 {
-  // Use addRequirements() here to declare subsystem dependencies.
+  AddRequirements(m_intakeAlgae);
 }
 
 // Called when the command is initially scheduled.
-void ChangeIntakeAngle::Initialize() {}
+void RunAlgaeIntake::Initialize() {}
 
 // Called repeatedly when this Command is scheduled to run
-void ChangeIntakeAngle::Execute() {}
+void RunAlgaeIntake::Execute()
+{
+  m_intakeAlgae->Intake(1.0);
+}
 
 // Called once the command ends or is interrupted.
-void ChangeIntakeAngle::End(bool interrupted) {}
+void RunAlgaeIntake::End(bool interrupted)
+{
+  m_intakeAlgae->stopMotors();
+}
 
 // Returns true when the command should end.
-bool ChangeIntakeAngle::IsFinished()
+bool RunAlgaeIntake::IsFinished()
 {
   return false;
 }

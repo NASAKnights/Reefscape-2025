@@ -6,6 +6,7 @@
 
 #include <frc2/command/Command.h>
 #include <frc2/command/CommandHelper.h>
+#include <frc/smartdashboard/SmartDashboard.h>
 
 /**
  * An example command.
@@ -14,16 +15,14 @@
  * directly; this is crucially important, or else the decorator functions in
  * Command will *not* work!
  */
-class RunIntake
-    : public frc2::CommandHelper<frc2::Command, RunIntake>
+class DeployClimber
+    : public frc2::CommandHelper<frc2::Command, DeployClimber>
 {
 public:
   /* You should consider using the more terse Command factories API instead
    * https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands
    */
-
-  /*This command would be used to run the Intake*/
-  RunIntake();
+  DeployClimber();
 
   void Initialize() override;
 

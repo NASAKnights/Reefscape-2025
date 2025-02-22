@@ -1,9 +1,6 @@
 // Copyright (c) FRC Team 122. All Rights Reserved.
 
 #include "Robot.hpp"
-#include <pathplanner/lib/commands/PathPlannerAuto.h>
-#include <pathplanner/lib/auto/AutoBuilder.h>
-#include <pathplanner/lib/auto/NamedCommands.h>
 
 Robot::Robot()
 {
@@ -138,11 +135,6 @@ void Robot::BindCommands()
             frc2::InstantCommand([this]
                                  { return m_swerveDrive.SetOffsets(); })));
 
-    // --------------OPERATOR BUTTONS--------------------------------
-    /* frc2::JoystickButton(&m_operatorController, 1)
-        .OnTrue(frc2::CommandPtr(frc2::InstantCommand([this]
-                                                      { return exampleCommandHere(); })));
-    Example Button */
     frc2::JoystickButton(&m_driverController, 3)
         .OnTrue(frc2::CommandPtr(frc2::InstantCommand(
             [this]
@@ -160,6 +152,43 @@ void Robot::BindCommands()
                 m_elevator.SetHeight(ElevatorConstants::lowerLimit.value());
                 return;
             })));
+
+
+    // --------------OPERATOR BUTTONS--------------------------------
+    /* frc2::JoystickButton(&m_operatorController, 1)
+        .OnTrue(frc2::CommandPtr(frc2::InstantCommand([this]
+                                                      { return exampleCommandHere(); })));
+    Example Button */
+
+    frc2::JoystickButton(&m_operatorController, 1)
+        .OnTrue(new PlaceL4);
+
+    frc2::JoystickButton(&m_operatorController, 2)
+        .OnTrue(new PlaceL3);
+
+    frc2::JoystickButton(&m_operatorController, 3)
+        .OnTrue(new PlaceL2);
+
+    frc2::JoystickButton(&m_operatorController, 4)
+        .OnTrue(new PlaceL1);
+
+    frc2::JoystickButton(&m_operatorController, 5)
+        .OnTrue(new GrabAlgaeL2(m_intakeAlgae));
+
+    frc2::JoystickButton(&m_operatorController, 6)
+        .OnTrue(new GrabAlgaeL3(m_intakeAlgae));
+
+    frc2::JoystickButton(&m_operatorController, 7)
+        .OnTrue(new RunAlgaeOuttake(*m_runAlgaeOuttake));
+
+    frc2::JoystickButton(&m_operatorController, 8)
+        .OnTrue(new ScoreAlgae);
+
+    frc2::POVButton(&m_operatorController, 0)
+        .OnTrue(new RunCoralOuttake(*m_runCoralOuttake));
+
+    frc2::POVButton(&m_operatorController, 180)
+        .OnTrue(new RunCoralIntake(*m_runCoralIntake));
 
     frc2::JoystickButton(&m_operatorController, 9)
         .WhileTrue(ClimbCage(&m_climber).ToPtr());
