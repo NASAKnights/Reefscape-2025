@@ -41,7 +41,10 @@ void Robot::RobotPeriodic()
 }
 
 // This function is called once each time the robot enters Disabled mode.
-void Robot::DisabledInit() {}
+void Robot::DisabledInit()
+{
+    m_LED_Controller.DefaultAnimation();
+}
 
 void Robot::AutonomousInit()
 {
@@ -70,6 +73,7 @@ void Robot::TeleopInit()
         m_autonomousCommand->Cancel();
     }
     m_swerveDrive.TurnVisionOn(); // Turn Vision back on for Teleop
+    m_LED_Controller.TeleopLED();
 }
 
 void Robot::TeleopPeriodic()
@@ -119,6 +123,7 @@ void Robot::CreateRobot()
     // Configure the button bindings
     BindCommands();
     m_swerveDrive.ResetHeading();
+    m_LED_Controller.DefaultAnimation();
 }
 
 /**
@@ -162,7 +167,9 @@ void Robot::BindCommands()
             })));
 }
 
-void Robot::DisabledPeriodic() {}
+void Robot::DisabledPeriodic()
+{
+}
 
 void Robot::UpdateDashboard()
 {
