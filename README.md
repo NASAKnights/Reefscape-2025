@@ -9,6 +9,13 @@ TBD: ???
 
 # Changelog
 
+### Updated 2/22/25
+
+- Intake for both Coral and Algae have been merged into main
+- LED Controller has been merged into main
+- Current version of Visual Servoing has been merged into main
+- Climber Subsystem has been merged into main
+
 ### Updated 2/1/25
 
 - Elevator code has been merged into main
