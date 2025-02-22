@@ -153,6 +153,7 @@ void Robot::BindCommands()
                 return;
             })));
 
+
     // --------------OPERATOR BUTTONS--------------------------------
     /* frc2::JoystickButton(&m_operatorController, 1)
         .OnTrue(frc2::CommandPtr(frc2::InstantCommand([this]
@@ -183,17 +184,17 @@ void Robot::BindCommands()
     frc2::JoystickButton(&m_operatorController, 8)
         .OnTrue(new ScoreAlgae);
 
-    frc2::JoystickButton(&m_operatorController, 9)
-        .OnTrue(new DeployClimber);
-
-    frc2::JoystickButton(&m_operatorController, 10)
-        .OnTrue(new ClimbCage);
-
     frc2::POVButton(&m_operatorController, 0)
         .OnTrue(new RunCoralOuttake(*m_runCoralOuttake));
 
     frc2::POVButton(&m_operatorController, 180)
         .OnTrue(new RunCoralIntake(*m_runCoralIntake));
+
+    frc2::JoystickButton(&m_operatorController, 9)
+        .WhileTrue(ClimbCage(&m_climber).ToPtr());
+
+    frc2::JoystickButton(&m_operatorController, 10)
+        .WhileTrue(DeployClimb(&m_climber).ToPtr());
 }
 
 void Robot::DisabledPeriodic() {}
