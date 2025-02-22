@@ -45,10 +45,13 @@
 #include <units/velocity.h>
 
 #include "subsystems/Elevator.h"
+
+#include "subsystems/LEDController.h"
 #include "subsystems/Climber.h"
 
 #include "commands/ClimbCage.h"
 #include "commands/DeployClimb.h"
+
 
 #include <cmath>
 
@@ -81,6 +84,8 @@ private:
     std::optional<frc2::CommandPtr> m_autonomousCommand;
 
     std::map<int, std::pair<pathplanner::PathPlannerAuto, frc::Pose2d>> autoMap;
+
+    LEDController m_LED_Controller;
 
     // Subsystems
 
