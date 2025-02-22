@@ -24,12 +24,34 @@
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
 
 #include "subsystems/SwerveDrive.hpp"
+#include "subsystems/Elevator.h"
+
+#include "Commands/RunCoralIntake.h"
+#include "Commands/RunCoralOuttake.h"
+#include "Commands/RunAlgaeIntake.h"
+#include "Commands/RunAlgaeOuttake.h"
+#include "Commands/PlaceL4.h"
+#include "Commands/PlaceL3.h"
+#include "Commands/PlaceL2.h"
+#include "Commands/PlaceL1.h"
+#include "commands/GrabAlgaeL2.h"
+#include "commands/GrabAlgaeL3.h"
+#include "commands/ScoreAlgae.h"
+#include "commands/DeployClimber.h"
+#include "commands/ClimbCage.h"
+#include "subsystems/IntakeAlgae.h"
 
 #include <units/angular_velocity.h>
 #include <units/velocity.h>
 
 #include "subsystems/Elevator.h"
+
 #include "subsystems/LEDController.h"
+#include "subsystems/Climber.h"
+
+#include "commands/ClimbCage.h"
+#include "commands/DeployClimb.h"
+
 
 #include <cmath>
 
@@ -54,6 +76,8 @@ public:
     void SimulationInit() override;
     void SimulationPeriodic() override;
 
+    // For Testing
+
 private:
     // Have it empty by default so that if testing teleop it
     // doesn't have undefined behavior and potentially crash.
@@ -64,8 +88,21 @@ private:
     LEDController m_LED_Controller;
 
     // Subsystems
+
+    RunCoralIntake *m_runCoralIntake;
+    RunCoralOuttake *m_runCoralOuttake;
+    RunAlgaeIntake *m_runAlgaeIntake;
+    RunAlgaeOuttake *m_runAlgaeOuttake;
+    GrabAlgaeL2 *m_grabAlgaeL2;
+    GrabAlgaeL3 *m_grabAlgaeL3;
+    IntakeAlgae *m_intakeAlgae;
+
+    DeployClimber deployClimber;
+    ClimbCage climbCage;
+    ScoreAlgae scoreAlgae;
     SwerveDrive m_swerveDrive;
     ElevatorSubsystem m_elevator;
+    Climber m_climber;
 
     frc::PowerDistribution m_pdh =
         frc::PowerDistribution{1, frc::PowerDistribution::ModuleType::kRev};

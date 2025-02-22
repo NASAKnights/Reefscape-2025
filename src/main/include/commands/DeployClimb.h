@@ -6,7 +6,7 @@
 
 #include <frc2/command/Command.h>
 #include <frc2/command/CommandHelper.h>
-#include "subsystems/IntakeAlgae.h"
+#include "subsystems/Climber.h"
 
 /**
  * An example command.
@@ -15,19 +15,14 @@
  * directly; this is crucially important, or else the decorator functions in
  * Command will *not* work!
  */
-class ChangeIntakeAngle
-    : public frc2::CommandHelper<frc2::Command, ChangeIntakeAngle>
+class DeployClimb
+    : public frc2::CommandHelper<frc2::Command, DeployClimb>
 {
 public:
   /* You should consider using the more terse Command factories API instead
    * https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands
    */
-
-  /*This command would be used to change the angle of the wrist if we include one.
-  They said that the wrist would most likely only have 2-3 angles for the wrist.
-  One for L4, one horizontal, and one other angle for L2/L3.*/
-
-  ChangeIntakeAngle();
+  DeployClimb(Climber *_climber);
 
   void Initialize() override;
 
@@ -36,4 +31,6 @@ public:
   void End(bool interrupted) override;
 
   bool IsFinished() override;
+
+  Climber *m_climber;
 };

@@ -2,32 +2,30 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-#include "commands/ClimbCage.h"
+#include "commands/RunCoralIntake.h"
 
-ClimbCage::ClimbCage(Climber *_climber) : m_climber{_climber}
+RunCoralIntake::RunCoralIntake(IntakeCoral *_intakeCoral) : m_intakeCoral{_intakeCoral}
 {
-
-  // Use addRequirements() here to declare subsystem dependencies.
-  AddRequirements(m_climber);
+  AddRequirements(m_intakeCoral);
 }
 
 // Called when the command is initially scheduled.
-void ClimbCage::Initialize() {}
+void RunCoralIntake::Initialize() {}
 
 // Called repeatedly when this Command is scheduled to run
-void ClimbCage::Execute()
+void RunCoralIntake::Execute()
 {
-  m_climber->Climb();
+  m_intakeCoral->Intake(1.0);
 }
 
 // Called once the command ends or is interrupted.
-void ClimbCage::End(bool interrupted)
+void RunCoralIntake::End(bool interrupted)
 {
-  m_climber->Stop();
+  m_intakeCoral->stopMotors();
 }
 
 // Returns true when the command should end.
-bool ClimbCage::IsFinished()
+bool RunCoralIntake::IsFinished()
 {
   return false;
 }

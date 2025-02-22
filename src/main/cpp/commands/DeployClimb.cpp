@@ -2,32 +2,31 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-#include "commands/ClimbCage.h"
+#include "commands/DeployClimb.h"
 
-ClimbCage::ClimbCage(Climber *_climber) : m_climber{_climber}
+DeployClimb::DeployClimb(Climber *_climber) : m_climber{_climber}
 {
-
   // Use addRequirements() here to declare subsystem dependencies.
   AddRequirements(m_climber);
 }
 
 // Called when the command is initially scheduled.
-void ClimbCage::Initialize() {}
+void DeployClimb::Initialize() {}
 
 // Called repeatedly when this Command is scheduled to run
-void ClimbCage::Execute()
+void DeployClimb::Execute()
 {
-  m_climber->Climb();
+  m_climber->Deploy();
 }
 
 // Called once the command ends or is interrupted.
-void ClimbCage::End(bool interrupted)
+void DeployClimb::End(bool interrupted)
 {
   m_climber->Stop();
 }
 
 // Returns true when the command should end.
-bool ClimbCage::IsFinished()
+bool DeployClimb::IsFinished()
 {
   return false;
 }
