@@ -4,7 +4,8 @@
 
 #include "commands/ChangeIntakeAngle.h"
 
-ChangeIntakeAngle::ChangeIntakeAngle() {
+ChangeIntakeAngle::ChangeIntakeAngle()
+{
   // Use addRequirements() here to declare subsystem dependencies.
 }
 
@@ -18,6 +19,7 @@ void ChangeIntakeAngle::Execute() {}
 void ChangeIntakeAngle::End(bool interrupted) {}
 
 // Returns true when the command should end.
-bool ChangeIntakeAngle::IsFinished() {
+bool ChangeIntakeAngle::IsFinished()
+{
   return false;
 }

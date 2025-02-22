@@ -122,7 +122,8 @@ namespace ModuleConstants
         units::meter_t{0.092815210491};
     // meters / turn
 
-    const auto kWheelEffectiveDiameterCoeff = 1.11016;
+    // const auto kWheelEffectiveDiameterCoeff = 1.11016;
+    const auto kWheelEffectiveDiameterCoeff = 1.08426;
 
     const auto kWheelCircumference =
         kWheelDiameterMeters * std::numbers::pi * kWheelEffectiveDiameterCoeff / units::turn_t{1.0};
@@ -165,9 +166,9 @@ namespace ModuleConstants
     // const double kDriveV = 0.20333; // Volts / (rot / s)
     // const double kDriveA = 0.02250; // Volts / (rot / s^2)
 
-    const double kSteerP = 35.0; // TODO: ensure this works with new inversion
+    const double kSteerP = 120.0; // TODO: ensure this works with new inversion
     const double kSteerI = 0.0;
-    const double kSteerD = 0.0;
+    const double kSteerD = 0.35;
 
 } // namespace ModuleConstants
 

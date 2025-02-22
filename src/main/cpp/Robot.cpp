@@ -18,6 +18,7 @@ void Robot::RobotInit()
     m_EnergyLog = wpi::log::DoubleLogEntry(log, "/PDP/Energy");
     m_TemperatureLog = wpi::log::DoubleLogEntry(log, "/PDP/Temperature");
 
+
     frc::SmartDashboard::PutString("POIName", "");
     frc::SmartDashboard::PutData("AddPOI", addPOICommand.get());
     frc::SmartDashboard::PutData("RemovePOI", removePOICommand.get());
@@ -26,6 +27,13 @@ void Robot::RobotInit()
     auto Px = frc::SmartDashboard::PutNumber("Note Px", 1);
     auto Py = frc::SmartDashboard::PutNumber("Note Py", 1);
     auto Do = frc::SmartDashboard::PutNumber("Note Do", 0.0);
+
+    std::string testAutoCalibration = "2mForward";
+    auto a4 = pathplanner::PathPlannerAuto(testAutoCalibration);
+    auto a4Pose = pathplanner::PathPlannerAuto::getPathGroupFromAutoFile(testAutoCalibration)[0]->getPathPoses()[0];
+    auto entry4 = std::make_pair(std::move(a4), a4Pose);
+    autoMap.emplace(1, std::move(entry4));
+
 };
 
 // This function is called every 20 ms
@@ -41,13 +49,18 @@ void Robot::RobotPeriodic()
 }
 
 // This function is called once each time the robot enters Disabled mode.
-void Robot::DisabledInit() {}
+void Robot::DisabledInit()
+{
+    m_LED_Controller.DefaultAnimation();
+}
 
 void Robot::AutonomousInit()
 {
     // m_autonomousCommand = this->GetAutonomousCommand();
     m_swerveDrive.TurnVisionOff(); // don't use vision during Auto
-
+    auto start = std::move(autoMap.at(1)).second;
+    m_autonomousCommand = std::move(std::move(autoMap.at(1)).first).ToPtr();
+    m_swerveDrive.ResetPose(start);
     if (m_autonomousCommand)
     {
         m_autonomousCommand->Schedule();
@@ -62,14 +75,19 @@ void Robot::TeleopInit()
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
+    m_elevator.HoldPosition();
     if (m_autonomousCommand)
     {
         m_autonomousCommand->Cancel();
     }
     m_swerveDrive.TurnVisionOn(); // Turn Vision back on for Teleop
+    m_LED_Controller.TeleopLED();
 }
 
-void Robot::TeleopPeriodic() {}
+void Robot::TeleopPeriodic()
+{
+    m_elevator.TeleopPeriodic();
+}
 
 void Robot::TeleopExit() {}
 
@@ -117,6 +135,7 @@ void Robot::CreateRobot()
     // Configure the button bindings
     BindCommands();
     m_swerveDrive.ResetHeading();
+    m_LED_Controller.DefaultAnimation();
 }
 
 /**
@@ -136,15 +155,71 @@ void Robot::BindCommands()
             frc2::InstantCommand([this]
                                  { return m_swerveDrive.SetOffsets(); })));
 
+    frc2::JoystickButton(&m_driverController, 3)
+        .OnTrue(frc2::CommandPtr(frc2::InstantCommand(
+            [this]
+            {
+                frc::SmartDashboard::PutBoolean("lifting elevator", true);
+                m_elevator.SetHeight(ElevatorConstants::upperLimit.value());
+                return;
+            })));
+
+    frc2::JoystickButton(&m_driverController, 4)
+        .OnTrue(frc2::CommandPtr(frc2::InstantCommand(
+            [this]
+            {
+                frc::SmartDashboard::PutBoolean("lowering elevator", true);
+                m_elevator.SetHeight(ElevatorConstants::lowerLimit.value());
+                return;
+            })));
+
+
     // --------------OPERATOR BUTTONS--------------------------------
     /* frc2::JoystickButton(&m_operatorController, 1)
         .OnTrue(frc2::CommandPtr(frc2::InstantCommand([this]
                                                       { return exampleCommandHere(); })));
     Example Button */
+
+    frc2::JoystickButton(&m_operatorController, 1)
+        .OnTrue(new PlaceL4);
+
+    frc2::JoystickButton(&m_operatorController, 2)
+        .OnTrue(new PlaceL3);
+
+    frc2::JoystickButton(&m_operatorController, 3)
+        .OnTrue(new PlaceL2);
+
+    frc2::JoystickButton(&m_operatorController, 4)
+        .OnTrue(new PlaceL1);
+
+    frc2::JoystickButton(&m_operatorController, 5)
+        .OnTrue(new GrabAlgaeL2(m_intakeAlgae));
+
+    frc2::JoystickButton(&m_operatorController, 6)
+        .OnTrue(new GrabAlgaeL3(m_intakeAlgae));
+
+    frc2::JoystickButton(&m_operatorController, 7)
+        .OnTrue(new RunAlgaeOuttake(*m_runAlgaeOuttake));
+
+    frc2::JoystickButton(&m_operatorController, 8)
+        .OnTrue(new ScoreAlgae);
+
+    frc2::POVButton(&m_operatorController, 0)
+        .OnTrue(new RunCoralOuttake(*m_runCoralOuttake));
+
+    frc2::POVButton(&m_operatorController, 180)
+        .OnTrue(new RunCoralIntake(*m_runCoralIntake));
+
+    frc2::JoystickButton(&m_operatorController, 9)
+        .WhileTrue(ClimbCage(&m_climber).ToPtr());
+
+    frc2::JoystickButton(&m_operatorController, 10)
+        .WhileTrue(DeployClimb(&m_climber).ToPtr());
 }
 
 void Robot::DisabledPeriodic()
 {
+
     std::string poiName = std::string("POI/") + frc::SmartDashboard::GetString("POIName", "");
     frc::SmartDashboard::PutBoolean("IsPersist", frc::SmartDashboard::IsPersistent(poiName));
 }

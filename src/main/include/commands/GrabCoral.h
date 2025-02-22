@@ -4,6 +4,12 @@
 
 #pragma once
 
+#include "commands/SetElevatorHeight.h"
+#include "commands/Reset.h"
+#include "subsystems/IntakeCoral.h"
+#include "commands/ChangeIntakeAngle.h"
+#include "commands/RunCoralIntake.h"
+#include <frc2/command/ParallelCommandGroup.h>
 #include <frc2/command/CommandHelper.h>
 #include <frc2/command/SequentialCommandGroup.h>
 
@@ -12,7 +18,11 @@
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 class GrabCoral
     : public frc2::CommandHelper<frc2::SequentialCommandGroup,
-                                 GrabCoral> {
- public:
-  GrabCoral();
+                                 GrabCoral>
+{
+public:
+  GrabCoral(IntakeCoral *_intakeCoral);
+
+private:
+  IntakeCoral *m_intakeCoral;
 };
