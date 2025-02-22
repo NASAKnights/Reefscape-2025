@@ -11,6 +11,7 @@
 #include <frc/TimedRobot.h>
 #include <frc/shuffleboard/Shuffleboard.h>
 #include <frc/smartdashboard/SmartDashboard.h>
+#include "utils/POIGenerator.h"
 
 #include <frc2/command/CommandPtr.h>
 #include <frc2/command/CommandScheduler.h>
@@ -104,6 +105,10 @@ private:
     ElevatorSubsystem m_elevator;
     Climber m_climber;
 
+    std::string_view baseLink = "base_link";
+
+    std::string targetKey = "POI/TestPersist";
+
     frc::PowerDistribution m_pdh =
         frc::PowerDistribution{1, frc::PowerDistribution::ModuleType::kRev};
 
@@ -117,6 +122,16 @@ private:
     wpi::log::DoubleLogEntry m_PowerLog;
     wpi::log::DoubleLogEntry m_EnergyLog;
     wpi::log::DoubleLogEntry m_TemperatureLog;
+
+    POIGenerator m_poiGenerator;
+
+    frc2::CommandPtr addPOICommand = frc2::CommandPtr(frc2::InstantCommand([this]
+                                                                           { return m_poiGenerator.MakePOI(); }))
+                                         .IgnoringDisable(true);
+
+    frc2::CommandPtr removePOICommand = frc2::CommandPtr(frc2::InstantCommand([this]
+                                                                              { return m_poiGenerator.RemovePOI(); }))
+                                            .IgnoringDisable(true);
 
     // Robot Container methods
     void CreateRobot();

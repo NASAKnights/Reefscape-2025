@@ -1,0 +1,18 @@
+[
+  {
+    "name": "/SmartDashboard/POI TEST SIM",
+    "type": "double[]",
+    "value": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 40.296759],
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/SmartDashboard/POI",
+    "type": "double[]",
+    "value": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 243.357898],
+    "properties": {
+      "persistent": true
+    }
+  }
+]

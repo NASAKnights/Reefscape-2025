@@ -18,11 +18,22 @@ void Robot::RobotInit()
     m_EnergyLog = wpi::log::DoubleLogEntry(log, "/PDP/Energy");
     m_TemperatureLog = wpi::log::DoubleLogEntry(log, "/PDP/Temperature");
 
+
+    frc::SmartDashboard::PutString("POIName", "");
+    frc::SmartDashboard::PutData("AddPOI", addPOICommand.get());
+    frc::SmartDashboard::PutData("RemovePOI", removePOICommand.get());
+
+    auto Po = frc::SmartDashboard::PutNumber("Note Po", 0.0);
+    auto Px = frc::SmartDashboard::PutNumber("Note Px", 1);
+    auto Py = frc::SmartDashboard::PutNumber("Note Py", 1);
+    auto Do = frc::SmartDashboard::PutNumber("Note Do", 0.0);
+
     std::string testAutoCalibration = "2mForward";
     auto a4 = pathplanner::PathPlannerAuto(testAutoCalibration);
     auto a4Pose = pathplanner::PathPlannerAuto::getPathGroupFromAutoFile(testAutoCalibration)[0]->getPathPoses()[0];
     auto entry4 = std::make_pair(std::move(a4), a4Pose);
     autoMap.emplace(1, std::move(entry4));
+
 };
 
 // This function is called every 20 ms
@@ -103,6 +114,8 @@ void Robot::CreateRobot()
     m_swerveDrive.SetDefaultCommand(frc2::RunCommand(
         [this]
         {
+            auto approach = m_driverController.GetRawButton(3);
+
             auto leftXAxis = MathUtilNK::calculateAxis(m_driverController.GetRawAxis(1),
                                                        DriveConstants::kDefaultAxisDeadband);
             auto leftYAxis = MathUtilNK::calculateAxis(m_driverController.GetRawAxis(0),
@@ -110,10 +123,12 @@ void Robot::CreateRobot()
             auto rightXAxis = MathUtilNK::calculateAxis(m_driverController.GetRawAxis(2),
                                                         DriveConstants::kDefaultAxisDeadband);
 
-            m_swerveDrive.Drive(frc::ChassisSpeeds::FromFieldRelativeSpeeds(
-                -leftXAxis * DriveConstants::kMaxTranslationalVelocity,
-                -leftYAxis * DriveConstants::kMaxTranslationalVelocity,
-                -rightXAxis * DriveConstants::kMaxRotationalVelocity, m_swerveDrive.GetHeading()));
+            m_swerveDrive.WeightedDriving(approach, leftXAxis, leftYAxis, rightXAxis, targetKey);
+
+            // m_swerveDrive.Drive(frc::ChassisSpeeds::FromFieldRelativeSpeeds(
+            //     -leftXAxis * DriveConstants::kMaxTranslationalVelocity,
+            //     -leftYAxis * DriveConstants::kMaxTranslationalVelocity,
+            //     -rightXAxis * DriveConstants::kMaxRotationalVelocity, m_swerveDrive.GetHeading()));
         },
         {&m_swerveDrive}));
 
@@ -204,6 +219,9 @@ void Robot::BindCommands()
 
 void Robot::DisabledPeriodic()
 {
+
+    std::string poiName = std::string("POI/") + frc::SmartDashboard::GetString("POIName", "");
+    frc::SmartDashboard::PutBoolean("IsPersist", frc::SmartDashboard::IsPersistent(poiName));
 }
 
 void Robot::UpdateDashboard()
