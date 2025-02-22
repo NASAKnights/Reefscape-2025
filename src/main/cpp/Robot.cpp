@@ -49,12 +49,7 @@ void Robot::AutonomousPeriodic() {}
 
 void Robot::TeleopInit()
 {
-    // This makes sure that the autonomous stops running when
-    // teleop starts running. If you want the autonomous to
-    // continue until interrupted by another command, remove
-    // this line or comment it out.
-
-    m_wrist.Enable();
+    m_wrist.Zero();
 
     if (m_autonomousCommand)
     {
@@ -65,7 +60,7 @@ void Robot::TeleopInit()
 
 void Robot::TeleopPeriodic()
 {
-    m_wrist.handle_Setpoint();
+    m_wrist.handle_Setpoint(26);
 }
 
 void Robot::TeleopExit()
@@ -137,7 +132,7 @@ void Robot::BindCommands()
             [this]
             {
                 frc::SmartDashboard::PutBoolean("kicking", true);
-                m_wrist.kick();
+                // m_wrist.kick();
                 return;
             })))
         .OnFalse((frc2::CommandPtr(frc2::InstantCommand(

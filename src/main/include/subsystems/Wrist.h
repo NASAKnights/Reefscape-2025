@@ -12,6 +12,7 @@
 #include <rev/SparkMax.h>
 #include <units/angle.h>
 #include <units/time.h>
+#include <units/acceleration.h>
 
 #include "Constants.hpp"
 #include <frc/DigitalInput.h>
@@ -23,13 +24,12 @@
 
 namespace WristConstants
 {
-
     enum WristState
     {
-        MOVINGTOGOAL,
-        ATGOAL,
+        MOVE,
+        HOLD,
         START,
-        ZEROED,
+        ZEROED
     };
 
     const double kAngleP = 0.3;
@@ -37,9 +37,9 @@ namespace WristConstants
     const double kAngleD = 0.0; // 0.0001
     const double kIZone = 0.0;
     const auto kArmVelLimit = units::degrees_per_second_t(90.0);
-    const auto kArmAccelLimit = units::angular_acceleration::degrees_per_second_squared_t(
-        90); // Mech limit 27 rad/s^2(1500 degree_second_squared)
-    const auto kControllerTolerance = units::degree_t(2.0);
+    const auto kArmAccelLimit = units::angular_acceleration::degrees_per_second_squared_t(90); // Mech limit 27 rad/s^2(1500 degree_second_squared)
+    const units::degree_t kTolerancePos = 0.01_deg;
+    const units::degrees_per_second_t kToleranceVel = 0.05_deg_per_s;
     const int kAngleMotorId = 5;
 
     const int kAngleEncoderPulsePerRev = 42;
@@ -60,7 +60,7 @@ namespace WristConstants
     const double kWristAngleUP = 45;        // With offset
     const double kWristAngleDown = -45.0;   // with offset
     const double kMaxTimer = 2.0;           // Max time for kicking (seconds)
-    const units::angle::radian_t kTolerance = 0.0349066_rad;
+    const units::angle::degree_t kTolerance = 0.0349066_rad;
 
     const double kGearRatio = 81.0; // gear ratio for motor to arm
     const units::moment_of_inertia::kilogram_square_meter_t kmoi =
@@ -83,19 +83,21 @@ class WristSubsystem : public frc2::SubsystemBase
 public:
     WristSubsystem();
     void printLog();
-    void handle_Setpoint();
+    void handle_Setpoint(int wristAngleGoal);
     void Emergency_Stop();
     void ChangeAngle();
     void UseOutput();
     void SimulationPeriodic();
     void Enable();
     void Disable();
+    void SetAngle(double angle);
+    void Zero();
     // void get_pigeon();
     void UseOutput(double output, State setpoint);
     units::degree_t GetMeasurement();
     bool isOverLimit();
 
-    units::time::second_t time_brake_released;
+    // units::time::second_t time_brake_released;
     WristConstants::WristState m_WristState;
 
 private:
@@ -112,6 +114,10 @@ private:
     float Wrist_Angle;
     frc::PWM Linear;
     frc::DigitalInput Kill{4};
+    frc::DigitalInput Zeroed;
+
+    bool speed;
+    units::degree_t m_goal;
 
     frc::Timer m_simTimer;
 
