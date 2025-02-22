@@ -4,16 +4,19 @@
 
 #include "commands/ChangeIntakeAngle.h"
 
-ChangeIntakeAngle::ChangeIntakeAngle()
+ChangeIntakeAngle::ChangeIntakeAngle(WristSubsystem *_wrist) : m_wrist{_wrist}
 {
-  // Use addRequirements() here to declare subsystem dependencies.
+  AddRequirements(m_wrist);
 }
 
 // Called when the command is initially scheduled.
 void ChangeIntakeAngle::Initialize() {}
 
 // Called repeatedly when this Command is scheduled to run
-void ChangeIntakeAngle::Execute() {}
+void ChangeIntakeAngle::Execute()
+{
+  m_wrist->SetAngle(Angle);
+}
 
 // Called once the command ends or is interrupted.
 void ChangeIntakeAngle::End(bool interrupted) {}

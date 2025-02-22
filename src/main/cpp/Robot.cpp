@@ -1,7 +1,6 @@
 // Copyright (c) FRC Team 122. All Rights Reserved.
 
 #include "Robot.hpp"
-
 Robot::Robot()
 {
     this->CreateRobot();
@@ -22,10 +21,10 @@ void Robot::RobotInit()
     frc::SmartDashboard::PutData("AddPOI", addPOICommand.get());
     frc::SmartDashboard::PutData("RemovePOI", removePOICommand.get());
 
-    auto Po = frc::SmartDashboard::PutNumber("Note Po", 0.0);
-    auto Px = frc::SmartDashboard::PutNumber("Note Px", 1);
-    auto Py = frc::SmartDashboard::PutNumber("Note Py", 1);
-    auto Do = frc::SmartDashboard::PutNumber("Note Do", 0.0);
+    // auto Po = frc::SmartDashboard::PutNumber("Note Po", 0.0);
+    // auto Px = frc::SmartDashboard::PutNumber("Note Px", 1);
+    // auto Py = frc::SmartDashboard::PutNumber("Note Py", 1);
+    // auto Do = frc::SmartDashboard::PutNumber("Note Do", 0.0);
 
     std::string testAutoCalibration = "2mForward";
     auto a4 = pathplanner::PathPlannerAuto(testAutoCalibration);
@@ -87,9 +86,6 @@ void Robot::TeleopInit()
 void Robot::TeleopPeriodic()
 {
     m_elevator.TeleopPeriodic();
-}
-void Robot::TeleopPeriodic()
-{
 }
 
 void Robot::TeleopExit()

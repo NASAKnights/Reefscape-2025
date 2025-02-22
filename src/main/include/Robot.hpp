@@ -28,8 +28,8 @@
 #include "subsystems/Elevator.h"
 #include "subsystems/Wrist.h"
 
-#include "Commands/RunCoralIntake.h"
 #include "Commands/RunCoralOuttake.h"
+#include "Commands/RunCoralIntake.h"
 #include "Commands/RunAlgaeIntake.h"
 #include "Commands/RunAlgaeOuttake.h"
 #include "Commands/PlaceL4.h"

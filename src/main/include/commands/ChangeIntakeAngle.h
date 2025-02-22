@@ -7,6 +7,7 @@
 #include <frc2/command/Command.h>
 #include <frc2/command/CommandHelper.h>
 #include "subsystems/IntakeAlgae.h"
+#include "subsystems/Wrist.h"
 
 /**
  * An example command.
@@ -27,7 +28,7 @@ public:
   They said that the wrist would most likely only have 2-3 angles for the wrist.
   One for L4, one horizontal, and one other angle for L2/L3.*/
 
-  ChangeIntakeAngle();
+  ChangeIntakeAngle(WristSubsystem *_wrist);
 
   void Initialize() override;
 
@@ -36,4 +37,8 @@ public:
   void End(bool interrupted) override;
 
   bool IsFinished() override;
+
+  WristSubsystem *m_wrist;
+
+  int Angle;
 };

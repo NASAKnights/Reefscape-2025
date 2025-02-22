@@ -15,5 +15,7 @@ class PlaceL1
                                  PlaceL1>
 {
 public:
-  PlaceL1();
+  PlaceL1(WristSubsystem *_wrist);
+
+  WristSubsystem *m_wrist;
 };
