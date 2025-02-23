@@ -39,13 +39,13 @@ namespace ElevatorConstants
         MOVING
     };
 
-    static constexpr units::meter_t upperLimit = 3_in; // 57
+    static constexpr units::meter_t upperLimit = 15_in; // 57
     static constexpr units::meter_t lowerLimit = 1_in;
     static constexpr units::meter_t simUpperLimit = 57.1_in;
     static constexpr units::meter_t simLowerLimit = -0.1_in;
 
-    static constexpr units::meters_per_second_t kMaxVelocity = 1.0_in / 1_s;                     // 61.55
-    static constexpr units::meters_per_second_squared_t kMaxAcceleration = 1.0_in / (1_s * 1_s); // 460_in / (1_s * 1_s);
+    static constexpr units::meters_per_second_t kMaxVelocity = 15.0_in / 1_s;                    // 61.55
+    static constexpr units::meters_per_second_squared_t kMaxAcceleration = 8.0_in / (1_s * 1_s); // 460_in / (1_s * 1_s);
     static constexpr double kP = 1.0;                                                            // 0.6 - 15
     static constexpr double kI = 0.3;                                                            // 0.0
 
@@ -61,8 +61,8 @@ namespace ElevatorConstants
     const int kMotorIdRight = 6;
     // const int kEncoderPulsePerRev = 42;
 
-    static constexpr auto kFFks = 0.4_V;                  // Volts static (motor)
-    static constexpr auto kFFkg = 0.0_V;                  // 0.54_V;                         // Volts
+    static constexpr auto kFFks = 0.2_V;                  // Volts static (motor)
+    static constexpr auto kFFkg = 0.19_V;                 // 0.54_V;                         // Volts
     static constexpr auto kFFkV = 0.5 * 2.68_V / 1.0_mps; // volts*s/meters //1.01 // 2.23
     static constexpr auto kFFkA = 0.10_V / 1.0_mps_sq;    // volts*s^2/meters //0.1
 

@@ -34,10 +34,8 @@ ElevatorSubsystem::ElevatorSubsystem()
                     {0.001})
 {
 
-    
     m_encoderLeft.SetPosition(0.0);
     m_encoderRight.SetPosition(0.0);
-
 
     rev::spark::SparkBaseConfig m_motorRightConfig;
     m_motorRightConfig.Follow(m_motorLeft, true);
@@ -135,6 +133,11 @@ void ElevatorSubsystem::Periodic()
     double fb;
     units::volt_t ff;
     units::volt_t v;
+    if (m_motorLeft.GetReverseLimitSwitch().Get())
+    {
+        m_encoderLeft.SetPosition(0.0);
+        m_encoderRight.SetPosition(0.0);
+    }
     switch (m_ElevatorState)
     {
     case ElevatorConstants::DISABLED:

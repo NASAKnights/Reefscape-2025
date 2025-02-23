@@ -120,7 +120,7 @@ void Robot::CreateRobot()
     m_swerveDrive.SetDefaultCommand(frc2::RunCommand(
         [this]
         {
-            auto approach = m_driverController.GetRawButton(3);
+            auto approach = m_driverController.GetRawButton(5);
 
             auto leftXAxis = MathUtilNK::calculateAxis(m_driverController.GetRawAxis(1),
                                                        DriveConstants::kDefaultAxisDeadband);
