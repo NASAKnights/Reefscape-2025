@@ -70,6 +70,7 @@ public:
     void DisabledPeriodic() override;
     void AutonomousInit() override;
     void AutonomousPeriodic() override;
+    void AutonomousExit() override;
     void TeleopInit() override;
     void TeleopPeriodic() override;
     void TeleopExit() override;
