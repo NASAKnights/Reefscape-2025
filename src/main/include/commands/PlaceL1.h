@@ -12,7 +12,8 @@
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 class PlaceL1
     : public frc2::CommandHelper<frc2::SequentialCommandGroup,
-                                 PlaceL1> {
- public:
+                                 PlaceL1>
+{
+public:
   PlaceL1();
 };

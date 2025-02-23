@@ -6,6 +6,7 @@
 
 #include <frc2/command/Command.h>
 #include <frc2/command/CommandHelper.h>
+#include "subsystems/Climber.h"
 
 /**
  * An example command.
@@ -25,7 +26,7 @@ public:
   /*This command would be used to climb the cage.
   It is hard to explain this command because of the fact that the climber is currently not decided entirely as of writing this.*/
 
-  ClimbCage();
+  ClimbCage(Climber *_climber);
 
   void Initialize() override;
 
@@ -34,4 +35,6 @@ public:
   void End(bool interrupted) override;
 
   bool IsFinished() override;
+
+  Climber *m_climber;
 };
