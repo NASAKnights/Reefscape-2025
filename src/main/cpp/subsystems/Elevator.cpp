@@ -33,7 +33,11 @@ ElevatorSubsystem::ElevatorSubsystem()
                     ElevatorConstants::simLowerLimit, ElevatorConstants::simUpperLimit, false, 0_m,
                     {0.001})
 {
-    m_motorRight.SetInverted(true);
+    rev::spark::SparkBaseConfig m_motorRightConfig;
+    m_motorRightConfig.Follow(m_motorLeft, true);
+
+    // m_motorRight.SetInverted(true);
+    m_motorRight.Configure(m_motorRightConfig, rev::spark::SparkBase::ResetMode::kResetSafeParameters, rev::spark::SparkBase::PersistMode::kPersistParameters);
     wpi::log::DataLog &log = frc::DataLogManager::GetLog();
     m_HeightLog = wpi::log::DoubleLogEntry(log, "/Elevator/Angle");
     m_SetPointLog = wpi::log::DoubleLogEntry(log, "/Elevator/Setpoint");

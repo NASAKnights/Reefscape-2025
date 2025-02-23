@@ -107,6 +107,7 @@ private:
     // PS4 controllers
     frc::Joystick m_driverController{DriveConstants::kDriverPort};
     frc::Joystick m_operatorController{DriveConstants::kOperatorPort};
+    frc::Joystick m_DebugController{DriveConstants::kDebugControllerPort};
 
     // Power Distribution
     wpi::log::DoubleLogEntry m_VoltageLog;

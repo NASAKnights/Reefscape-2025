@@ -45,6 +45,7 @@ namespace DriveConstants
 {
     const int kDriverPort = 0;
     const int kOperatorPort = 1;
+    const int kDebugControllerPort = 2;
 
     const SDSModuleType mk4i_l1{0.10033,
                                 (14.0 / 50.0) * (25.0 / 19.0) * (15.0 / 45.0), true,

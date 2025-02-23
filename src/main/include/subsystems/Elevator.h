@@ -44,7 +44,8 @@ namespace ElevatorConstants
     static constexpr units::meter_t simLowerLimit = -0.1_in;
     static constexpr units::meters_per_second_t kMaxVelocity = 10.0_in / 1_s; // 61.55
     static constexpr units::meters_per_second_squared_t kMaxAcceleration = 460_in / (1_s * 1_s);
-    static constexpr double kP = 1.0; // 0.6 - 15
+    // static constexpr double kP = 1.0; // 0.6 - 15
+    static constexpr double kP = 0.1; // 0.6 - 15
     static constexpr double kI = 0.1; // 0.0
     static constexpr double kD = 0.0;
     static constexpr units::volt_t kS = 0.2_V; // minimum voltage to move motor
@@ -72,7 +73,8 @@ namespace ElevatorConstants
     // effective carriage mass: carriage mass = m
     // maths: 1 state = 1/1 * m1, 2 stage = 1/2 * m1 + 2/2 * m2, 3 stage = 1/3 * m1 + 2/3 * m2 + 3/3 * m3
     // highest number stage = carriage
-    static constexpr units::kilogram_t kCarriageMass = (17.5_lb + 0.5 * 5_lb);
+    // static constexpr units::kilogram_t kCarriageMass = (17.5_lb + 0.5 * 5_lb);
+    static constexpr units::kilogram_t kCarriageMass = (13_lb);
     // effective drum radius = radius of first stage * number of stages
     static constexpr units::meter_t kElevatorDrumRadius = 1.432_in * 2;
 }
