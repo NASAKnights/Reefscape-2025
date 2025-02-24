@@ -4,8 +4,8 @@
 
 #include "commands/RunCoralOuttake.h"
 
-RunCoralOuttake::RunCoralOuttake(IntakeCoral *_intakeCoral)
-    : m_intakeCoral{_intakeCoral}
+RunCoralOuttake::RunCoralOuttake(IntakeCoral *intakeCoral)
+    : m_intakeCoral{intakeCoral}
 {
   AddRequirements(m_intakeCoral);
 }

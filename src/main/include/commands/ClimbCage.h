@@ -26,7 +26,7 @@ public:
   /*This command would be used to climb the cage.
   It is hard to explain this command because of the fact that the climber is currently not decided entirely as of writing this.*/
 
-  ClimbCage(Climber *_climber);
+  ClimbCage(Climber *climber);
 
   void Initialize() override;
 

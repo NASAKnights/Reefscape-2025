@@ -19,7 +19,7 @@ class GrabAlgaeL3
                                  GrabAlgaeL3>
 {
 public:
-  GrabAlgaeL3(IntakeAlgae *_intakeAlgae);
+  GrabAlgaeL3(IntakeAlgae *intakeAlgae);
 
   IntakeAlgae *m_intakeAlgae;
 

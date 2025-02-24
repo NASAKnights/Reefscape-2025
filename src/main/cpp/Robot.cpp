@@ -141,6 +141,8 @@ void Robot::CreateRobot()
 
     AddPeriodic([this]
                 { m_elevator.Periodic(); }, 5_ms, 1_ms);
+    AddPeriodic([this]
+                { m_wrist.Periodic(); }, 10_ms, 2_ms);
     // Configure the button bindings
     BindCommands();
     m_swerveDrive.ResetHeading();
@@ -186,14 +188,13 @@ void Robot::BindCommands()
         .OnTrue(frc2::CommandPtr(frc2::InstantCommand(
             [this]
             {
-                frc::SmartDashboard::PutBoolean("kicking", true);
-                // m_wrist.kick();
+                m_wrist.SetAngle(60);
                 return;
             })))
         .OnFalse((frc2::CommandPtr(frc2::InstantCommand(
             [this]
             {
-                frc::SmartDashboard::PutBoolean("kicking", false);
+                m_wrist.SetAngle(10);
                 return;
             }))));
 

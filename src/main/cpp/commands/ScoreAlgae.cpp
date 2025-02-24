@@ -4,7 +4,7 @@
 
 #include "commands/ScoreAlgae.h"
 #include <commands/SetElevatorHeight.h>
-#include <commands/ChangeIntakeAngle.h>
+#include <commands/MoveWristToAngle.h>
 #include <commands/Reset.h>
 #include <commands/DropAlgae.h>
 // NOTE:  Consider using this command inline, rather than writing a subclass.

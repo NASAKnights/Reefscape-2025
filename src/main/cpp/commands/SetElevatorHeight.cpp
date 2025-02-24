@@ -4,7 +4,9 @@
 
 #include "commands/SetElevatorHeight.h"
 
-SetElevatorHeight::SetElevatorHeight() {
+// MIRROR WRIST COMMAND
+SetElevatorHeight::SetElevatorHeight()
+{
   // Use addRequirements() here to declare subsystem dependencies.
 }
 
@@ -18,6 +20,8 @@ void SetElevatorHeight::Execute() {}
 void SetElevatorHeight::End(bool interrupted) {}
 
 // Returns true when the command should end.
-bool SetElevatorHeight::IsFinished() {
+bool SetElevatorHeight::IsFinished()
+{
+  // TODO FIX BASED OFF STATE
   return false;
 }

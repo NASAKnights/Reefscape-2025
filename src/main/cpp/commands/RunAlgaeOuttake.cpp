@@ -4,7 +4,7 @@
 
 #include "commands/RunAlgaeOuttake.h"
 
-RunAlgaeOuttake::RunAlgaeOuttake(IntakeAlgae *_intakeAlgae) : m_intakeAlgae{_intakeAlgae}
+RunAlgaeOuttake::RunAlgaeOuttake(IntakeAlgae *intakeAlgae) : m_intakeAlgae{intakeAlgae}
 {
   AddRequirements(m_intakeAlgae);
 }

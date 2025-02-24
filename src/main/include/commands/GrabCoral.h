@@ -20,7 +20,7 @@ class GrabCoral
                                  GrabCoral>
 {
 public:
-  GrabCoral(IntakeCoral *_intakeCoral);
+  GrabCoral(IntakeCoral *intakeCoral);
 
 private:
   IntakeCoral *m_intakeCoral;

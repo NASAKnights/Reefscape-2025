@@ -4,7 +4,7 @@
 
 #include "commands/DeployClimb.h"
 
-DeployClimb::DeployClimb(Climber *_climber) : m_climber{_climber}
+DeployClimb::DeployClimb(Climber *climber) : m_climber{climber}
 {
   // Use addRequirements() here to declare subsystem dependencies.
   AddRequirements(m_climber);

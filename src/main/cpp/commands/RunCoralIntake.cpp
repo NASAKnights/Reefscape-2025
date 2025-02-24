@@ -4,7 +4,7 @@
 
 #include "commands/RunCoralIntake.h"
 
-RunCoralIntake::RunCoralIntake(IntakeCoral *_intakeCoral) : m_intakeCoral{_intakeCoral}
+RunCoralIntake::RunCoralIntake(IntakeCoral *intakeCoral) : m_intakeCoral{intakeCoral}
 {
   AddRequirements(m_intakeCoral);
 }
@@ -27,5 +27,6 @@ void RunCoralIntake::End(bool interrupted)
 // Returns true when the command should end.
 bool RunCoralIntake::IsFinished()
 {
+  // TODO FIX BASED OFF SWITCH
   return false;
 }

@@ -4,7 +4,7 @@
 
 #include "commands/RunAlgaeIntake.h"
 
-RunAlgaeIntake::RunAlgaeIntake(IntakeAlgae *_intakeAlgae) : m_intakeAlgae{_intakeAlgae}
+RunAlgaeIntake::RunAlgaeIntake(IntakeAlgae *intakeAlgae) : m_intakeAlgae{intakeAlgae}
 {
   AddRequirements(m_intakeAlgae);
 }
@@ -27,5 +27,6 @@ void RunAlgaeIntake::End(bool interrupted)
 // Returns true when the command should end.
 bool RunAlgaeIntake::IsFinished()
 {
+  // TODO FIX BASED OFF SWITCH
   return false;
 }

@@ -16,7 +16,7 @@ class PlaceL1
                                  PlaceL1>
 {
 public:
-  PlaceL1(Wrist *_wrist);
+  PlaceL1(Wrist *wrist);
 
   Wrist *m_wrist;
 };

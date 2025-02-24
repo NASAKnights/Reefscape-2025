@@ -16,8 +16,8 @@
  * directly; this is crucially important, or else the decorator functions in
  * Command will *not* work!
  */
-class ChangeIntakeAngle
-    : public frc2::CommandHelper<frc2::Command, ChangeIntakeAngle>
+class MoveWristToAngle
+    : public frc2::CommandHelper<frc2::Command, MoveWristToAngle>
 {
 public:
   /* You should consider using the more terse Command factories API instead
@@ -28,8 +28,8 @@ public:
   They said that the wrist would most likely only have 2-3 angles for the wrist.
   One for L4, one horizontal, and one other angle for L2/L3.*/
 
-  ChangeIntakeAngle(Wrist *_wrist);
-  ChangeIntakeAngle();
+  MoveWristToAngle(Wrist *wrist, double angle);
+  MoveWristToAngle();
 
   void Initialize() override;
 
@@ -41,5 +41,5 @@ public:
 
   Wrist *m_wrist;
 
-  int Angle;
+  double m_angle;
 };

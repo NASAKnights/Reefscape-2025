@@ -6,7 +6,7 @@
 
 #include <frc2/command/CommandHelper.h>
 #include <frc2/command/SequentialCommandGroup.h>
-#include <commands/ChangeIntakeAngle.h>
+#include <commands/MoveWristToAngle.h>
 #include <commands/SetElevatorHeight.h>
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.

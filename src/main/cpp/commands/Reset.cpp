@@ -9,7 +9,7 @@
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 Reset::Reset()
 {
-  // SetElevatorHeight{}, ChangeIntakeAngle{};
+  // SetElevatorHeight{}, MoveWristToAngle{};
   // Add your commands here, e.g.
   // AddCommands(FooCommand{}, BarCommand{});
 }
