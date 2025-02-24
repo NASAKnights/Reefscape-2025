@@ -9,7 +9,7 @@
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 GrabCoral::GrabCoral(IntakeCoral *_intakeCoral) : m_intakeCoral{_intakeCoral}
 {
-  AddCommands(frc2::ParallelCommandGroup(SetElevatorHeight(), ChangeIntakeAngle()), RunCoralIntake(m_intakeCoral), Reset());
+  // AddCommands(frc2::ParallelCommandGroup(SetElevatorHeight(), ChangeIntakeAngle()), RunCoralIntake(m_intakeCoral), Reset());
   // Add your commands here, e.g.
   // AddCommands(FooCommand{}, BarCommand{});
 }

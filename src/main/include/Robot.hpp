@@ -96,7 +96,7 @@ private:
     IntakeAlgae m_AlgaeIntake;
 
     SwerveDrive m_swerveDrive;
-    WristSubsystem m_wrist;
+    Wrist m_wrist;
     ElevatorSubsystem m_elevator;
     Climber m_climber;
 

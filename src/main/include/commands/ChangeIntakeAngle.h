@@ -28,7 +28,8 @@ public:
   They said that the wrist would most likely only have 2-3 angles for the wrist.
   One for L4, one horizontal, and one other angle for L2/L3.*/
 
-  ChangeIntakeAngle(WristSubsystem *_wrist);
+  ChangeIntakeAngle(Wrist *_wrist);
+  ChangeIntakeAngle();
 
   void Initialize() override;
 
@@ -38,7 +39,7 @@ public:
 
   bool IsFinished() override;
 
-  WristSubsystem *m_wrist;
+  Wrist *m_wrist;
 
   int Angle;
 };

@@ -4,7 +4,7 @@
 
 #include "commands/ChangeIntakeAngle.h"
 
-ChangeIntakeAngle::ChangeIntakeAngle(WristSubsystem *_wrist) : m_wrist{_wrist}
+ChangeIntakeAngle::ChangeIntakeAngle(Wrist *_wrist) : m_wrist{_wrist}
 {
   AddRequirements(m_wrist);
 }

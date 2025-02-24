@@ -6,6 +6,7 @@
 
 #include <frc2/command/CommandHelper.h>
 #include <frc2/command/SequentialCommandGroup.h>
+#include "subsystems/Wrist.h"
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.
 // For more information, see:
@@ -15,7 +16,7 @@ class PlaceL1
                                  PlaceL1>
 {
 public:
-  PlaceL1(WristSubsystem *_wrist);
+  PlaceL1(Wrist *_wrist);
 
-  WristSubsystem *m_wrist;
+  Wrist *m_wrist;
 };

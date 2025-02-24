@@ -4,7 +4,8 @@
 
 #include "commands/DropAlgae.h"
 
-DropAlgae::DropAlgae() {
+DropAlgae::DropAlgae()
+{
   // Use addRequirements() here to declare subsystem dependencies.
 }
 
@@ -18,6 +19,7 @@ void DropAlgae::Execute() {}
 void DropAlgae::End(bool interrupted) {}
 
 // Returns true when the command should end.
-bool DropAlgae::IsFinished() {
+bool DropAlgae::IsFinished()
+{
   return false;
 }

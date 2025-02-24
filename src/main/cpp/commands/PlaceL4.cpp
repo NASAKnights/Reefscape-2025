@@ -14,7 +14,7 @@
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 PlaceL4::PlaceL4()
 {
-  AddCommands(frc2::ParallelCommandGroup(SetElevatorHeight(), ChangeIntakeAngle()), DropCoral(), Reset());
+  // AddCommands(frc2::ParallelCommandGroup(SetElevatorHeight(), ChangeIntakeAngle()), DropCoral(), Reset());
   // Add your commands here, e.g.
   // AddCommands(FooCommand{}, BarCommand{});
 }
