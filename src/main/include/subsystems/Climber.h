@@ -40,9 +40,9 @@ private:
   rev::spark::SparkBaseConfig climbMainConfig;
   rev::spark::SparkBaseConfig climbFollowConfig;
 
-  rev::spark::SparkMax absoluteEncoderSub{9, rev::spark::SparkLowLevel::MotorType::kBrushed};
+  // rev::spark::SparkMax absoluteEncoderSub{9, rev::spark::SparkLowLevel::MotorType::kBrushed};
 
-  rev::spark::SparkAbsoluteEncoder climberWristEncoder = absoluteEncoderSub.GetAbsoluteEncoder();
+  rev::spark::SparkAbsoluteEncoder climberWristEncoder = climbMain.GetAbsoluteEncoder();
 
   frc::PIDController climbWristController{kClimbP, kClimbI, kClimbD};
 
