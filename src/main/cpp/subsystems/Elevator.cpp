@@ -92,7 +92,8 @@ double ElevatorSubsystem::GetHeight()
         // frc::SmartDashboard::PutBoolean("isSim", true);
         return m_elevatorSim.GetPosition().value();
     }
-    return (GetEncoderDistance(m_encoderLeft) + GetEncoderDistance(m_encoderRight) / 2.0).value();
+    // auto gearedVal = ( / ElevatorConstants::kElevatorGearing)*;
+    return ((GetEncoderDistance(m_encoderLeft) + GetEncoderDistance(m_encoderRight)) / 2.0).value();
 }
 
 units::meter_t ElevatorSubsystem::GetMeasurement()
@@ -231,7 +232,7 @@ void ElevatorSubsystem::UseOutput(double output, State setpoint)
 }
 units::meter_t ElevatorSubsystem::GetEncoderDistance(rev::spark::SparkRelativeEncoder encoder)
 {
-    return encoder.GetPosition() * 2.0 * std::numbers::pi * ElevatorConstants::kElevatorDrumRadius / 5.0;
+    return encoder.GetPosition() * 2.0 * std::numbers::pi * ElevatorConstants::kElevatorDrumRadius / ElevatorConstants::kElevatorGearing;
 }
 void ElevatorSubsystem::Disable()
 {
