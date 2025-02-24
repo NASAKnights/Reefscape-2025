@@ -28,14 +28,14 @@
 #include "subsystems/Elevator.h"
 #include "subsystems/Wrist.h"
 
-#include "Commands/RunCoralOuttake.h"
-#include "Commands/RunCoralIntake.h"
-#include "Commands/RunAlgaeIntake.h"
-#include "Commands/RunAlgaeOuttake.h"
-#include "Commands/PlaceL4.h"
-#include "Commands/PlaceL3.h"
-#include "Commands/PlaceL2.h"
-#include "Commands/PlaceL1.h"
+#include "commands/RunCoralIntake.h"
+#include "commands/RunCoralOuttake.h"
+#include "commands/RunAlgaeIntake.h"
+#include "commands/RunAlgaeOuttake.h"
+#include "commands/PlaceL4.h"
+#include "commands/PlaceL3.h"
+#include "commands/PlaceL2.h"
+#include "commands/PlaceL1.h"
 #include "commands/GrabAlgaeL2.h"
 #include "commands/GrabAlgaeL3.h"
 #include "commands/ScoreAlgae.h"
@@ -71,6 +71,7 @@ public:
     void DisabledPeriodic() override;
     void AutonomousInit() override;
     void AutonomousPeriodic() override;
+    void AutonomousExit() override;
     void TeleopInit() override;
     void TeleopPeriodic() override;
     void TeleopExit() override;
@@ -109,6 +110,7 @@ private:
     // PS4 controllers
     frc::Joystick m_driverController{DriveConstants::kDriverPort};
     frc::Joystick m_operatorController{DriveConstants::kOperatorPort};
+    frc::Joystick m_DebugController{DriveConstants::kDebugControllerPort};
 
     // Power Distribution
     wpi::log::DoubleLogEntry m_VoltageLog;

@@ -28,7 +28,7 @@ public:
 
 private:
   bool Configure = false;
-  ctre::phoenix::motorcontrol::can::TalonSRX coralIntakeMotor{1};
+  ctre::phoenix::motorcontrol::can::TalonSRX coralIntakeMotor{4};
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
 };

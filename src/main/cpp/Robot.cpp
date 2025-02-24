@@ -54,10 +54,13 @@ void Robot::DisabledInit()
 void Robot::AutonomousInit()
 {
     // m_autonomousCommand = this->GetAutonomousCommand();
+    m_elevator.HoldPosition();
     m_swerveDrive.TurnVisionOff(); // don't use vision during Auto
+
     auto start = std::move(autoMap.at(1)).second;
     m_autonomousCommand = std::move(std::move(autoMap.at(1)).first).ToPtr();
     m_swerveDrive.ResetPose(start);
+
     if (m_autonomousCommand)
     {
         m_autonomousCommand->Schedule();
@@ -65,6 +68,11 @@ void Robot::AutonomousInit()
 }
 
 void Robot::AutonomousPeriodic() {}
+
+void Robot::AutonomousExit()
+{
+    m_elevator.Disable();
+}
 
 void Robot::TeleopInit()
 {
@@ -83,14 +91,11 @@ void Robot::TeleopInit()
     m_LED_Controller.TeleopLED();
 }
 
-void Robot::TeleopPeriodic()
-{
-    m_elevator.TeleopPeriodic();
-}
+void Robot::TeleopPeriodic() {}
 
 void Robot::TeleopExit()
 {
-    m_wrist.Disable();
+    m_elevator.Disable();
 }
 
 /**
@@ -116,7 +121,7 @@ void Robot::CreateRobot()
     m_swerveDrive.SetDefaultCommand(frc2::RunCommand(
         [this]
         {
-            auto approach = m_driverController.GetRawButton(3);
+            auto approach = m_driverController.GetRawButton(5);
 
             auto leftXAxis = MathUtilNK::calculateAxis(m_driverController.GetRawAxis(1),
                                                        DriveConstants::kDefaultAxisDeadband);
@@ -134,6 +139,8 @@ void Robot::CreateRobot()
         },
         {&m_swerveDrive}));
 
+    AddPeriodic([this]
+                { m_elevator.Periodic(); }, 5_ms, 1_ms);
     // Configure the button bindings
     BindCommands();
     m_swerveDrive.ResetHeading();
@@ -152,10 +159,10 @@ void Robot::BindCommands()
             frc2::InstantCommand([this]
                                  { return m_swerveDrive.ResetHeading(); })));
 
-    frc2::JoystickButton(&m_driverController, 2)
-        .OnTrue(frc2::CommandPtr(
-            frc2::InstantCommand([this]
-                                 { return m_swerveDrive.SetOffsets(); })));
+    // frc2::JoystickButton(&m_driverController, 2)
+    //     .OnTrue(frc2::CommandPtr(
+    //         frc2::InstantCommand([this]
+    //                              { return m_swerveDrive.SetOffsets(); })));
 
     frc2::JoystickButton(&m_driverController, 3)
         .OnTrue(frc2::CommandPtr(frc2::InstantCommand(

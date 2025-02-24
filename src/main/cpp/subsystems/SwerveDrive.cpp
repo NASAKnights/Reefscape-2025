@@ -162,10 +162,10 @@ void SwerveDrive::Drive(frc::ChassisSpeeds speeds)
         double velocityCommanded = std::sqrt(std::pow(speeds.vx.value(), 2) + std::pow(speeds.vy.value(), 2));
         double prevVelocity = std::sqrt(std::pow(prevVX, 2) + std::pow(prevVY, 2));
 
-        velocityCommanded = std::min(accelLimit * dT.value() + (prevVelocity), velocityCommanded);
+        velocityCommanded = std::min(accelLimit * (dT.value() * 10000) + (prevVelocity), velocityCommanded);
 
         Eigen::Vector2d prevVelocityVector(speeds.vx.value(), speeds.vy.value());
-        Eigen::Vector2d a = prevVelocityVector.Unit(0) * velocityCommanded;
+        Eigen::Vector2d a = prevVelocityVector.normalized() * velocityCommanded;
 
         speeds.vx = units::velocity::meters_per_second_t(a[0]);
         speeds.vy = units::velocity::meters_per_second_t(a[1]);
@@ -486,9 +486,7 @@ void SwerveDrive::PeriodicShuffleboard()
     // frc::SmartDashboard::GetNumber("SmartDashboard/Swerve/MaxTranslationalVelocity", 0);
 }
 
-
 void SwerveDrive::ShuffleboardInit() {}
-
 
 void SwerveDrive::SetOffsets()
 {
