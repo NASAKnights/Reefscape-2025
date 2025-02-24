@@ -76,14 +76,14 @@ namespace WristConstants
 /**
  * A robot m_arm subsystem that moves with a motion profile.
  */
-class WristSubsystem : public frc2::SubsystemBase
+class Wrist : public frc2::SubsystemBase
 {
     using State = frc::TrapezoidProfile<units::degrees>::State;
 
 public:
-    WristSubsystem();
+    Wrist();
     void printLog();
-    void handle_Setpoint(int wristAngleGoal);
+    void HandleSetpoint(int wristAngleGoal);
     void Emergency_Stop();
     void ChangeAngle();
     void UseOutput();
