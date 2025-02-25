@@ -8,6 +8,8 @@
 #include <frc2/command/SequentialCommandGroup.h>
 #include <commands/MoveWristToAngle.h>
 #include <commands/SetElevatorHeight.h>
+#include "subsystems/Elevator.h"
+#include "subsystems/Wrist.h"
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.
 // For more information, see:
@@ -17,5 +19,9 @@ class Reset
                                  Reset>
 {
 public:
-  Reset();
+  Reset(Elevator *Elevator, Wrist *Wrist);
+
+private:
+  Wrist *m_wrist;
+  Elevator *m_elevator;
 };

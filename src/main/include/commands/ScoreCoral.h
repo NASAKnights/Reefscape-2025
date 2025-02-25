@@ -6,6 +6,8 @@
 
 #include <frc2/command/Command.h>
 #include <frc2/command/CommandHelper.h>
+#include "subsystems/Wrist.h"
+#include "subsystems/IntakeCoral.h"
 
 /**
  * An example command.
@@ -14,18 +16,14 @@
  * directly; this is crucially important, or else the decorator functions in
  * Command will *not* work!
  */
-class DropAlgae
-    : public frc2::CommandHelper<frc2::Command, DropAlgae>
+class ScoreCoral
+    : public frc2::CommandHelper<frc2::Command, ScoreCoral>
 {
 public:
   /* You should consider using the more terse Command factories API instead
    * https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands
    */
-
-  /*This commmand is used to drop algae when we need to.
-  This would be used to drop algae if we need to and when we need to for scoring in the processor.*/
-
-  DropAlgae();
+  ScoreCoral(Wrist *wrist, IntakeCoral *IntakeCoral);
 
   void Initialize() override;
 
@@ -34,4 +32,8 @@ public:
   void End(bool interrupted) override;
 
   bool IsFinished() override;
+
+private:
+  Wrist *m_wrist;
+  IntakeCoral *m_intakeCoral;
 };

@@ -6,6 +6,7 @@
 
 #include <frc2/command/Command.h>
 #include <frc2/command/CommandHelper.h>
+#include "subsystems/Elevator.h"
 
 /**
  * An example command.
@@ -25,7 +26,7 @@ public:
   /*This command should take in a value and make the elevator go to a certain value.
   The heights that we need to go to are L1-L4, AL2-AL3, and whatever heights we need for Coral Station, Climb, And Processor.
   Another thing we need to decide is what we want the default height to be*/
-  SetElevatorHeight();
+  SetElevatorHeight(Elevator *elevator, double height);
 
   void Initialize() override;
 
@@ -34,4 +35,8 @@ public:
   void End(bool interrupted) override;
 
   bool IsFinished() override;
+
+  Elevator *m_elevator;
+
+  double m_height;
 };
