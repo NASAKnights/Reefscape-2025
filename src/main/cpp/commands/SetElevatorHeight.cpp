@@ -5,13 +5,17 @@
 #include "commands/SetElevatorHeight.h"
 
 // MIRROR WRIST COMMAND
-SetElevatorHeight::SetElevatorHeight()
+SetElevatorHeight::SetElevatorHeight(Elevator *elevator, double height) : m_elevator{elevator}, m_height{height}
 {
   // Use addRequirements() here to declare subsystem dependencies.
+  AddRequirements(m_elevator);
 }
 
 // Called when the command is initially scheduled.
-void SetElevatorHeight::Initialize() {}
+void SetElevatorHeight::Initialize()
+{
+  m_elevator->SetHeight(m_height);
+}
 
 // Called repeatedly when this Command is scheduled to run
 void SetElevatorHeight::Execute() {}
@@ -23,5 +27,5 @@ void SetElevatorHeight::End(bool interrupted) {}
 bool SetElevatorHeight::IsFinished()
 {
   // TODO FIX BASED OFF STATE
-  return false;
+  return m_elevator->GetState() == ElevatorConstants::ElevatorState::HOLDING;
 }

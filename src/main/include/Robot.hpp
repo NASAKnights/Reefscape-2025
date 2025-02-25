@@ -97,7 +97,7 @@ private:
 
     SwerveDrive m_swerveDrive;
     Wrist m_wrist;
-    ElevatorSubsystem m_elevator;
+    Elevator m_elevator;
     Climber m_climber;
 
     std::string_view baseLink = "base_link";

@@ -6,13 +6,23 @@
 
 #include <frc2/command/CommandHelper.h>
 #include <frc2/command/SequentialCommandGroup.h>
+#include "subsystems/Wrist.h"
+#include "subsystems/Elevator.h"
+#include "subsystems/IntakeCoral.h"
+#include "commands/Reset.h"
+#include "commands/ScoreCoral.h"
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.
 // For more information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 class PlaceL4
     : public frc2::CommandHelper<frc2::SequentialCommandGroup,
-                                 PlaceL4> {
- public:
-  PlaceL4();
+                                 PlaceL4>
+{
+public:
+  PlaceL4(Wrist *wrist, Elevator *Elevator);
+
+  Wrist *m_wrist;
+  Elevator *m_elevator;
+  IntakeCoral *m_intakeCoral;
 };

@@ -82,13 +82,13 @@ namespace ElevatorConstants
     static constexpr units::meter_t kElevatorDrumRadius = 1.432_in;
 }
 
-class ElevatorSubsystem : public frc2::SubsystemBase
-// class ElevatorSubsystem : public frc2::ProfiledPIDSubsystem<units::meter>
+class Elevator : public frc2::SubsystemBase
+// class Elevator : public frc2::ProfiledPIDSubsystem<units::meter>
 {
     using State = frc::TrapezoidProfile<units::meter>::State;
 
 public:
-    ElevatorSubsystem();
+    Elevator();
     void printLog();
     // void Emergency_Stop();
     void SimulationPeriodic();
@@ -106,6 +106,10 @@ public:
     void Disable();
     bool IsHolding();
     units::meter_t GetEncoderDistance(rev::spark::SparkRelativeEncoder);
+    ElevatorConstants::ElevatorState GetState()
+    {
+        return m_ElevatorState;
+    }
 
 private:
     frc::ProfiledPIDController<units::meter> m_controller;

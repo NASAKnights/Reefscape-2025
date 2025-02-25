@@ -6,13 +6,23 @@
 
 #include <frc2/command/CommandHelper.h>
 #include <frc2/command/SequentialCommandGroup.h>
+#include <commands/SetElevatorHeight.h>
+#include <commands/MoveWristToAngle.h>
+#include <commands/Reset.h>
+#include <commands/RunAlgaeOuttake.h>
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.
 // For more information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 class ScoreAlgae
     : public frc2::CommandHelper<frc2::SequentialCommandGroup,
-                                 ScoreAlgae> {
- public:
-  ScoreAlgae();
+                                 ScoreAlgae>
+{
+public:
+  ScoreAlgae(Wrist *wrist, IntakeAlgae *IntakeAlgae, Elevator *elevator);
+
+private:
+  Wrist *m_wrist;
+  IntakeAlgae *m_intakeAlgae;
+  Elevator *m_elevator;
 };

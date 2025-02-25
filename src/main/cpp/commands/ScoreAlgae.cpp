@@ -3,16 +3,13 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "commands/ScoreAlgae.h"
-#include <commands/SetElevatorHeight.h>
-#include <commands/MoveWristToAngle.h>
-#include <commands/Reset.h>
-#include <commands/DropAlgae.h>
+
 // NOTE:  Consider using this command inline, rather than writing a subclass.
 // For more information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-ScoreAlgae::ScoreAlgae()
+ScoreAlgae::ScoreAlgae(Wrist *wrist, IntakeAlgae *IntakeAlgae, Elevator *elevator) : m_wrist{wrist}, m_intakeAlgae{IntakeAlgae}, m_elevator{elevator}
 {
-  SetElevatorHeight{}, DropAlgae{}, Reset{};
+  AddCommands(SetElevatorHeight{m_elevator, 0}, RunAlgaeOuttake{m_intakeAlgae}, Reset{m_elevator, m_wrist});
   // Add your commands here, e.g.
   // AddCommands(FooCommand{}, BarCommand{});
 }

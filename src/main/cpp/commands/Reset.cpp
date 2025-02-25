@@ -7,9 +7,11 @@
 // NOTE:  Consider using this command inline, rather than writing a subclass.
 // For more information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-Reset::Reset()
+Reset::Reset(Elevator *Elevator, Wrist *Wrist)
 {
   // SetElevatorHeight{}, MoveWristToAngle{};
   // Add your commands here, e.g.
-  // AddCommands(FooCommand{}, BarCommand{});
+  AddCommands(SetElevatorHeight{m_elevator, 0}, MoveWristToAngle{m_wrist, 90.0});
+  // TODO set height and angle to correct values
+  //  AddCommands(FooCommand{}, BarCommand{});
 }
