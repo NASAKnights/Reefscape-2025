@@ -26,6 +26,5 @@ void MoveWristToAngle::End(bool interrupted)
 // Returns true when the command should end.
 bool MoveWristToAngle::IsFinished()
 {
-  if (m_wrist->GetMeasurement())
-    return false;
+  return WristConstants::WristState::HOLD == m_wrist->GetState();
 }

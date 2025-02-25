@@ -27,6 +27,5 @@ void RunAlgaeIntake::End(bool interrupted)
 // Returns true when the command should end.
 bool RunAlgaeIntake::IsFinished()
 {
-  // TODO FIX BASED OFF SWITCH
-  return false;
+  return m_intakeAlgae->hasAlgae();
 }

@@ -29,7 +29,6 @@ public:
   One for L4, one horizontal, and one other angle for L2/L3.*/
 
   MoveWristToAngle(Wrist *wrist, double angle);
-  MoveWristToAngle();
 
   void Initialize() override;
 

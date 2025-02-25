@@ -81,10 +81,9 @@ void Robot::TeleopInit()
     // continue until interrupted by another command, remove
     // this line or comment it out.
     m_elevator.HoldPosition();
-    if (m_wrist.m_WristState != WristConstants::WristState::ZEROING)
+    if (m_wrist.GetState() != WristConstants::WristState::ZEROING)
     {
         m_wrist.SetAngle(m_wrist.GetMeasurement().value());
-        // m_wrist.m_WristState = WristState::HOLD;
     }
 
     if (m_autonomousCommand)
@@ -227,16 +226,28 @@ void Robot::BindCommands()
     //     .OnTrue(new GrabAlgaeL3(m_intakeAlgae));
 
     frc2::JoystickButton(&m_operatorController, 1)
-        .WhileTrue(RunAlgaeOuttake(&m_AlgaeIntake).ToPtr());
+        .OnTrue(PlaceL1(&m_wrist, &m_elevator).ToPtr());
 
     frc2::JoystickButton(&m_operatorController, 2)
-        .WhileTrue(RunAlgaeIntake(&m_AlgaeIntake).ToPtr());
+        .OnTrue(PlaceL2(&m_wrist, &m_elevator).ToPtr());
 
     frc2::JoystickButton(&m_operatorController, 3)
-        .WhileTrue(RunCoralOuttake(&m_CoralIntake).ToPtr());
+        .OnTrue(PlaceL3(&m_wrist, &m_elevator, &m_AlgaeIntake).ToPtr());
 
     frc2::JoystickButton(&m_operatorController, 4)
+        .OnTrue(PlaceL4(&m_wrist, &m_elevator).ToPtr());
+
+    frc2::JoystickButton(&m_operatorController, 7)
         .WhileTrue(RunCoralIntake(&m_CoralIntake).ToPtr());
+
+    frc2::JoystickButton(&m_operatorController, 6)
+        .WhileTrue(RunAlgaeOuttake(&m_AlgaeIntake).ToPtr());
+
+    frc2::JoystickButton(&m_operatorController, 8)
+        .WhileTrue(RunAlgaeIntake(&m_AlgaeIntake).ToPtr());
+
+    frc2::JoystickButton(&m_operatorController, 5)
+        .WhileTrue(RunCoralOuttake(&m_CoralIntake).ToPtr());
 
     frc2::JoystickButton(&m_operatorController, 9)
         .WhileTrue(ClimbCage(&m_climber).ToPtr());

@@ -132,6 +132,11 @@ void Wrist::Periodic()
     }
 }
 
+WristConstants::WristState Wrist::GetState()
+{
+    return m_WristState;
+}
+
 void Wrist::Zero()
 {
     m_WristState = WristConstants::ZEROING;

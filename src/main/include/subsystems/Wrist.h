@@ -86,11 +86,12 @@ public:
     void Zero();
     // void get_pigeon();
     units::degree_t GetMeasurement();
+    WristConstants::WristState GetState();
 
     // units::time::second_t time_brake_released;
-    WristConstants::WristState m_WristState;
 
 private:
+    WristConstants::WristState m_WristState;
     void printLog();
     rev::spark::SparkMax m_motor;
     frc::ArmFeedforward m_feedforward;

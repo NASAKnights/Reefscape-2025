@@ -9,8 +9,9 @@
 #include "subsystems/Wrist.h"
 #include "subsystems/Elevator.h"
 #include "subsystems/IntakeCoral.h"
+#include "subsystems/IntakeAlgae.h"
 #include "commands/Reset.h"
-#include "commands/ScoreCoral.h"
+#include "commands/RunAlgaeIntake.h"
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.
 // For more information, see:
@@ -20,9 +21,5 @@ class PlaceL3
                                  PlaceL3>
 {
 public:
-  PlaceL3(Wrist *wrist, Elevator *Elevator);
-
-  Wrist *m_wrist;
-  Elevator *m_elevator;
-  IntakeCoral *m_intakeCoral;
+  PlaceL3(Wrist *wrist, Elevator *elevator, IntakeAlgae *intakeAlgae);
 };

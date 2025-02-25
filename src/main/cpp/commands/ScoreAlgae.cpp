@@ -9,7 +9,7 @@
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 ScoreAlgae::ScoreAlgae(Wrist *wrist, IntakeAlgae *IntakeAlgae, Elevator *elevator) : m_wrist{wrist}, m_intakeAlgae{IntakeAlgae}, m_elevator{elevator}
 {
-  AddCommands(SetElevatorHeight{m_elevator, 0}, RunAlgaeOuttake{m_intakeAlgae}, Reset{m_elevator, m_wrist});
+  AddCommands(SetElevatorHeight{m_elevator, 0.1}, RunAlgaeOuttake{m_intakeAlgae}, Reset{m_elevator, m_wrist});
   // Add your commands here, e.g.
   // AddCommands(FooCommand{}, BarCommand{});
 }
