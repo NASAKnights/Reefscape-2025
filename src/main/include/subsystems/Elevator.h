@@ -40,7 +40,7 @@ namespace ElevatorConstants
     };
 
     static constexpr units::meter_t upperLimit = 30_in; // 57
-    static constexpr units::meter_t lowerLimit = 5_in;
+    static constexpr units::meter_t lowerLimit = 0.257_m;
     static constexpr units::meter_t simUpperLimit = 57.1_in;
     static constexpr units::meter_t simLowerLimit = -0.1_in;
 

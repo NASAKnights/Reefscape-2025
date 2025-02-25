@@ -76,16 +76,17 @@ void Wrist::Periodic()
     units::volt_t ff;
     units::volt_t v;
     // TODO Check the following
-    if (m_motor.GetReverseLimitSwitch().Get())
+    if (m_WristState == WristConstants::ZEROING && m_motor.GetForwardLimitSwitch().Get())
     {
         m_encoder.SetPosition(91.0);
+        SetAngle(GetMeasurement().value());
         m_WristState = WristConstants::HOLD;
     }
     switch (m_WristState)
     {
     case WristConstants::ZEROING:
     {
-        m_motor.Set(-0.1);
+        m_motor.Set(0.1);
         frc::SmartDashboard::PutString("/Wrist/State", "ZEROING");
         break;
     }

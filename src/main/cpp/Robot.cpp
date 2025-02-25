@@ -81,7 +81,11 @@ void Robot::TeleopInit()
     // continue until interrupted by another command, remove
     // this line or comment it out.
     m_elevator.HoldPosition();
-    m_wrist.Zero();
+    if (m_wrist.m_WristState != WristConstants::WristState::ZEROING)
+    {
+        m_wrist.SetAngle(m_wrist.GetMeasurement().value());
+        // m_wrist.m_WristState = WristState::HOLD;
+    }
 
     if (m_autonomousCommand)
     {
@@ -188,13 +192,13 @@ void Robot::BindCommands()
         .OnTrue(frc2::CommandPtr(frc2::InstantCommand(
             [this]
             {
-                m_wrist.SetAngle(60);
+                m_wrist.SetAngle(25);
                 return;
             })))
         .OnFalse((frc2::CommandPtr(frc2::InstantCommand(
             [this]
             {
-                m_wrist.SetAngle(10);
+                m_wrist.SetAngle(60);
                 return;
             }))));
 

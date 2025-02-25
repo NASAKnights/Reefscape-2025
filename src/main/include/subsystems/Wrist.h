@@ -36,11 +36,11 @@ namespace WristConstants
     const double kAngleI = 0.0;
     const double kAngleD = 0.0; // 0.0001
     const double kIZone = 1.0;
-    const auto kArmVelLimit = units::degrees_per_second_t(150.0);
-    const auto kArmAccelLimit = units::angular_acceleration::degrees_per_second_squared_t(300); // Mech limit 27 rad/s^2(1500 degree_second_squared)
+    const auto kArmVelLimit = units::degrees_per_second_t(360.0);
+    const auto kArmAccelLimit = units::angular_acceleration::degrees_per_second_squared_t(1500); // Mech limit 27 rad/s^2(1500 degree_second_squared)
     const units::degree_t kTolerancePos = 1_deg;
     const units::degrees_per_second_t kToleranceVel = 0.5_deg_per_s;
-    const int kAngleMotorId = 4;
+    const int kAngleMotorId = 2;
 
     const auto kFFks = units::volt_t(0.23);                               // Volts static (motor)
     const auto kFFkg = units::volt_t(0.28);                               // Volts
