@@ -28,5 +28,5 @@ void DeployClimb::End(bool interrupted)
 // Returns true when the command should end.
 bool DeployClimb::IsFinished()
 {
-  return false;
+  return m_climber->atDeployAngle();
 }

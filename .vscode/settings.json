@@ -97,7 +97,8 @@
     "xutility": "cpp",
     "expected": "cpp",
     "source_location": "cpp",
-    "version": "cpp"
+    "version": "cpp",
+    "charconv": "cpp"
   },
   "C_Cpp.errorSquiggles": "enabled",
   "editor.formatOnSave": true
