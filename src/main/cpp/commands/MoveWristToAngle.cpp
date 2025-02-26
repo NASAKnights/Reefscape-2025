@@ -20,11 +20,11 @@ void MoveWristToAngle::Execute() {}
 // Called once the command ends or is interrupted.
 void MoveWristToAngle::End(bool interrupted)
 {
-  m_wrist->SetAngle(m_wrist->GetMeasurement().value());
+  // m_wrist->SetAngle(m_wrist->GetMeasurement().value());
 }
 
 // Returns true when the command should end.
 bool MoveWristToAngle::IsFinished()
 {
-  return WristConstants::WristState::HOLD == m_wrist->GetState();
+  return m_wrist->GetState() == WristConstants::WristState::HOLD;
 }

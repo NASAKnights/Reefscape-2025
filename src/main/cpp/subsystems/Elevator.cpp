@@ -66,10 +66,12 @@ void Elevator::HoldPosition()
 // height in meters
 void Elevator::SetHeight(double height)
 {
+    frc::SmartDashboard::PutNumber("/Elevator/I_am_here", 69);
     if (m_ElevatorState != ElevatorConstants::ElevatorState::DISABLED &&
         m_ElevatorState != ElevatorConstants::ElevatorState::START_HOLD &&
         m_ElevatorState != ElevatorConstants::ElevatorState::START_MOVE)
     {
+        frc::SmartDashboard::PutNumber("/Elevator/I_am_here", 74);
         m_goal = units::meter_t{height};
         m_ElevatorState = ElevatorConstants::START_MOVE;
     }

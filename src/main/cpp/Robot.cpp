@@ -225,35 +225,44 @@ void Robot::BindCommands()
     // frc2::JoystickButton(&m_operatorController, 6)
     //     .OnTrue(new GrabAlgaeL3(m_intakeAlgae));
 
+    // Square
     frc2::JoystickButton(&m_operatorController, 1)
-        .OnTrue(PlaceL1(&m_wrist, &m_elevator).ToPtr());
-
+        .OnTrue(PlaceL4(&m_wrist, &m_elevator).ToPtr())
+        .OnFalse(Reset(&m_elevator, &m_wrist).ToPtr());
+    // Cross
     frc2::JoystickButton(&m_operatorController, 2)
-        .OnTrue(PlaceL2(&m_wrist, &m_elevator).ToPtr());
-
+        .OnTrue(PlaceL3(&m_wrist, &m_elevator, &m_AlgaeIntake).ToPtr())
+        .OnFalse(Reset(&m_elevator, &m_wrist).ToPtr());
+    // Circle
     frc2::JoystickButton(&m_operatorController, 3)
-        .OnTrue(PlaceL3(&m_wrist, &m_elevator, &m_AlgaeIntake).ToPtr());
-
+        .OnTrue(PlaceL2(&m_wrist, &m_elevator).ToPtr())
+        .OnFalse(Reset(&m_elevator, &m_wrist).ToPtr());
+    // Triangle
     frc2::JoystickButton(&m_operatorController, 4)
-        .OnTrue(PlaceL4(&m_wrist, &m_elevator).ToPtr());
+        .OnTrue(PlaceL1(&m_wrist, &m_elevator).ToPtr())
+        .OnFalse(Reset(&m_elevator, &m_wrist).ToPtr());
 
+    // frc2::JoystickButton(&m_operatorController, 5)
+    //     .WhileTrue(RunCoralOuttake(&m_CoralIntake).ToPtr());
+
+    // frc2::JoystickButton(&m_operatorController, 6)
+    //     .WhileTrue(GrabAlgaeL3(&m_AlgaeIntake).ToPtr());
+    // ^ Rewrite command to include elevator
+
+    // Left Trigger
     frc2::JoystickButton(&m_operatorController, 7)
-        .WhileTrue(RunCoralIntake(&m_CoralIntake).ToPtr());
-
-    frc2::JoystickButton(&m_operatorController, 6)
         .WhileTrue(RunAlgaeOuttake(&m_AlgaeIntake).ToPtr());
 
+    // Right Trigger
     frc2::JoystickButton(&m_operatorController, 8)
-        .WhileTrue(RunAlgaeIntake(&m_AlgaeIntake).ToPtr());
-
-    frc2::JoystickButton(&m_operatorController, 5)
         .WhileTrue(RunCoralOuttake(&m_CoralIntake).ToPtr());
 
+    // Share
     frc2::JoystickButton(&m_operatorController, 9)
-        .WhileTrue(ClimbCage(&m_climber).ToPtr());
-
-    frc2::JoystickButton(&m_operatorController, 10)
         .WhileTrue(DeployClimb(&m_climber).ToPtr());
+    // Option
+    frc2::JoystickButton(&m_operatorController, 10)
+        .WhileTrue(ClimbCage(&m_climber).ToPtr());
 }
 
 void Robot::DisabledPeriodic()

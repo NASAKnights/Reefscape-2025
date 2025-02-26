@@ -23,12 +23,11 @@ void SetElevatorHeight::Execute() {}
 // Called once the command ends or is interrupted.
 void SetElevatorHeight::End(bool interrupted)
 {
-  m_elevator->SetHeight(m_elevator->GetMeasurement().value());
+  // m_elevator->SetHeight(m_elevator->GetMeasurement().value());
 }
 
 // Returns true when the command should end.
 bool SetElevatorHeight::IsFinished()
 {
-  // TODO FIX BASED OFF STATE
   return m_elevator->GetState() == ElevatorConstants::ElevatorState::HOLDING;
 }

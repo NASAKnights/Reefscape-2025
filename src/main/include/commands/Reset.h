@@ -22,6 +22,4 @@ public:
   Reset(Elevator *Elevator, Wrist *Wrist);
 
 private:
-  Wrist *m_wrist;
-  Elevator *m_elevator;
 };

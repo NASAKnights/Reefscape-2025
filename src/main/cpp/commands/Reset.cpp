@@ -3,6 +3,7 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "commands/Reset.h"
+#include <frc2/command/ParallelCommandGroup.h>
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.
 // For more information, see:
@@ -11,7 +12,7 @@ Reset::Reset(Elevator *Elevator, Wrist *Wrist)
 {
   // SetElevatorHeight{}, MoveWristToAngle{};
   // Add your commands here, e.g.
-  AddCommands(SetElevatorHeight{m_elevator, 0}, MoveWristToAngle{m_wrist, 90.0});
+  AddCommands(frc2::ParallelCommandGroup(SetElevatorHeight{Elevator, 0.1}, MoveWristToAngle{Wrist, 90.0}));
   // TODO set height and angle to correct values
   //  AddCommands(FooCommand{}, BarCommand{});
 }

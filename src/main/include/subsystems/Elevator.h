@@ -46,13 +46,13 @@ namespace ElevatorConstants
 
     static constexpr units::meters_per_second_t kMaxVelocity = 60.0_in / 1_s;                      // 61.55
     static constexpr units::meters_per_second_squared_t kMaxAcceleration = 240.0_in / (1_s * 1_s); // 460_in / (1_s * 1_s);
-    static constexpr double kP = 8.0;                                                              // 0.6 - 15
+    static constexpr double kP = 9.0;                                                              // 0.6 - 15
     static constexpr double kI = 0.0;                                                              // 0.0
     static constexpr double kD = 0.0;
     static constexpr units::volt_t kS = 0.2_V; // minimum voltage to move motor
 
     static constexpr units::meter_t kTolerancePos = 0.01_m;
-    static constexpr units::meters_per_second_t kToleranceVel = 0.05_mps;
+    static constexpr units::meters_per_second_t kToleranceVel = 0.01_mps;
 
     static constexpr units::meter_t kEmergencyTolerance = 0.25_in;
 
