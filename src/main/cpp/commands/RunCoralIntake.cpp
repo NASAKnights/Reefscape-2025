@@ -15,7 +15,7 @@ void RunCoralIntake::Initialize() {}
 // Called repeatedly when this Command is scheduled to run
 void RunCoralIntake::Execute()
 {
-  m_intakeCoral->Intake(1.0);
+  m_intakeCoral->Intake(-1.0);
 }
 
 // Called once the command ends or is interrupted.

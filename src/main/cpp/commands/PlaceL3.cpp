@@ -10,7 +10,7 @@
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 PlaceL3::PlaceL3(Wrist *wrist, Elevator *elevator, IntakeAlgae *algaeIntake)
 {
-  AddCommands(frc2::ParallelCommandGroup(SetElevatorHeight{elevator, 0.83}, MoveWristToAngle{wrist, 17.0}, RunAlgaeIntake(algaeIntake)));
+  AddCommands(frc2::ParallelCommandGroup(SetElevatorHeight{elevator, 0.81}, MoveWristToAngle{wrist, 18.0}, RunAlgaeIntake(algaeIntake)));
   //,
   // frc2::SequentialCommandGroup(ScoreCoral{m_wrist, m_intakeCoral}, Reset(m_elevator, m_wrist)));
   // TODO set height and angle to correct values
