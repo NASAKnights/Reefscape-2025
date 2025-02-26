@@ -201,6 +201,20 @@ void Robot::BindCommands()
                 return;
             }))));
 
+    frc2::JoystickButton(&m_driverController, 10)
+        .WhileTrue(frc2::CommandPtr(frc2::InstantCommand(
+            [this]
+            {
+                m_climber.Unspool();
+                return;
+            })))
+        .OnFalse(frc2::CommandPtr(frc2::InstantCommand(
+            [this]
+            {
+                m_climber.Stop();
+                return;
+            })));
+
     // --------------OPERATOR BUTTONS--------------------------------
     /* frc2::JoystickButton(&m_operatorController, 1)
         .OnTrue(frc2::CommandPtr(frc2::InstantCommand([this]

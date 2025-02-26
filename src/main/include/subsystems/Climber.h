@@ -9,7 +9,10 @@
 #include "frc/DataLogManager.h"
 #include "wpi/DataLog.h"
 #include <rev/SparkFlex.h>
+#include <rev/AbsoluteEncoder.h>
+#include <rev/SparkAbsoluteEncoder.h>
 #include <rev/SparkMax.h>
+#include <frc/smartdashboard/SmartDashboard.h>
 
 class Climber : public frc2::SubsystemBase
 {
@@ -23,6 +26,9 @@ public:
 
   void Deploy();
   void Climb();
+  void Unspool();
+  bool atDeployAngle();
+  bool atClimbAngle();
   void Stop();
 
 private:
@@ -30,8 +36,8 @@ private:
   double kClimbI = 0.0;
   double kClimbD = 0.0;
 
-  double kClimbDeploySetPoint = 0.0;
-  double kClimbClimbSetPoint = 0.0; // radians
+  double kClimbDeploySetPoint = 0.6 * (2 * std::numbers::pi);
+  double kClimbClimbSetPoint = 0.4 * (2 * std::numbers::pi); // radians
 
   rev::spark::SparkFlex climbMain{7, rev::spark::SparkLowLevel::MotorType::kBrushless};
   rev::spark::SparkFlex climbFollower{8, rev::spark::SparkLowLevel::MotorType::kBrushless};
@@ -42,7 +48,9 @@ private:
 
   // rev::spark::SparkMax absoluteEncoderSub{9, rev::spark::SparkLowLevel::MotorType::kBrushed};
 
-  rev::spark::SparkAbsoluteEncoder climberWristEncoder = climbMain.GetAbsoluteEncoder();
+  rev::spark::SparkAbsoluteEncoder climberWristEncoder = climbFollower.GetAbsoluteEncoder();
+  // rev::spark::SparkFlexExternalEncoder climberWristEncoder = climbMain.GetExternalEncoder();
+  // rev::spark::SparkRelativeEncoder climberWristEncoder = climbMain.GetEncoder();
 
   frc::PIDController climbWristController{kClimbP, kClimbI, kClimbD};
 

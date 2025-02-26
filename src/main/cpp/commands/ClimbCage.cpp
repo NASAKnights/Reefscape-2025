@@ -29,5 +29,5 @@ void ClimbCage::End(bool interrupted)
 // Returns true when the command should end.
 bool ClimbCage::IsFinished()
 {
-  return false;
+  return m_climber->atClimbAngle();
 }
