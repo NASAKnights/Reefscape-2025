@@ -7,9 +7,12 @@
 // NOTE:  Consider using this command inline, rather than writing a subclass.
 // For more information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-GrabCoral::GrabCoral(IntakeCoral *_intakeCoral) : m_intakeCoral{_intakeCoral}
+GrabCoral::GrabCoral(Elevator *elevator, Wrist *wrist, IntakeCoral *intakeCoral)
 {
-  AddCommands(frc2::ParallelCommandGroup(SetElevatorHeight(), ChangeIntakeAngle()), RunCoralIntake(m_intakeCoral), Reset());
+  AddCommands(frc2::ParallelCommandGroup(SetElevatorHeight(elevator, 0.2),
+                                         MoveWristToAngle(wrist, 60.0),
+                                         RunCoralIntake(intakeCoral)),
+              Reset(elevator, wrist));
   // Add your commands here, e.g.
   // AddCommands(FooCommand{}, BarCommand{});
 }

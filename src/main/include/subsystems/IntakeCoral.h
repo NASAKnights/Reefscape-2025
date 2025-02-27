@@ -14,6 +14,7 @@ public:
   IntakeCoral();
   void Intake(double Speed);
   void Outtake(double Speed);
+  bool IsLimitSwitch();
   void SetConfig();
   void stopMotors();
 

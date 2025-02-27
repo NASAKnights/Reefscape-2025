@@ -4,7 +4,7 @@
 
 #include "commands/ClimbCage.h"
 
-ClimbCage::ClimbCage(Climber *_climber) : m_climber{_climber}
+ClimbCage::ClimbCage(Climber *climber) : m_climber{climber}
 {
 
   // Use addRequirements() here to declare subsystem dependencies.
@@ -29,5 +29,5 @@ void ClimbCage::End(bool interrupted)
 // Returns true when the command should end.
 bool ClimbCage::IsFinished()
 {
-  return false;
+  return m_climber->atClimbAngle();
 }

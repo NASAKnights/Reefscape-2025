@@ -7,6 +7,7 @@
 #include <frc2/command/Command.h>
 #include <frc2/command/CommandHelper.h>
 #include "subsystems/IntakeAlgae.h"
+#include "subsystems/Wrist.h"
 
 /**
  * An example command.
@@ -15,8 +16,8 @@
  * directly; this is crucially important, or else the decorator functions in
  * Command will *not* work!
  */
-class ChangeIntakeAngle
-    : public frc2::CommandHelper<frc2::Command, ChangeIntakeAngle>
+class MoveWristToAngle
+    : public frc2::CommandHelper<frc2::Command, MoveWristToAngle>
 {
 public:
   /* You should consider using the more terse Command factories API instead
@@ -27,7 +28,7 @@ public:
   They said that the wrist would most likely only have 2-3 angles for the wrist.
   One for L4, one horizontal, and one other angle for L2/L3.*/
 
-  ChangeIntakeAngle();
+  MoveWristToAngle(Wrist *wrist, double angle);
 
   void Initialize() override;
 
@@ -36,4 +37,8 @@ public:
   void End(bool interrupted) override;
 
   bool IsFinished() override;
+
+  Wrist *m_wrist;
+
+  double m_angle;
 };

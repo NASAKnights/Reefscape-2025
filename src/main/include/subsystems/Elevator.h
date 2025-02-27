@@ -40,19 +40,22 @@ namespace ElevatorConstants
     };
 
     static constexpr units::meter_t upperLimit = 30_in; // 57
-    static constexpr units::meter_t lowerLimit = 5_in;
+    static constexpr units::meter_t lowerLimit = 0.257_m;
+
     static constexpr units::meter_t simUpperLimit = 57.1_in;
     static constexpr units::meter_t simLowerLimit = -0.1_in;
 
     static constexpr units::meters_per_second_t kMaxVelocity = 60.0_in / 1_s;                      // 61.55
     static constexpr units::meters_per_second_squared_t kMaxAcceleration = 240.0_in / (1_s * 1_s); // 460_in / (1_s * 1_s);
-    static constexpr double kP = 8.0;                                                              // 0.6 - 15
+
+    static constexpr double kP = 9.0;                                                              // 0.6 - 15
+
     static constexpr double kI = 0.0;                                                              // 0.0
     static constexpr double kD = 0.0;
     static constexpr units::volt_t kS = 0.2_V; // minimum voltage to move motor
 
     static constexpr units::meter_t kTolerancePos = 0.01_m;
-    static constexpr units::meters_per_second_t kToleranceVel = 0.05_mps;
+    static constexpr units::meters_per_second_t kToleranceVel = 0.01_mps;
 
     static constexpr units::meter_t kEmergencyTolerance = 0.25_in;
 
@@ -82,13 +85,13 @@ namespace ElevatorConstants
     static constexpr units::meter_t kElevatorDrumRadius = 1.432_in;
 }
 
-class ElevatorSubsystem : public frc2::SubsystemBase
-// class ElevatorSubsystem : public frc2::ProfiledPIDSubsystem<units::meter>
+class Elevator : public frc2::SubsystemBase
+// class Elevator : public frc2::ProfiledPIDSubsystem<units::meter>
 {
     using State = frc::TrapezoidProfile<units::meter>::State;
 
 public:
-    ElevatorSubsystem();
+    Elevator();
     void printLog();
     // void Emergency_Stop();
     void SimulationPeriodic();
@@ -106,6 +109,10 @@ public:
     void Disable();
     bool IsHolding();
     units::meter_t GetEncoderDistance(rev::spark::SparkRelativeEncoder);
+    ElevatorConstants::ElevatorState GetState()
+    {
+        return m_ElevatorState;
+    }
 
 private:
     frc::ProfiledPIDController<units::meter> m_controller;

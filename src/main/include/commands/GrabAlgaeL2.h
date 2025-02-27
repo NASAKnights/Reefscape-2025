@@ -6,8 +6,8 @@
 
 #include "commands/SetElevatorHeight.h"
 #include "commands/Reset.h"
-#include "commands/ChangeIntakeAngle.h"
 #include "commands/RunAlgaeIntake.h"
+#include "subsystems/Wrist.h"
 #include <frc2/command/ParallelCommandGroup.h>
 #include <frc2/command/CommandHelper.h>
 #include <frc2/command/SequentialCommandGroup.h>
@@ -20,7 +20,7 @@ class GrabAlgaeL2
                                  GrabAlgaeL2>
 {
 public:
-  GrabAlgaeL2(IntakeAlgae *_intakeAlgae);
+  GrabAlgaeL2(IntakeAlgae *intakeAlgae);
 
   IntakeAlgae *m_intakeAlgae;
 

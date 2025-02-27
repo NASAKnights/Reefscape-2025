@@ -15,7 +15,7 @@ public:
   /* You should consider using the more terse Command factories API instead
    * https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands
    */
-  RunAlgaeIntake(IntakeAlgae *_intakeAlgae);
+  RunAlgaeIntake(IntakeAlgae *intakeAlgae);
 
   void Initialize() override;
 

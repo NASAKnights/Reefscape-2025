@@ -3,18 +3,17 @@
 // the WPILib BSD license file in the root directory of this project.
 
 #include "commands/PlaceL1.h"
-#include <commands/SetElevatorHeight.h>
-#include <commands/DropCoral.h>
-#include <commands/Reset.h>
-#include <commands/ChangeIntakeAngle.h>
 #include <frc2/command/ParallelCommandGroup.h>
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.
 // For more information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-PlaceL1::PlaceL1()
+PlaceL1::PlaceL1(Wrist *wrist, Elevator *elevator)
 {
-  AddCommands(frc2::ParallelCommandGroup(SetElevatorHeight(), ChangeIntakeAngle()), DropCoral(), Reset());
+  AddCommands(frc2::ParallelCommandGroup(SetElevatorHeight{elevator, 0.157}, MoveWristToAngle{wrist, 35.0}));
+  //,
+  // frc2::SequentialCommandGroup(ScoreCoral{m_wrist, m_intakeCoral}, Reset(m_elevator, m_wrist)));
+  // TODO set height and angle to correct values
   // Add your commands here, e.g.
   // AddCommands(FooCommand{}, BarCommand{});
 }

@@ -6,6 +6,10 @@
 
 #include <frc2/command/CommandHelper.h>
 #include <frc2/command/SequentialCommandGroup.h>
+#include "subsystems/Wrist.h"
+#include "subsystems/Elevator.h"
+#include "subsystems/IntakeCoral.h"
+#include "commands/Reset.h"
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.
 // For more information, see:
@@ -15,5 +19,5 @@ class PlaceL1
                                  PlaceL1>
 {
 public:
-  PlaceL1();
+  PlaceL1(Wrist *wrist, Elevator *elevator);
 };

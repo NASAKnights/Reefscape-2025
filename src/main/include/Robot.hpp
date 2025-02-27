@@ -26,6 +26,7 @@
 
 #include "subsystems/SwerveDrive.hpp"
 #include "subsystems/Elevator.h"
+#include "subsystems/Wrist.h"
 
 #include "commands/RunCoralIntake.h"
 #include "commands/RunCoralOuttake.h"
@@ -37,6 +38,7 @@
 #include "commands/PlaceL1.h"
 #include "commands/GrabAlgaeL2.h"
 #include "commands/GrabAlgaeL3.h"
+#include "commands/GrabCoral.h"
 #include "commands/ScoreAlgae.h"
 #include "commands/ClimbCage.h"
 #include "subsystems/IntakeAlgae.h"
@@ -95,7 +97,8 @@ private:
     IntakeAlgae m_AlgaeIntake;
 
     SwerveDrive m_swerveDrive;
-    ElevatorSubsystem m_elevator;
+    Wrist m_wrist;
+    Elevator m_elevator;
     Climber m_climber;
 
     std::string_view baseLink = "base_link";

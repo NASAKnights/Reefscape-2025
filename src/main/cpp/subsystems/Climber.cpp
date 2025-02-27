@@ -15,6 +15,7 @@ Climber::Climber()
     climbFollowConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
     climbFollowConfig.SmartCurrentLimit(30);
     climbFollowConfig.VoltageCompensation(12.0);
+    climbFollowConfig.absoluteEncoder.PositionConversionFactor(2 * std::numbers::pi);
 
     climbMain.Configure(climbMainConfig, rev::spark::SparkBase::ResetMode::kNoResetSafeParameters, rev::spark::SparkBase::PersistMode::kPersistParameters);
     climbFollower.Configure(climbFollowConfig, rev::spark::SparkBase::ResetMode::kNoResetSafeParameters, rev::spark::SparkBase::PersistMode::kPersistParameters);
@@ -29,6 +30,12 @@ Climber::Climber()
 void Climber::Periodic()
 {
     m_AbsolutePosition.Append(climberWristEncoder.GetPosition());
+    frc::SmartDashboard::PutNumber("Climb Rotation", climberWristEncoder.GetPosition());
+}
+
+void Climber::Unspool()
+{
+    climbMain.Set(-0.4);
 }
 
 void Climber::Deploy()
@@ -42,10 +49,20 @@ void Climber::Climb()
 {
     // Pulls the winch back in
     // climbMain.Set(climbWristController.Calculate(climberWristEncoder.GetPosition(), kClimbClimbSetPoint));
-    climbMain.Set(-0.8);
+    climbMain.Set(0.8);
 }
 
 void Climber::Stop()
 {
     climbMain.Set(0.0);
+}
+
+bool Climber::atClimbAngle()
+{
+    return climberWristEncoder.GetPosition() < Climber::kClimbClimbSetPoint;
+}
+
+bool Climber::atDeployAngle()
+{
+    return climberWristEncoder.GetPosition() > Climber::kClimbDeploySetPoint;
 }

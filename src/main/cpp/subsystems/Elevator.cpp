@@ -11,7 +11,7 @@ using State = frc::TrapezoidProfile<units::meters>::State;
 using mps_sq_t =
     units::unit_t<units::compound_unit<units::velocity::mps, units::inverse<units::time::seconds>>>;
 
-ElevatorSubsystem::ElevatorSubsystem()
+Elevator::Elevator()
     : // frc2::ProfiledPIDSubsystem<units::meter>(
       m_controller(
           ElevatorConstants::kP, ElevatorConstants::kI, ElevatorConstants::kD,
@@ -53,7 +53,7 @@ ElevatorSubsystem::ElevatorSubsystem()
     m_ElevatorState = ElevatorConstants::ElevatorState::DISABLED;
 }
 
-void ElevatorSubsystem::HoldPosition()
+void Elevator::HoldPosition()
 {
     if (m_ElevatorState != ElevatorConstants::ElevatorState::START_HOLD &&
         m_ElevatorState != ElevatorConstants::ElevatorState::START_MOVE &&
@@ -64,12 +64,14 @@ void ElevatorSubsystem::HoldPosition()
     }
 }
 // height in meters
-void ElevatorSubsystem::SetHeight(double height)
+void Elevator::SetHeight(double height)
 {
+    frc::SmartDashboard::PutNumber("/Elevator/I_am_here", 69);
     if (m_ElevatorState != ElevatorConstants::ElevatorState::DISABLED &&
         m_ElevatorState != ElevatorConstants::ElevatorState::START_HOLD &&
         m_ElevatorState != ElevatorConstants::ElevatorState::START_MOVE)
     {
+        frc::SmartDashboard::PutNumber("/Elevator/I_am_here", 74);
         m_goal = units::meter_t{height};
         m_ElevatorState = ElevatorConstants::START_MOVE;
     }
@@ -85,7 +87,7 @@ void ElevatorSubsystem::SetSpeed(double speed)
 }
 */
 
-double ElevatorSubsystem::GetHeight()
+double Elevator::GetHeight()
 {
     if constexpr (frc::RobotBase::IsSimulation())
     {
@@ -96,7 +98,7 @@ double ElevatorSubsystem::GetHeight()
     return ((GetEncoderDistance(m_encoderLeft) + GetEncoderDistance(m_encoderRight)) / 2.0).value();
 }
 
-units::meter_t ElevatorSubsystem::GetMeasurement()
+units::meter_t Elevator::GetMeasurement()
 {
     return units::meter_t{GetHeight()};
 }
@@ -106,7 +108,7 @@ bool ElevatorSubsystem::CheckGoal()
     return m_ElevatorState == ElevatorConstants::ElevatorState::HOLD;
 }
 */
-void ElevatorSubsystem::printLog()
+void Elevator::printLog()
 {
     frc::SmartDashboard::PutNumber("/Elevator/ELEVATOR_ENC_ABS", GetMeasurement().value());
     frc::SmartDashboard::PutNumber("/Elevator/ELEVATOR_ENC_ABS_LEFT", m_encoderLeft.GetPosition());
@@ -129,7 +131,7 @@ void ElevatorSubsystem::Periodic()
     }
 }
 */
-void ElevatorSubsystem::Periodic()
+void Elevator::Periodic()
 {
     double fb;
     units::volt_t ff;
@@ -217,30 +219,30 @@ void ElevatorSubsystem::Periodic()
     // This method will be called once per scheduler run.
     printLog();
 }
-void ElevatorSubsystem::SimulationInit()
+void Elevator::SimulationInit()
 {
     m_simTimer.Reset();
 }
-void ElevatorSubsystem::SimulationPeriodic()
+void Elevator::SimulationPeriodic()
 {
     m_elevatorSim.Update(ElevatorConstants::kDt);
     m_simTimer.Reset();
 }
-void ElevatorSubsystem::UseOutput(double output, State setpoint)
+void Elevator::UseOutput(double output, State setpoint)
 {
     // Calculate the feedforward from the sepoint
 }
-units::meter_t ElevatorSubsystem::GetEncoderDistance(rev::spark::SparkRelativeEncoder encoder)
+units::meter_t Elevator::GetEncoderDistance(rev::spark::SparkRelativeEncoder encoder)
 {
     return encoder.GetPosition() * 2.0 * std::numbers::pi * ElevatorConstants::kElevatorDrumRadius / ElevatorConstants::kElevatorGearing;
 }
-void ElevatorSubsystem::Disable()
+void Elevator::Disable()
 {
     m_ElevatorState = ElevatorConstants::ElevatorState::DISABLED;
     m_motorLeft.StopMotor();
     m_motorRight.StopMotor();
 }
-bool ElevatorSubsystem::IsHolding()
+bool Elevator::IsHolding()
 {
     return m_ElevatorState == ElevatorConstants::HOLDING;
 }

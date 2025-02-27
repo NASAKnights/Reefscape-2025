@@ -7,7 +7,6 @@
 #include "commands/SetElevatorHeight.h"
 #include "commands/Reset.h"
 #include "subsystems/IntakeCoral.h"
-#include "commands/ChangeIntakeAngle.h"
 #include "commands/RunCoralIntake.h"
 #include <frc2/command/ParallelCommandGroup.h>
 #include <frc2/command/CommandHelper.h>
@@ -21,8 +20,7 @@ class GrabCoral
                                  GrabCoral>
 {
 public:
-  GrabCoral(IntakeCoral *_intakeCoral);
+  GrabCoral(Elevator *elevator, Wrist *wrist, IntakeCoral *intakeCoral);
 
 private:
-  IntakeCoral *m_intakeCoral;
 };

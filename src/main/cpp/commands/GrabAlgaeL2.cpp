@@ -7,9 +7,9 @@
 // NOTE:  Consider using this command inline, rather than writing a subclass.
 // For more information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-GrabAlgaeL2::GrabAlgaeL2(IntakeAlgae *_intakeAlgae) : m_intakeAlgae{_intakeAlgae}
+GrabAlgaeL2::GrabAlgaeL2(IntakeAlgae *intakeAlgae) : m_intakeAlgae{intakeAlgae}
 {
-  AddCommands(frc2::ParallelCommandGroup(SetElevatorHeight(), ChangeIntakeAngle()), RunAlgaeIntake(m_intakeAlgae), Reset());
+  // AddCommands(SetElevatorHeight(), RunAlgaeIntake(m_intakeAlgae), Reset());
 
   // Add your commands here, e.g.
   // AddCommands(FooCommand{}, BarCommand{});

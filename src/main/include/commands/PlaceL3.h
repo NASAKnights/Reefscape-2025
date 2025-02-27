@@ -6,13 +6,20 @@
 
 #include <frc2/command/CommandHelper.h>
 #include <frc2/command/SequentialCommandGroup.h>
+#include "subsystems/Wrist.h"
+#include "subsystems/Elevator.h"
+#include "subsystems/IntakeCoral.h"
+#include "subsystems/IntakeAlgae.h"
+#include "commands/Reset.h"
+#include "commands/RunAlgaeIntake.h"
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.
 // For more information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 class PlaceL3
     : public frc2::CommandHelper<frc2::SequentialCommandGroup,
-                                 PlaceL3> {
- public:
-  PlaceL3();
+                                 PlaceL3>
+{
+public:
+  PlaceL3(Wrist *wrist, Elevator *elevator, IntakeAlgae *intakeAlgae);
 };
