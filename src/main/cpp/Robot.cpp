@@ -43,6 +43,14 @@ void Robot::RobotPeriodic()
     m_PowerLog.Append(m_pdh.GetTotalPower());
     m_EnergyLog.Append(m_pdh.GetTotalEnergy());
     m_TemperatureLog.Append(m_pdh.GetTemperature());
+    if (m_elevator.GetHeight() >= 0.35)
+    {
+        frc::SmartDashboard::PutNumber("drive/accelLim", 0.25);
+    }
+    else
+    {
+        frc::SmartDashboard::PutNumber("drive/accelLim", 3.0);
+    }
 }
 
 // This function is called once each time the robot enters Disabled mode.
