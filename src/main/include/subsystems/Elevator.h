@@ -4,6 +4,8 @@
 #include "wpi/DataLog.h"
 #include <ctre/phoenix6/Pigeon2.hpp>
 #include <ctre/phoenix6/TalonFX.hpp>
+#include <ctre/phoenix6/CANdi.hpp>
+#include <ctre/phoenix6/StatusSignal.hpp>
 #include <frc/DutyCycleEncoder.h>
 #include <frc/Encoder.h>
 #include <frc/controller/ElevatorFeedforward.h>
@@ -36,7 +38,10 @@ namespace ElevatorConstants
         START_HOLD,
         HOLDING,
         START_MOVE,
-        MOVING
+        MOVING,
+        START_CAL,
+        CAL_MOVE_ZERO,
+        CAL_MOVE_HT
     };
 
     static constexpr units::meter_t upperLimit = 30_in; // 57
@@ -48,14 +53,18 @@ namespace ElevatorConstants
     static constexpr units::meters_per_second_t kMaxVelocity = 60.0_in / 1_s;                      // 61.55
     static constexpr units::meters_per_second_squared_t kMaxAcceleration = 240.0_in / (1_s * 1_s); // 460_in / (1_s * 1_s);
 
-    static constexpr double kP = 9.0;                                                              // 0.6 - 15
+    static constexpr double kP = 9.0; // 0.6 - 15
 
-    static constexpr double kI = 0.0;                                                              // 0.0
+    static constexpr double kI = 0.0; // 0.0
     static constexpr double kD = 0.0;
     static constexpr units::volt_t kS = 0.2_V; // minimum voltage to move motor
 
     static constexpr units::meter_t kTolerancePos = 0.01_m;
     static constexpr units::meters_per_second_t kToleranceVel = 0.01_mps;
+
+    // tolerance to use during calibration
+    static constexpr units::meter_t kCalTolerancePos = 0.005_m;
+    static constexpr units::meters_per_second_t kCalToleranceVel = 0.005_mps;
 
     static constexpr units::meter_t kEmergencyTolerance = 0.25_in;
 
@@ -83,6 +92,47 @@ namespace ElevatorConstants
     // effective drum radius = radius of first stage * number of stages
     // pulses per rev must be set correctly in the SparkMax encoder - only reports revolutions
     static constexpr units::meter_t kElevatorDrumRadius = 1.432_in;
+
+    // voltage applied during calibration while moving to zero encoder
+    static constexpr auto kCalZeroVoltage = kFFks * -1.5;
+
+    // piecewise linear fit breakpoint count
+    static const int kHallPwlPoints = 10;
+
+    // piecewise linear fit for 2 magnet holders
+    // piecewise linear fit breakpoint field angles in rotations (0 .. 1)
+    static const double kHall2PwlAngle[kHallPwlPoints] = {
+        -0.03386625, 0.00548981, 0.03846759, 0.0993575, 0.16011927,
+        0.82887919, 0.90070398, 0.94538503, 1.00212295, 1.03386625};
+    // piecewise linear fit breakpoint relative positions in meters
+    static const double kHall2PwlPosition[kHallPwlPoints] = {
+        -0.0278375, -0.02339076, -0.02053397, -0.01653541, -0.01346209,
+        0.0130175, 0.01655938, 0.01931709, 0.02409609, 0.02790332};
+
+    // piecewise linear fit for 4 magnet holders
+    // piecewise linear fit breakpoint field angles in rotations (0 .. 1)
+    static const double kHall4PwlAngle[kHallPwlPoints] = {
+        -1.04600337, -1.00715384, -0.94230751, -0.83611974, -0.24959909,
+        0.38566217, 0.8375927, 0.92915047, 0.99704411, 1.04600337};
+    // piecewise linear fit breakpoint relative positions in meters
+    static const double kHall4PwlPosition[kHallPwlPoints] = {
+        -0.04817201, -0.0434131, -0.03794988, -0.03223475, -0.00944449,
+        0.01464383, 0.03235479, 0.03713524, 0.04237394, 0.04810641};
+
+    // factor applied after pwl linear fit to scale values based on elevator stages
+    static const double kHallStageFactor = 2.0;
+
+    // number of magnet holders
+    static const int kHallMagnetHolderCount = 4;
+    // number of magnets in each holder
+    static const int kHallMagnetCounts[kHallMagnetHolderCount] = {2, 4, 2, 2};
+    // position of the center of each holder in the final scaled reference frame
+    // TODO Measure the distance between L0 mag holder and each of L1/L2, L3, and
+    //      L4 mag holders.  Add the offset from zero position to L0 mag holder
+    //      center to each.  Then multiply each by kHallStageFactor.
+    static double kHallMagnetHeights[kHallMagnetHolderCount] = {0.0, 0.5, 1.0, 2.0};
+
+    static const bool kDisableHallSensor = true;
 }
 
 class Elevator : public frc2::SubsystemBase
@@ -100,12 +150,10 @@ public:
     void UseOutput(double output, State setpoint);
     units::meter_t GetMeasurement();
     void HoldPosition();
+    void Calibrate(double cal_height);
     // void           SetSpeed(double speed);
     void SetHeight(double height);
-    // bool           CheckGoal();
     void Periodic();
-    void TeleopInit();
-    void AutonomousInit();
     void Disable();
     bool IsHolding();
     units::meter_t GetEncoderDistance(rev::spark::SparkRelativeEncoder);
@@ -115,8 +163,14 @@ public:
     }
 
 private:
+    double GetEncoderHeight();   // meters
+    double GetEncoderVelocity(); // meters per second
+    double GetHallHeight(double height_estimate);
+    double GetHallPWM();
+    double GetHallPosition(double position_estimate, int magnet_count);
+    double InterpolatePWL(const double *xs, const double *ys, int count, double x);
+
     frc::ProfiledPIDController<units::meter> m_controller;
-    // frc::PIDController m_holdController;
 
     rev::spark::SparkMax m_motorLeft;
     rev::spark::SparkMax m_motorRight;
@@ -132,14 +186,23 @@ private:
     rev::spark::SparkRelativeEncoder m_encoderLeft;
     rev::spark::SparkRelativeEncoder m_encoderRight;
 
+    ctre::phoenix6::hardware::CANdi m_candi;
+
     frc::Timer m_simTimer;
     frc::Timer *m_timer;
 
     frc::sim::ElevatorSim m_elevatorSim;
 
-    double m_holdHeight;
-
     ElevatorConstants::ElevatorState m_ElevatorState;
 
     units::meter_t m_goal;
+
+    // raw hall pwm value, updated in Periodic
+    double m_hall_pwm;
+
+    // indicates zero encoder has been detected
+    // must persist if we are actually at the limit switch
+    bool m_lastCalZero;
+
+    double m_heightCorrection;
 };
