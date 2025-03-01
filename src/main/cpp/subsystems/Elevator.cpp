@@ -425,7 +425,7 @@ double Elevator::InterpolatePWL(const double *xs, const double *ys, int count, d
 
 void Elevator::AutoCalibrateHeight()
 {
-    if (units::meters_per_second_t{GetEncoderVelocity()} < ElevatorConstants::kAutoCalMaxVelocity)
+    if (units::meters_per_second_t{std::abs(GetEncoderVelocity())} < ElevatorConstants::kAutoCalMaxVelocity)
     {
         double encoderHeight = GetEncoderHeight();
         double stage1Height = encoderHeight / 2.0;
