@@ -59,10 +59,6 @@ namespace ElevatorConstants
     static constexpr units::meter_t kTolerancePos = 0.01_m;
     static constexpr units::meters_per_second_t kToleranceVel = 0.01_mps;
 
-    // tolerance to use during calibration
-    static constexpr units::meter_t kCalTolerancePos = 0.005_m;
-    static constexpr units::meters_per_second_t kCalToleranceVel = 0.005_mps;
-
     static constexpr units::meter_t kEmergencyTolerance = 0.25_in;
 
     const int kMotorIdLeft = 5;
