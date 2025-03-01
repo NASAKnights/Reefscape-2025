@@ -92,30 +92,10 @@ double Elevator::GetHeight()
         // frc::SmartDashboard::PutBoolean("isSim", true);
         return m_elevatorSim.GetPosition().value();
     }
-    // average the left and right encoder distance to get the encoder estimated height
-    // note that the value represents double the actual height of stage 1
-    double encoderHeight = GetEncoderHeight();
-
     if (ElevatorConstants::kDisableHallSensor)
-        return encoderHeight;
-
-    double stage1Height = encoderHeight / 2.0;
-    // apply the previously determined height correction to get an estimate of the
-    // height of stage2 (carriage) relative to stage 1
-    double stage2HeightEstimate = stage1Height - m_heightCorrection;
-
-    // TODO detect a fault state if we definitely should be within range
-    // of a magnet, but we aren't OR if we definitely should NOT be within
-    // range and we are.  Condition should persist for X milliseconds.
-
-    // using the estimated height, get the height of stage2 (carriage) relative to
-    // stage 1
-    double stage2Height = GetHallHeight(stage2HeightEstimate);
-    // if no data, return the estimated total height
-    if (stage2Height < -999.0)
-        return stage1Height + stage2HeightEstimate;
-    // otherwise return the true total height
-    return stage1Height + stage2Height;
+        return GetEncoderHeight();
+    else
+        return GetFusedHeight();
 }
 
 units::meter_t Elevator::GetMeasurement()
@@ -128,6 +108,7 @@ void Elevator::printLog()
     double encoderHeight = GetEncoderHeight();
     double hallHeight = GetHallHeight(encoderHeight / 2.0 - m_heightCorrection);
     frc::SmartDashboard::PutNumber("/Elevator/ELEVATOR_HEIGHT", GetMeasurement().value());
+    frc::SmartDashboard::PutNumber("/Elevator/ELEVATOR_HEIGHT_FUSED", GetFusedHeight());
     frc::SmartDashboard::PutNumber("/Elevator/ELEVATOR_ENC_ABS_LEFT", m_encoderLeft.GetPosition());
     frc::SmartDashboard::PutNumber("/Elevator/ELEVATOR_ENC_ABS_RIGHT", m_encoderRight.GetPosition());
     frc::SmartDashboard::PutNumber("/Elevator/ELEVATOR_ENC_HEIGHT", encoderHeight);
@@ -267,6 +248,31 @@ bool Elevator::IsHolding()
 }
 
 /*  Private Methods */
+
+double Elevator::GetFusedHeight()
+{
+    // average the left and right encoder distance to get the encoder estimated height
+    // note that the value represents double the actual height of stage 1
+    double encoderHeight = GetEncoderHeight();
+
+    double stage1Height = encoderHeight / 2.0;
+    // apply the previously determined height correction to get an estimate of the
+    // height of stage2 (carriage) relative to stage 1
+    double stage2HeightEstimate = stage1Height - m_heightCorrection;
+
+    // TODO detect a fault state if we definitely should be within range
+    // of a magnet, but we aren't OR if we definitely should NOT be within
+    // range and we are.  Condition should persist for X milliseconds.
+
+    // using the estimated height, get the height of stage2 (carriage) relative to
+    // stage 1
+    double stage2Height = GetHallHeight(stage2HeightEstimate);
+    // if no data, return the estimated total height
+    if (stage2Height < -999.0)
+        return stage1Height + stage2HeightEstimate;
+    // otherwise return the true total height
+    return stage1Height + stage2Height;
+}
 
 double Elevator::GetEncoderHeight()
 {

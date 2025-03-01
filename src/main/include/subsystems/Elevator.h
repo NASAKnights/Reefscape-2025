@@ -158,6 +158,7 @@ public:
     }
 
 private:
+    double GetFusedHeight();     // meters
     double GetEncoderHeight();   // meters
     double GetEncoderVelocity(); // meters per second
     double GetHallHeight(double heightEstimate);
