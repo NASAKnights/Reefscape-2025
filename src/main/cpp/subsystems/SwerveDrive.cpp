@@ -157,12 +157,12 @@ void SwerveDrive::Drive(frc::ChassisSpeeds speeds)
 
         auto prevVX = frc::SmartDashboard::GetNumber("drive/vx", 0.0);
         auto prevVY = frc::SmartDashboard::GetNumber("drive/vy", 0.0);
-        double accelLimit = frc::SmartDashboard::GetNumber("drive/accelLim", 2.0);
+        double accelLimit = frc::SmartDashboard::GetNumber("drive/accelLim", 5.0);
 
         double velocityCommanded = std::sqrt(std::pow(speeds.vx.value(), 2) + std::pow(speeds.vy.value(), 2));
         double prevVelocity = std::sqrt(std::pow(prevVX, 2) + std::pow(prevVY, 2));
 
-        velocityCommanded = std::min(accelLimit * (dT.value() * 10000) + (prevVelocity), velocityCommanded);
+        velocityCommanded = std::min(((accelLimit * (dT.value() * 1000)) + prevVelocity), velocityCommanded);
 
         Eigen::Vector2d prevVelocityVector(speeds.vx.value(), speeds.vy.value());
         Eigen::Vector2d a = prevVelocityVector.normalized() * velocityCommanded;

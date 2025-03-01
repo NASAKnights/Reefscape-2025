@@ -21,10 +21,15 @@ void Robot::RobotInit()
     frc::SmartDashboard::PutData("AddPOI", addPOICommand.get());
     frc::SmartDashboard::PutData("RemovePOI", removePOICommand.get());
 
-    // auto Po = frc::SmartDashboard::PutNumber("Note Po", 0.0);
-    // auto Px = frc::SmartDashboard::PutNumber("Note Px", 1);
-    // auto Py = frc::SmartDashboard::PutNumber("Note Py", 1);
-    // auto Do = frc::SmartDashboard::PutNumber("Note Do", 0.0);
+    frc::SmartDashboard::PutNumber("FrontLeftDegree", 0.0);
+    frc::SmartDashboard::PutNumber("FrontRightDegree", 0.0);
+    frc::SmartDashboard::PutNumber("BackLeftDegree", 0.0);
+    frc::SmartDashboard::PutNumber("BackRightDegree", 0.0);
+
+    auto Po = frc::SmartDashboard::PutNumber("Note Po", 0.0);
+    auto Px = frc::SmartDashboard::PutNumber("Note Px", 1);
+    auto Py = frc::SmartDashboard::PutNumber("Note Py", 1);
+    auto Do = frc::SmartDashboard::PutNumber("Note Do", 0.0);
 
     std::string testAutoCalibration = "2mForward";
     auto a4 = pathplanner::PathPlannerAuto(testAutoCalibration);
