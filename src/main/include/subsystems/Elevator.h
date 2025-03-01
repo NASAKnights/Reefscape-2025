@@ -38,10 +38,7 @@ namespace ElevatorConstants
         START_HOLD,
         HOLDING,
         START_MOVE,
-        MOVING,
-        START_CAL,
-        CAL_MOVE_ZERO,
-        CAL_MOVE_HT
+        MOVING
     };
 
     static constexpr units::meter_t upperLimit = 30_in; // 57
@@ -91,15 +88,16 @@ namespace ElevatorConstants
     static constexpr units::kilogram_t kCarriageMass = (13_lb);
     // effective drum radius = radius of first stage * number of stages
     // pulses per rev must be set correctly in the SparkMax encoder - only reports revolutions
+    // effectively, this will be the diameter because there are two stages
     static constexpr units::meter_t kElevatorDrumRadius = 1.432_in;
 
     // voltage applied during calibration while moving to zero encoder
-    static constexpr auto kCalZeroVoltage = kFFks * -1.5;
+    static constexpr units::meters_per_second_t kMaxAutoCalVelocity = 0.01_mps;
 
     // piecewise linear fit breakpoint count
     static const int kHallPwlPoints = 10;
 
-    // piecewise linear fit for 2 magnet holders
+    // piecewise linear fit for 2-magnet holders
     // piecewise linear fit breakpoint field angles in rotations (0 .. 1)
     static const double kHall2PwlAngle[kHallPwlPoints] = {
         -0.03386625, 0.00548981, 0.03846759, 0.0993575, 0.16011927,
@@ -109,7 +107,7 @@ namespace ElevatorConstants
         -0.0278375, -0.02339076, -0.02053397, -0.01653541, -0.01346209,
         0.0130175, 0.01655938, 0.01931709, 0.02409609, 0.02790332};
 
-    // piecewise linear fit for 4 magnet holders
+    // piecewise linear fit for 4-magnet holders
     // piecewise linear fit breakpoint field angles in rotations (0 .. 1)
     static const double kHall4PwlAngle[kHallPwlPoints] = {
         -1.04600337, -1.00715384, -0.94230751, -0.83611974, -0.24959909,
@@ -119,18 +117,20 @@ namespace ElevatorConstants
         -0.04817201, -0.0434131, -0.03794988, -0.03223475, -0.00944449,
         0.01464383, 0.03235479, 0.03713524, 0.04237394, 0.04810641};
 
-    // factor applied after pwl linear fit to scale values based on elevator stages
-    static const double kHallStageFactor = 2.0;
-
     // number of magnet holders
     static const int kHallMagnetHolderCount = 4;
     // number of magnets in each holder
     static const int kHallMagnetCounts[kHallMagnetHolderCount] = {2, 4, 2, 2};
-    // position of the center of each holder in the final scaled reference frame
-    // TODO Measure the distance between L0 mag holder and each of L1/L2, L3, and
-    //      L4 mag holders.  Add the offset from zero position to L0 mag holder
-    //      center to each.  Then multiply each by kHallStageFactor.
-    static double kHallMagnetHeights[kHallMagnetHolderCount] = {0.0, 0.5, 1.0, 2.0};
+    // heights of the center of each holder relative to the position of the
+    // sensor center when the carriage is fully retracted (corresponds to when the
+    // motor encoders are zeroed).  Note that these distances are not scaled.
+    // Measurement Process:
+    //   - With the cable properly tensioned, put the elevator in its lowest (zeroed)
+    //     position.
+    //   - Measure the distance from the sensor center point to each of the
+    //     L0, L1/L2, L3, and L4 mag holder centers.
+    // TODO make these measurement and update values below
+    static double kHallMagnetHeights[kHallMagnetHolderCount] = {0.0100, 0.1180, 0.3022, 0.7245};
 
     static const bool kDisableHallSensor = true;
 }
@@ -150,7 +150,6 @@ public:
     void UseOutput(double output, State setpoint);
     units::meter_t GetMeasurement();
     void HoldPosition();
-    void Calibrate(double cal_height);
     // void           SetSpeed(double speed);
     void SetHeight(double height);
     void Periodic();
@@ -165,10 +164,11 @@ public:
 private:
     double GetEncoderHeight();   // meters
     double GetEncoderVelocity(); // meters per second
-    double GetHallHeight(double height_estimate);
+    double GetHallHeight(double heightEstimate);
     double GetHallPWM();
-    double GetHallPosition(double position_estimate, int magnet_count);
+    double GetHallPosition(double positionEstimate, int magnetCount);
     double InterpolatePWL(const double *xs, const double *ys, int count, double x);
+    void AutoCalibrateHeight();
 
     frc::ProfiledPIDController<units::meter> m_controller;
 
@@ -198,7 +198,7 @@ private:
     units::meter_t m_goal;
 
     // raw hall pwm value, updated in Periodic
-    double m_hall_pwm;
+    double m_hallPwm;
 
     // indicates zero encoder has been detected
     // must persist if we are actually at the limit switch
