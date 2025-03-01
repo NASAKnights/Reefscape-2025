@@ -25,7 +25,7 @@ Elevator::Elevator()
                             ElevatorConstants::kFFkV, ElevatorConstants::kFFkA},
       m_encoderLeft{m_motorLeft.GetEncoder()},
       m_encoderRight{m_motorRight.GetEncoder()},
-      m_candi{14}, // TODO may need canbus name
+      m_candi{13}, // TODO may need canbus name
       m_elevatorSim(frc::DCMotor::NEO(ElevatorConstants::kNumMotors), ElevatorConstants::kElevatorGearing,
                     ElevatorConstants::kCarriageMass, ElevatorConstants::kElevatorDrumRadius,
                     ElevatorConstants::simLowerLimit, ElevatorConstants::simUpperLimit, false, 0_m,
@@ -126,13 +126,14 @@ units::meter_t Elevator::GetMeasurement()
 void Elevator::printLog()
 {
     double encoderHeight = GetEncoderHeight();
-    double hallHeight = GetHallHeight(encoderHeight);
+    double hallHeight = GetHallHeight(encoderHeight / 2.0 - m_heightCorrection);
     frc::SmartDashboard::PutNumber("/Elevator/ELEVATOR_HEIGHT", GetMeasurement().value());
     frc::SmartDashboard::PutNumber("/Elevator/ELEVATOR_ENC_ABS_LEFT", m_encoderLeft.GetPosition());
     frc::SmartDashboard::PutNumber("/Elevator/ELEVATOR_ENC_ABS_RIGHT", m_encoderRight.GetPosition());
     frc::SmartDashboard::PutNumber("/Elevator/ELEVATOR_ENC_HEIGHT", encoderHeight);
     frc::SmartDashboard::PutNumber("/Elevator/ELEVATOR_HALL_PWM", m_hallPwm);
     frc::SmartDashboard::PutNumber("/Elevator/ELEVATOR_HALL_HEIGHT", hallHeight);
+    frc::SmartDashboard::PutNumber("/Elevator/ELEVATOR_HEIGHT_CORRECTION", m_heightCorrection);
     frc::SmartDashboard::PutNumber("/Elevator/elevatorGoal_POS", m_controller.GetGoal().position.value());
     frc::SmartDashboard::PutNumber("/Elevator/ELEVATOR_setpoint",
                                    m_controller.GetSetpoint().position.value());
@@ -327,9 +328,9 @@ double Elevator::GetHallPosition(double positionEstimate, int magnetCount)
     pwm = (pwm < 0 ? -1 : 1) * pwm;
     pwm = pwm - std::trunc(pwm);
     // pwm < 0.025 or pwm > 0.95 represents fault
-    // 0.25 < pwm < 0.09 represents no data yet
+    // 0.025 < pwm < 0.09 represents no data yet
     // 0.91 < pwm < 0.95 indeterminate, ignore
-    if (pwm < 0.25 or pwm > 0.95)
+    if (pwm < 0.025 or pwm > 0.95)
         return -2000.0;
     if (pwm < 0.09 || pwm > 0.91)
         return -1000.0;
