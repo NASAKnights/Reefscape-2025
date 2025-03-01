@@ -87,8 +87,17 @@ namespace ElevatorConstants
     // effectively, this will be the diameter because there are two stages
     static constexpr units::meter_t kElevatorDrumRadius = 1.432_in;
 
-    // voltage applied during calibration while moving to zero encoder
-    static constexpr units::meters_per_second_t kMaxAutoCalVelocity = 0.01_mps;
+    // auto calibration will only occur when gong slower than this
+    static constexpr units::meters_per_second_t kAutoCalMaxVelocity = 0.01_mps;
+
+    // auto calibration will only occure when above this height
+    static constexpr units::meter_t kAutoCalMinHeight = 0.05_m;
+
+    // should be set to the expected height in meters of stage 1
+    // when the cable becomes tensioned and stage 2 begins to move
+    // relative to stage 1.
+    // TODO need to measure this
+    static const units::meter_t kInitialHeightCorrection = 0.02_m;
 
     // piecewise linear fit breakpoint count
     static const int kHallPwlPoints = 10;

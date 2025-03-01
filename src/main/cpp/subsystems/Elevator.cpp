@@ -48,7 +48,7 @@ Elevator::Elevator()
     m_MotorVoltageLog = wpi::log::DoubleLogEntry(log, "/Elevator/MotorVoltage");
     m_ElevatorState = ElevatorConstants::ElevatorState::DISABLED;
     m_goal = 0.0_m;
-    m_heightCorrection = 0.0;
+    m_heightCorrection = ElevatorConstants::kInitialHeightCorrection.value();
 }
 
 void Elevator::HoldPosition()
@@ -425,22 +425,26 @@ double Elevator::InterpolatePWL(const double *xs, const double *ys, int count, d
 
 void Elevator::AutoCalibrateHeight()
 {
-    if (units::meters_per_second_t{GetEncoderVelocity()} < ElevatorConstants::kMaxAutoCalVelocity)
+    if (units::meters_per_second_t{GetEncoderVelocity()} < ElevatorConstants::kAutoCalMaxVelocity)
     {
         double encoderHeight = GetEncoderHeight();
         double stage1Height = encoderHeight / 2.0;
-        // apply the previously determined height correction to get an estimate of the
-        // height of stage2 (carriage) relative to stage 1
-        double stage2HeightEstimate = stage1Height - m_heightCorrection;
-
-        // using the estimated height, get the height of stage2 (carriage) relative to
-        // stage 1
-        double stage2Height = GetHallHeight(stage2HeightEstimate);
-        // if no data, return the estimated total height
-        if (stage2Height > -999.0)
+        if (units::meter_t{stage1Height} > ElevatorConstants::kAutoCalMinHeight)
         {
-            m_heightCorrection = stage1Height - stage2Height;
+
+            // apply the previously determined height correction to get an estimate of the
+            // height of stage2 (carriage) relative to stage 1
+            double stage2HeightEstimate = stage1Height - m_heightCorrection;
+
+            // using the estimated height, get the height of stage2 (carriage) relative to
+            // stage 1
+            double stage2Height = GetHallHeight(stage2HeightEstimate);
+            // if no data, return the estimated total height
+            if (stage2Height > -999.0)
+            {
+                m_heightCorrection = stage1Height - stage2Height;
+            }
+            frc::SmartDashboard::PutNumber("/Elevator/Elevator Height Correction", m_heightCorrection);
         }
-        frc::SmartDashboard::PutNumber("/Elevator/Elevator Height Correction", m_heightCorrection);
     }
 }
