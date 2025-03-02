@@ -21,10 +21,10 @@ void Robot::RobotInit()
     frc::SmartDashboard::PutData("AddPOI", addPOICommand.get());
     frc::SmartDashboard::PutData("RemovePOI", removePOICommand.get());
 
-    frc::SmartDashboard::PutNumber("FrontLeftDegree", 0.0);
-    frc::SmartDashboard::PutNumber("FrontRightDegree", 0.0);
-    frc::SmartDashboard::PutNumber("BackLeftDegree", 0.0);
-    frc::SmartDashboard::PutNumber("BackRightDegree", 0.0);
+    // frc::SmartDashboard::PutNumber("FrontLeftDegree", 0.0);
+    // frc::SmartDashboard::PutNumber("FrontRightDegree", 0.0);
+    // frc::SmartDashboard::PutNumber("BackLeftDegree", 0.0);
+    // frc::SmartDashboard::PutNumber("BackRightDegree", 0.0);
 
     auto Po = frc::SmartDashboard::PutNumber("Note Po", 0.0);
     auto Px = frc::SmartDashboard::PutNumber("Note Px", 1);
@@ -181,10 +181,10 @@ void Robot::BindCommands()
     frc2::JoystickButton(&m_driverController, 5)
         .WhileTrue(RunCoralOuttake(&m_CoralIntake).ToPtr());
 
-    // frc2::JoystickButton(&m_driverController, 2)
-    //     .OnTrue(frc2::CommandPtr(
-    //         frc2::InstantCommand([this]
-    //                              { return m_swerveDrive.SetOffsets(); })));
+    frc2::JoystickButton(&m_driverController, 2)
+        .OnTrue(frc2::CommandPtr(
+            frc2::InstantCommand([this]
+                                 { return m_swerveDrive.SetOffsets(); })));
 
     // frc2::JoystickButton(&m_driverController, 3)
     //     .OnTrue(frc2::CommandPtr(frc2::InstantCommand(
