@@ -146,6 +146,7 @@ void Robot::CreateRobot()
                 { m_elevator.Periodic(); }, 5_ms, 1_ms);
     AddPeriodic([this]
                 { m_wrist.Periodic(); }, 10_ms, 2_ms);
+
     // Configure the button bindings
     BindCommands();
     m_swerveDrive.ResetHeading();
