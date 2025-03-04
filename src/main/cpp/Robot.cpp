@@ -26,6 +26,15 @@ void Robot::RobotInit()
     // frc::SmartDashboard::PutNumber("BackLeftDegree", 0.0);
     // frc::SmartDashboard::PutNumber("BackRightDegree", 0.0);
 
+    m_chooser.SetDefaultOption("A", "hu");
+    m_chooser.AddOption("A", "aaaa");
+    m_chooser.AddOption("A1", "nullptr");
+    m_chooser.AddOption("A2", "huh");
+    m_chooser.AddOption("A3", "nullptr");
+    m_chooser.AddOption("A4", "oh");
+
+    frc::Shuffleboard::GetTab("Auto Settings").Add(m_chooser).WithWidget(frc::BuiltInWidgets::kComboBoxChooser);
+
     auto Po = frc::SmartDashboard::PutNumber("Note Po", 0.0);
     auto Px = frc::SmartDashboard::PutNumber("Note Px", 1);
     auto Py = frc::SmartDashboard::PutNumber("Note Py", 1);
@@ -50,11 +59,11 @@ void Robot::RobotPeriodic()
     m_TemperatureLog.Append(m_pdh.GetTemperature());
     if (m_elevator.GetHeight() >= 0.35)
     {
-        frc::SmartDashboard::PutNumber("drive/accelLim", 0.25);
+        frc::SmartDashboard::PutNumber("drive/accelLim", 0.5);
     }
     else
     {
-        frc::SmartDashboard::PutNumber("drive/accelLim", 3.0);
+        frc::SmartDashboard::PutNumber("drive/accelLim", 4.0);
     }
 }
 
@@ -290,10 +299,6 @@ void Robot::DisabledPeriodic()
 
 void Robot::UpdateDashboard()
 {
-    // frc::ShuffleboardLayout& autoCommands =
-    //     frc::Shuffleboard::GetTab("Auto Config").GetLayout("Auto Selection",
-    //                                                        frc::BuiltInLayouts::kList);
-    // autoCommands.Add("NAME", commandName);
 
     // I don't know yet if this is the best way of doing this, I just wanted to
     // have this commented for later.

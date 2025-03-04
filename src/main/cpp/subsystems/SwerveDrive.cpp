@@ -152,7 +152,7 @@ void SwerveDrive::Drive(frc::ChassisSpeeds speeds)
 {
     if (enable)
     {
-        auto dT = timer.Get();
+        auto dT = 20_ms;
         timer.Reset();
 
         auto prevVX = frc::SmartDashboard::GetNumber("drive/vx", 0.0);
@@ -162,7 +162,7 @@ void SwerveDrive::Drive(frc::ChassisSpeeds speeds)
         double velocityCommanded = std::sqrt(std::pow(speeds.vx.value(), 2) + std::pow(speeds.vy.value(), 2));
         double prevVelocity = std::sqrt(std::pow(prevVX, 2) + std::pow(prevVY, 2));
 
-        velocityCommanded = std::min(accelLimit * (dT.value() * 10000) + (prevVelocity), velocityCommanded);
+        velocityCommanded = std::min(accelLimit * (0.02) + (prevVelocity), velocityCommanded);
 
         Eigen::Vector2d prevVelocityVector(speeds.vx.value(), speeds.vy.value());
         Eigen::Vector2d a = prevVelocityVector.normalized() * velocityCommanded;

@@ -96,6 +96,8 @@ private:
     IntakeCoral m_CoralIntake;
     IntakeAlgae m_AlgaeIntake;
 
+    frc::SendableChooser<std::string> m_chooser;
+
     SwerveDrive m_swerveDrive;
     Wrist m_wrist;
     Elevator m_elevator;
