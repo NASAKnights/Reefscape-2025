@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartBottomScoreA4"
+            "pathName": "StartBottomScoreA3"
           }
         },
         {
@@ -17,9 +17,27 @@
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "A3toHP1"
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "HPSScoreA4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score L4"
           }
         },
         {
@@ -38,6 +56,12 @@
           "type": "path",
           "data": {
             "pathName": "HPSScoreA4"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score L4"
           }
         }
       ]

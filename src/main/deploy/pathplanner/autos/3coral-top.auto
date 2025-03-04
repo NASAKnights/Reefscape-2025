@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartMiddleRemoveAlgaeA2"
+            "pathName": "StartTopScoreA1"
           }
         },
         {
@@ -17,15 +17,9 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "Intake"
-          }
-        },
-        {
           "type": "path",
           "data": {
-            "pathName": "StartA2RemoveAlgaeA1"
+            "pathName": "A1ToHPS2"
           }
         },
         {
@@ -37,13 +31,37 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartA1RemoveAlgaeA6"
+            "pathName": "HPS2ScoreA6"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score L4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "A6ToHPS2"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "HPS2ScoreA6"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score L4"
           }
         }
       ]
