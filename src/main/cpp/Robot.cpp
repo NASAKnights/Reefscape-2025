@@ -187,13 +187,13 @@ void Robot::BindCommands()
             frc2::InstantCommand([this]
                                  { return m_swerveDrive.ResetHeading(); })));
 
-    frc2::JoystickButton(&m_driverController, 5)
-        .WhileTrue(RunCoralOuttake(&m_CoralIntake).ToPtr());
+    // frc2::JoystickButton(&m_driverController, 5)
+    //     .WhileTrue(RunCoralOuttake(&m_CoralIntake).ToPtr());
 
-    frc2::JoystickButton(&m_driverController, 2)
-        .OnTrue(frc2::CommandPtr(
-            frc2::InstantCommand([this]
-                                 { return m_swerveDrive.SetOffsets(); })));
+    // frc2::JoystickButton(&m_driverController, 2)
+    //     .OnTrue(frc2::CommandPtr(
+    //         frc2::InstantCommand([this]
+    //                              { return m_swerveDrive.SetOffsets(); })));
 
     // frc2::JoystickButton(&m_driverController, 3)
     //     .OnTrue(frc2::CommandPtr(frc2::InstantCommand(
@@ -265,18 +265,22 @@ void Robot::BindCommands()
         .OnFalse(Reset(&m_elevator, &m_wrist).ToPtr());
 
     frc2::JoystickButton(&m_operatorController, 5)
-        .WhileTrue(RunCoralOuttake(&m_CoralIntake).ToPtr());
+        .WhileTrue(GrabAlgaeL3(&m_AlgaeIntake).ToPtr());
+
+    frc2::JoystickButton(&m_operatorController, 6)
+        .WhileTrue(GrabCoral(&m_elevator, &m_wrist, &m_CoralIntake).ToPtr())
+        .OnFalse(Reset(&m_elevator, &m_wrist).ToPtr());
 
     // frc2::JoystickButton(&m_operatorController, 6)
     //     .WhileTrue(GrabAlgaeL3(&m_AlgaeIntake).ToPtr());
     // ^ Rewrite command to include elevator
-    frc2::POVButton(&m_operatorController, 180)
-        .OnTrue(GrabCoral(&m_elevator, &m_wrist, &m_CoralIntake).ToPtr())
-        .OnFalse(Reset(&m_elevator, &m_wrist).ToPtr());
+    // frc2::POVButton(&m_operatorController, 180)
+    //     .OnTrue(GrabCoral(&m_elevator, &m_wrist, &m_CoralIntake).ToPtr())
+    //     .OnFalse(Reset(&m_elevator, &m_wrist).ToPtr());
 
     // Left Trigger
     frc2::JoystickButton(&m_operatorController, 7)
-        .WhileTrue(RunAlgaeOuttake(&m_AlgaeIntake).ToPtr());
+        .WhileTrue(ScoreAlgae(&m_wrist, &m_AlgaeIntake, &m_elevator).ToPtr());
 
     // Right Trigger
     frc2::JoystickButton(&m_operatorController, 8)
