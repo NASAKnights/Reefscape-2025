@@ -89,7 +89,7 @@ private:
 
     std::map<int, std::pair<pathplanner::PathPlannerAuto, frc::Pose2d>> autoMap;
 
-    LEDController m_LED_Controller;
+    // LEDController m_LED_Controller;
 
     // Subsystems
 

@@ -40,7 +40,7 @@ void Robot::RobotInit()
     auto Py = frc::SmartDashboard::PutNumber("Note Py", 1);
     auto Do = frc::SmartDashboard::PutNumber("Note Do", 0.0);
 
-    std::string testAutoCalibration = "2mForward";
+    std::string testAutoCalibration = "3coral-bot";
     auto a4 = pathplanner::PathPlannerAuto(testAutoCalibration);
     auto a4Pose = pathplanner::PathPlannerAuto::getPathGroupFromAutoFile(testAutoCalibration)[0]->getPathPoses()[0];
     auto entry4 = std::make_pair(std::move(a4), a4Pose);
@@ -70,7 +70,7 @@ void Robot::RobotPeriodic()
 // This function is called once each time the robot enters Disabled mode.
 void Robot::DisabledInit()
 {
-    m_LED_Controller.DefaultAnimation();
+    // m_LED_Controller.DefaultAnimation();
 }
 
 void Robot::AutonomousInit()
@@ -113,7 +113,7 @@ void Robot::TeleopInit()
         m_autonomousCommand->Cancel();
     }
     m_swerveDrive.TurnVisionOn(); // Turn Vision back on for Teleop
-    m_LED_Controller.TeleopLED();
+    // m_LED_Controller.TeleopLED();
 }
 
 void Robot::TeleopPeriodic() {}
@@ -172,7 +172,7 @@ void Robot::CreateRobot()
     // Configure the button bindings
     BindCommands();
     m_swerveDrive.ResetHeading();
-    m_LED_Controller.DefaultAnimation();
+    // m_LED_Controller.DefaultAnimation();
 }
 
 /**
