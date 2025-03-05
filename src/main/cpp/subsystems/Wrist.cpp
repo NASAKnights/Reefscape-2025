@@ -78,7 +78,8 @@ void Wrist::Periodic()
     // TODO Check the following
     if (m_WristState == WristConstants::ZEROING && m_motor.GetForwardLimitSwitch().Get())
     {
-        m_encoder.SetPosition(91.0);
+        // m_encoder.SetPosition(91.0);
+        m_encoder.SetPosition(111.0);
         SetAngle(GetMeasurement().value());
         m_WristState = WristConstants::HOLD;
     }
