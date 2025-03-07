@@ -135,6 +135,12 @@ private:
     // Robot Container methods
     void CreateRobot();
     void BindCommands();
+
+    frc::Pose2d autoStartPose;
+
     frc2::CommandPtr GetAutonomousCommand();
+    void SetAutonomousCommand(std::string a);
+    // std::function<void(std::string)> SetAutonomousCommand(std::string a);
+    // void SetTAutonomousCommand(std::string a);
     void UpdateDashboard();
 };
