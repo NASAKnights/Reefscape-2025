@@ -36,7 +36,8 @@ namespace ElevatorConstants
         START_HOLD,
         HOLDING,
         START_MOVE,
-        MOVING
+        MOVING,
+        ZEROING
     };
 
     static constexpr units::meter_t upperLimit = 30_in; // 57
@@ -46,7 +47,7 @@ namespace ElevatorConstants
     static constexpr units::meter_t simLowerLimit = -0.1_in;
 
     static constexpr units::meters_per_second_t kMaxVelocity = 60.0_in / 1_s;                      // 61.55
-    static constexpr units::meters_per_second_squared_t kMaxAcceleration = 240.0_in / (1_s * 1_s); // 460_in / (1_s * 1_s);
+    static constexpr units::meters_per_second_squared_t kMaxAcceleration = 140.0_in / (1_s * 1_s); // 460_in / (1_s * 1_s);
 
     static constexpr double kP = 9.5; // 0.6 - 15
 
@@ -108,6 +109,7 @@ public:
     void AutonomousInit();
     void Disable();
     bool IsHolding();
+    void Zero();
     units::meter_t GetEncoderDistance(rev::spark::SparkRelativeEncoder);
     ElevatorConstants::ElevatorState GetState()
     {

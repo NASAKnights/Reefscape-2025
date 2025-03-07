@@ -38,9 +38,14 @@ Elevator::Elevator()
     m_encoderRight.SetPosition(0.0);
 
     rev::spark::SparkBaseConfig m_motorRightConfig;
+    rev::spark::SparkBaseConfig m_motorLeftConfig;
     m_motorRightConfig.Follow(m_motorLeft, true);
+    m_motorRightConfig.SmartCurrentLimit(30);
+
+    m_motorLeftConfig.SmartCurrentLimit(30);
 
     m_motorRight.Configure(m_motorRightConfig, rev::spark::SparkBase::ResetMode::kResetSafeParameters, rev::spark::SparkBase::PersistMode::kPersistParameters);
+    m_motorLeft.Configure(m_motorLeftConfig, rev::spark::SparkBase::ResetMode::kResetSafeParameters, rev::spark::SparkBase::PersistMode::kPersistParameters);
 
     wpi::log::DataLog &log = frc::DataLogManager::GetLog();
     m_HeightLog = wpi::log::DoubleLogEntry(log, "/Elevator/Angle");
@@ -66,12 +71,12 @@ void Elevator::HoldPosition()
 // height in meters
 void Elevator::SetHeight(double height)
 {
-    frc::SmartDashboard::PutNumber("/Elevator/I_am_here", 69);
+    // frc::SmartDashboard::PutNumber("/Elevator/I_am_here", 69);
     if (m_ElevatorState != ElevatorConstants::ElevatorState::DISABLED &&
         m_ElevatorState != ElevatorConstants::ElevatorState::START_HOLD &&
         m_ElevatorState != ElevatorConstants::ElevatorState::START_MOVE)
     {
-        frc::SmartDashboard::PutNumber("/Elevator/I_am_here", 74);
+        // frc::SmartDashboard::PutNumber("/Elevator/I_am_here", 74);
         m_goal = units::meter_t{height};
         m_ElevatorState = ElevatorConstants::START_MOVE;
     }
@@ -140,9 +145,22 @@ void Elevator::Periodic()
     {
         m_encoderLeft.SetPosition(0.0);
         m_encoderRight.SetPosition(0.0);
+        if (m_ElevatorState == ElevatorConstants::ZEROING)
+        {
+            // m_goal = 0.1_m;
+            m_ElevatorState = ElevatorConstants::HOLDING;
+            SetHeight(0.1);
+        }
+        // m_controller.SetGoal(0.1_m);
+        // m_ElevatorState = ElevatorConstants::HOLDING;
     }
     switch (m_ElevatorState)
     {
+    case ElevatorConstants::ZEROING:
+        m_motorLeft.SetVoltage(units::volt_t{-0.1});
+        m_motorRight.SetVoltage(units::volt_t{-0.1});
+        frc::SmartDashboard::PutString("/Elevator/ElevState", "ZEROING");
+        break;
     case ElevatorConstants::DISABLED:
         frc::SmartDashboard::PutString("/Elevator/ElevState", "DISABLED");
         break;
@@ -245,4 +263,8 @@ void Elevator::Disable()
 bool Elevator::IsHolding()
 {
     return m_ElevatorState == ElevatorConstants::HOLDING;
+}
+void Elevator::Zero()
+{
+    m_ElevatorState = ElevatorConstants::ZEROING;
 }

@@ -23,6 +23,7 @@ Wrist::Wrist() : m_controller(
     rev::spark::SparkBaseConfig config;
     config.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
     config.encoder.PositionConversionFactor(360 / 81.0);
+    config.SmartCurrentLimit(30, 0, 20000);
 
     m_motor.Configure(config, rev::spark::SparkMax::ResetMode::kResetSafeParameters, rev::spark::SparkMax::PersistMode::kPersistParameters);
 
@@ -79,7 +80,7 @@ void Wrist::Periodic()
     if (m_WristState == WristConstants::ZEROING && m_motor.GetForwardLimitSwitch().Get())
     {
         // m_encoder.SetPosition(91.0);
-        m_encoder.SetPosition(111.0);
+        m_encoder.SetPosition(106.0);
         SetAngle(GetMeasurement().value());
         m_WristState = WristConstants::HOLD;
     }
