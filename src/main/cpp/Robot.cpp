@@ -69,7 +69,7 @@ void Robot::DisabledInit()
 void Robot::SetAutonomousCommand(std::string a)
 {
     // Elements in list, make this dynamic maybe?
-    std::string autoList[1] = {"1coral-mid"}; // CHANGE AUTOS
+    std::string autoList[4] = {"1coral-mid", "1coral-mid", "1coral-mid", "1coral-mid"}; // CHANGE AUTOS
     m_autonomousCommand = pathplanner::PathPlannerAuto(autoList[std::stoi(a)]).ToPtr();
     autoStartPose = pathplanner::PathPlannerAuto::getPathGroupFromAutoFile(autoList[std::stoi(a)])[0]->getPathPoses()[0];
 
@@ -160,9 +160,9 @@ void Robot::CreateRobot()
     // pathplanner::NamedCommands::registerCommand("Score L1", std::move(PlaceL1(&m_wrist, &m_elevator)).ToPtr());
     // pathplanner::NamedCommands::registerCommand("Score L2", std::move(PlaceL2(&m_wrist, &m_elevator)).ToPtr());
     // pathplanner::NamedCommands::registerCommand("Score L3", std::move(PlaceL3(&m_wrist, &m_elevator)).ToPtr());
-    // pathplanner::NamedCommands::registerCommand("Score L4", std::move(PlaceL4(&m_wrist, &m_elevator)).ToPtr());
+    pathplanner::NamedCommands::registerCommand("Score L4", std::move(PlaceL4(&m_wrist, &m_elevator)).ToPtr());
     // pathplanner::NamedCommands::registerCommand("IntakeCoral", std::move(RunCoralIntake(&m_CoralIntake).ToPtr()));
-    // pathplanner::NamedCommands::registerCommand("OuttakeCoral", std::move(RunCoralOuttake(&m_CoralIntake).ToPtr()));
+    pathplanner::NamedCommands::registerCommand("OuttakeCoral", std::move(RunCoralOuttake(&m_CoralIntake).ToPtr()));
     // pathplanner::NamedCommands::registerCommand("Reset", std::move(Reset(&m_elevator, &m_wrist).ToPtr()));
 
     m_swerveDrive.SetDefaultCommand(frc2::RunCommand(
@@ -336,14 +336,13 @@ void Robot::BindCommands()
 
 void Robot::DisabledPeriodic()
 {
-    std::string prevString = "";
-    if (m_chooser.GetSelected() != prevString)
+    if (m_chooser.GetSelected() != prevAuto)
     {
         SetAutonomousCommand(m_chooser.GetSelected());
     }
     else
     {
-        prevString = m_chooser.GetSelected();
+        prevAuto = m_chooser.GetSelected();
     }
 
     std::string poiName = std::string("POI/") + frc::SmartDashboard::GetString("POIName", "");

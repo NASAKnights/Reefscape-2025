@@ -49,7 +49,7 @@ namespace ElevatorConstants
     static constexpr units::meters_per_second_t kMaxVelocity = 60.0_in / 1_s;                      // 61.55
     static constexpr units::meters_per_second_squared_t kMaxAcceleration = 140.0_in / (1_s * 1_s); // 460_in / (1_s * 1_s);
 
-    static constexpr double kP = 9.5; // 0.6 - 15
+    static constexpr double kP = 14.5; // 0.6 - 15
 
     static constexpr double kI = 0.12; // 0.0
     static constexpr double kD = 0.0;
@@ -65,7 +65,7 @@ namespace ElevatorConstants
     // const int kEncoderPulsePerRev = 42;
 
     static constexpr auto kFFks = 0.05_V;              // Volts static (motor)
-    static constexpr auto kFFkg = 0.5_V;               // 0.54_V;                         // Volts
+    static constexpr auto kFFkg = -0.1_V;              // 0.54_V;                         // Volts
     static constexpr auto kFFkV = 2.8_V / 1.0_mps;     // volts*s/meters //1.01 // 2.23
     static constexpr auto kFFkA = 0.35_V / 1.0_mps_sq; // volts*s^2/meters //0.1
 
@@ -80,7 +80,7 @@ namespace ElevatorConstants
     // highest number stage = carriage
 
     // static constexpr units::kilogram_t kCarriageMass = (17.5_lb + 0.5 * 5_lb);
-    static constexpr units::kilogram_t kCarriageMass = (13_lb);
+    static constexpr units::kilogram_t kCarriageMass = (0.1_lb);
     // effective drum radius = radius of first stage * number of stages
     // pulses per rev must be set correctly in the SparkMax encoder - only reports revolutions
     static constexpr units::meter_t kElevatorDrumRadius = 1.432_in;

@@ -23,6 +23,7 @@
 #include <pathplanner/lib/auto/AutoBuilder.h>
 #include <pathplanner/lib/auto/NamedCommands.h>
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
+#include <pathplanner/lib/auto/AutoBuilder.h>
 
 #include "subsystems/SwerveDrive.hpp"
 #include "subsystems/Elevator.h"
@@ -106,6 +107,7 @@ private:
     std::string_view baseLink = "base_link";
 
     std::string targetKey = "POI/TestPersist";
+    std::string prevAuto = "";
 
     frc::PowerDistribution m_pdh =
         frc::PowerDistribution{1, frc::PowerDistribution::ModuleType::kRev};

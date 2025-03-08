@@ -120,7 +120,7 @@ private:
 
   double prevOError;
 
-  bool useVision = false;
+  bool useVision = true;
 
   POIGenerator poiGenerator;
 
