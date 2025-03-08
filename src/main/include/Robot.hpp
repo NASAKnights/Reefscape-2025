@@ -123,7 +123,7 @@ private:
     wpi::log::DoubleLogEntry m_PowerLog;
     wpi::log::DoubleLogEntry m_EnergyLog;
     wpi::log::DoubleLogEntry m_TemperatureLog;
-
+    frc::SendableChooser<frc2::Command *> autoChooser;
     POIGenerator m_poiGenerator;
 
     frc2::CommandPtr addPOICommand = frc2::CommandPtr(frc2::InstantCommand([this]

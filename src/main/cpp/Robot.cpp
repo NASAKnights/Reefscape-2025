@@ -27,19 +27,23 @@ void Robot::RobotInit()
     // frc::SmartDashboard::PutNumber("BackLeftDegree", 0.0);
     // frc::SmartDashboard::PutNumber("BackRightDegree", 0.0);
 
-    m_chooser.SetDefaultOption("CHOOSE A OPTION", "");
-    m_chooser.AddOption("A", "0");
-    m_chooser.AddOption("A1", "1");
-    m_chooser.AddOption("A2", "2");
-    m_chooser.AddOption("A3", "3");
-    m_chooser.AddOption("A4", "4");
+    // m_chooser.SetDefaultOption("CHOOSE A OPTION", "");
+    // m_chooser.AddOption("A", "0");
+    // m_chooser.AddOption("A1", "1");
+    // m_chooser.AddOption("A2", "2");
+    // m_chooser.AddOption("A3", "3");
+    // m_chooser.AddOption("A4", "4");
 
-    frc::Shuffleboard::GetTab("Auto Settings").Add(m_chooser).WithWidget(frc::BuiltInWidgets::kComboBoxChooser);
+    // frc::Shuffleboard::GetTab("Auto Settings").Add(m_chooser).WithWidget(frc::BuiltInWidgets::kComboBoxChooser);
 
     auto Po = frc::SmartDashboard::PutNumber("Note Po", 0.0);
     auto Px = frc::SmartDashboard::PutNumber("Note Px", 1);
     auto Py = frc::SmartDashboard::PutNumber("Note Py", 1);
     auto Do = frc::SmartDashboard::PutNumber("Note Do", 0.0);
+
+    autoChooser = pathplanner::AutoBuilder::buildAutoChooser();
+
+    frc::SmartDashboard::PutData("Auto Chooser", &autoChooser);
 
     // std::string testAutoCalibration = "3coral-bot";
     // auto a4 = pathplanner::PathPlannerAuto(testAutoCalibration);
@@ -81,6 +85,7 @@ void Robot::AutonomousInit()
     // m_autonomousCommand = this->GetAutonomousCommand();
     m_elevator.HoldPosition();
     m_swerveDrive.TurnVisionOff(); // don't use vision during Auto
+    auto m_autonomousCommand = autoChooser.GetSelected();
 
     // auto start = std::move(autoMap.at(1)).second;
     // m_autonomousCommand = std::move(std::move(autoMap.at(1)).first).ToPtr();
@@ -336,14 +341,14 @@ void Robot::BindCommands()
 
 void Robot::DisabledPeriodic()
 {
-    if (m_chooser.GetSelected() != prevAuto)
-    {
-        SetAutonomousCommand(m_chooser.GetSelected());
-    }
-    else
-    {
-        prevAuto = m_chooser.GetSelected();
-    }
+    // if (m_chooser.GetSelected() != prevAuto)
+    // {
+    //     SetAutonomousCommand(m_chooser.GetSelected());
+    // }
+    // else
+    // {
+    //     prevAuto = m_chooser.GetSelected();
+    // }
 
     std::string poiName = std::string("POI/") + frc::SmartDashboard::GetString("POIName", "");
     frc::SmartDashboard::PutBoolean("IsPersist", frc::SmartDashboard::IsPersistent(poiName));
