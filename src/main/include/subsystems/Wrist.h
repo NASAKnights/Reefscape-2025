@@ -29,7 +29,8 @@ namespace WristConstants
         MOVE,
         HOLD,
         START,
-        ZEROING
+        ZEROING,
+        DISABLED
     };
 
     const double kAngleP = 0.3;
@@ -84,6 +85,7 @@ public:
     void Disable();
     void SetAngle(double angle);
     void Zero();
+    void HoldPosition();
     // void get_pigeon();
     units::degree_t GetMeasurement();
     WristConstants::WristState GetState();

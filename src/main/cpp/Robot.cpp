@@ -110,11 +110,14 @@ void Robot::TeleopInit()
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
+    m_wrist.HoldPosition();
     m_elevator.HoldPosition();
+    /*
     if (m_wrist.GetState() != WristConstants::WristState::ZEROING)
     {
         m_wrist.SetAngle(m_wrist.GetMeasurement().value());
     }
+    */
 
     if (m_autonomousCommand)
     {
@@ -166,7 +169,7 @@ void Robot::CreateRobot()
     // pathplanner::NamedCommands::registerCommand("Score L2", std::move(PlaceL2(&m_wrist, &m_elevator)).ToPtr());
     // pathplanner::NamedCommands::registerCommand("Score L3", std::move(PlaceL3(&m_wrist, &m_elevator)).ToPtr());
     pathplanner::NamedCommands::registerCommand("Score L4", std::move(PlaceL4(&m_wrist, &m_elevator)).ToPtr());
-    // pathplanner::NamedCommands::registerCommand("IntakeCoral", std::move(RunCoralIntake(&m_CoralIntake).ToPtr()));
+    pathplanner::NamedCommands::registerCommand("Intake", std::move(GrabCoral(&m_elevator, &m_wrist, &m_CoralIntake).ToPtr()));
     pathplanner::NamedCommands::registerCommand("OuttakeCoral", std::move(RunCoralOuttake(&m_CoralIntake).ToPtr()));
     // pathplanner::NamedCommands::registerCommand("Reset", std::move(Reset(&m_elevator, &m_wrist).ToPtr()));
 
