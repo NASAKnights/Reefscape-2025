@@ -5,25 +5,32 @@
     "data": {
       "commands": [
         {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.25
-          }
-        },
-        {
           "type": "parallel",
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "sequential",
                 "data": {
-                  "name": "Score L4"
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.25
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Score L4"
+                      }
+                    }
+                  ]
                 }
               },
               {
                 "type": "path",
                 "data": {
-                  "pathName": "StartMiddleScoreA2"
+                  "pathName": "StartTopScoreA1"
                 }
               }
             ]

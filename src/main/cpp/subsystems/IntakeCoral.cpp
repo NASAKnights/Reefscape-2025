@@ -16,8 +16,9 @@ void IntakeCoral::SetConfig()
         ctre::phoenix::motorcontrol::can::TalonSRXConfiguration config;
         config.peakCurrentLimit = 40;
         config.peakCurrentDuration = 1500;
-        config.continuousCurrentLimit = 30;
+        config.continuousCurrentLimit = 18;
         coralIntakeMotor.ConfigAllSettings(config);
+        coralIntakeMotor.SetNeutralMode(ctre::phoenix::motorcontrol::NeutralMode::Brake);
         Configure = true;
     }
 }

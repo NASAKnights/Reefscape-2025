@@ -381,6 +381,8 @@ void SwerveDrive::PublishOdometry(frc::Pose2d odometryPose)
                              odoPoseQ.W(),
                              time};
     baseLinkPublisher.Set(poseDeconstruct, time);
+
+    timePublisher.SetDouble(time, time);
 }
 
 void SwerveDrive::EnableDrive()

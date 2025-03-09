@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 7.140621212121212,
-        "y": 4.0055
+        "x": 7.140621131099589,
+        "y": 4.0054967204520695
       },
       "isLocked": false,
       "linkedName": null
@@ -31,14 +31,7 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "Score L4",
-      "waypointRelativePos": 0.04676291207286799,
-      "endWaypointRelativePos": null,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 2.0,
     "maxAcceleration": 2.0,
