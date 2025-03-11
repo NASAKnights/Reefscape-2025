@@ -169,7 +169,7 @@ namespace ModuleConstants
 
     const double kSteerP = 120.0; // TODO: ensure this works with new inversion
     const double kSteerI = 0.0;
-    const double kSteerD = 0.35;
+    const double kSteerD = 0.37;
 
 } // namespace ModuleConstants
 
