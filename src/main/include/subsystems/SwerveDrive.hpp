@@ -143,5 +143,5 @@ private:
   PoseEstimator m_visionPoseEstimator;
 
   nt::DoubleArrayPublisher baseLinkPublisher;
-  nt::GenericPublisher timePublisher;
+  nt::DoubleArrayPublisher timePublisher;
 };

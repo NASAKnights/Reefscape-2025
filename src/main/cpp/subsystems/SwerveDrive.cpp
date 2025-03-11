@@ -59,6 +59,7 @@ SwerveDrive::SwerveDrive()
         {}, {.periodic = 0.01, .sendAll = true});
 
     baseLinkPublisher = poseTable->GetDoubleArrayTopic(baseLink).Publish();
+    timePublisher = poseTable->GetDoubleArrayTopic(timeLinkName).Publish();
 
     SetOffsets();
 
@@ -332,6 +333,7 @@ void SwerveDrive::UpdatePoseEstimate()
     auto result1 = baseLink1Subscribe.GetAtomic();
     auto result2 = baseLink2Subscribe.GetAtomic();
     // auto time = result.time; // time stamp
+    frc::SmartDashboard::PutBoolean("Vision", useVision);
 
     if (result1.value.size() > 0 && useVision)
     {
@@ -381,8 +383,8 @@ void SwerveDrive::PublishOdometry(frc::Pose2d odometryPose)
                              odoPoseQ.W(),
                              time};
     baseLinkPublisher.Set(poseDeconstruct, time);
-
-    timePublisher.SetDouble(time, time);
+    double timearr[]{time};
+    timePublisher.Set(timearr, time);
 }
 
 void SwerveDrive::EnableDrive()
