@@ -9,8 +9,9 @@
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 GrabCoral::GrabCoral(Elevator *elevator, Wrist *wrist, IntakeCoral *intakeCoral)
 {
-  AddCommands(frc2::ParallelCommandGroup(SetElevatorHeight(elevator, 0.2),
-                                         MoveWristToAngle(wrist, 60.0),
+  // elevator .31, wrist 80
+  AddCommands(frc2::ParallelCommandGroup(SetElevatorHeight(elevator, 0.35),
+                                         MoveWristToAngle(wrist, 65.0),
                                          RunCoralIntake(intakeCoral)),
               Reset(elevator, wrist));
   // Add your commands here, e.g.

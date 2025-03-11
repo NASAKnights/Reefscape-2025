@@ -23,12 +23,13 @@ Wrist::Wrist() : m_controller(
     rev::spark::SparkBaseConfig config;
     config.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
     config.encoder.PositionConversionFactor(360 / 81.0);
+    config.SmartCurrentLimit(30, 0, 20000);
 
     m_motor.Configure(config, rev::spark::SparkMax::ResetMode::kResetSafeParameters, rev::spark::SparkMax::PersistMode::kPersistParameters);
 
     m_controller.SetTolerance(WristConstants::kTolerancePos, WristConstants::kToleranceVel);
     // Start m_arm in neutral position
-    m_WristState = WristConstants::ZEROING;
+    m_WristState = WristConstants::DISABLED;
 
     wpi::log::DataLog &log = frc::DataLogManager::GetLog();
     m_AngleLog = wpi::log::DoubleLogEntry(log, "/Wrist/Angle");
@@ -61,11 +62,14 @@ units::degree_t Wrist::GetMeasurement()
 
 void Wrist::SetAngle(double wristAngleGoal)
 {
-
-    m_WristState = WristConstants::MOVE;
-    m_goal = units::angle::degree_t(wristAngleGoal);
-    m_controller.Reset(GetMeasurement());
-    m_controller.SetGoal(m_goal);
+    if (m_WristState != WristConstants::ZEROING)
+    {
+        // m_WristState = WristConstants::MOVE;
+        m_WristState = WristConstants::START;
+        m_goal = units::angle::degree_t(wristAngleGoal);
+        // m_controller.Reset(GetMeasurement());
+        // m_controller.SetGoal(m_goal);
+    }
 }
 
 void Wrist::Periodic()
@@ -75,19 +79,19 @@ void Wrist::Periodic()
     double fb;
     units::volt_t ff;
     units::volt_t v;
-    // TODO Check the following
-    if (m_WristState == WristConstants::ZEROING && m_motor.GetForwardLimitSwitch().Get())
-    {
-        m_encoder.SetPosition(91.0);
-        SetAngle(GetMeasurement().value());
-        m_WristState = WristConstants::HOLD;
-    }
+
     switch (m_WristState)
     {
+    case WristConstants::START:
+    {
+        m_controller.Reset(GetMeasurement());
+        m_controller.SetGoal(m_goal);
+        m_WristState = WristConstants::MOVE;
+    }
     case WristConstants::ZEROING:
     {
-        m_motor.Set(0.1);
         frc::SmartDashboard::PutString("/Wrist/State", "ZEROING");
+        m_motor.Set(0.1);
         break;
     }
     case WristConstants::MOVE:
@@ -124,11 +128,24 @@ void Wrist::Periodic()
         m_motor.SetVoltage(v);
         break;
     }
+    case WristConstants::DISABLED:
+        frc::SmartDashboard::PutString("/Elevator/ElevState", "DISABLED");
+        break;
     default:
     {
         frc::SmartDashboard::PutString("/Wrist/State", "default");
         break;
     }
+    }
+    if (m_motor.GetForwardLimitSwitch().Get())
+    {
+        m_encoder.SetPosition(106.0);
+        if (m_WristState == WristConstants::ZEROING)
+        {
+            // m_goal = 0.1_m;
+            m_WristState = WristConstants::HOLD;
+            SetAngle(105.0);
+        }
     }
 }
 
@@ -158,4 +175,15 @@ void Wrist::printLog()
 void Wrist::Disable()
 {
     m_motor.StopMotor();
+}
+
+void Wrist::HoldPosition()
+{
+    // if (m_WristState != WristConstants::WristState::HOLD)
+    {
+        m_controller.Reset(GetMeasurement());
+        m_controller.SetGoal(GetMeasurement());
+        m_goal = GetMeasurement();
+        m_WristState = WristConstants::WristState::HOLD;
+    }
 }

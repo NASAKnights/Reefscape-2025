@@ -36,8 +36,8 @@ private:
   double kClimbI = 0.0;
   double kClimbD = 0.0;
 
-  double kClimbDeploySetPoint = 0.6 * (2 * std::numbers::pi);
-  double kClimbClimbSetPoint = 0.4 * (2 * std::numbers::pi); // radians
+  double kClimbDeploySetPoint = 0.79 * (2 * std::numbers::pi);
+  double kClimbClimbSetPoint = 0.6 * (2 * std::numbers::pi); // radians
 
   rev::spark::SparkFlex climbMain{7, rev::spark::SparkLowLevel::MotorType::kBrushless};
   rev::spark::SparkFlex climbFollower{8, rev::spark::SparkLowLevel::MotorType::kBrushless};
@@ -48,11 +48,9 @@ private:
 
   // rev::spark::SparkMax absoluteEncoderSub{9, rev::spark::SparkLowLevel::MotorType::kBrushed};
 
-
   rev::spark::SparkAbsoluteEncoder climberWristEncoder = climbFollower.GetAbsoluteEncoder();
   // rev::spark::SparkFlexExternalEncoder climberWristEncoder = climbMain.GetExternalEncoder();
   // rev::spark::SparkRelativeEncoder climberWristEncoder = climbMain.GetEncoder();
-
 
   frc::PIDController climbWristController{kClimbP, kClimbI, kClimbD};
 

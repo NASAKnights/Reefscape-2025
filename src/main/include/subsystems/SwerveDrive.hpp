@@ -102,6 +102,7 @@ private:
   // studica::AHRS m_gyro{frc::SPI::Port::kMXP};
   studica::AHRS navx{studica::AHRS::NavXComType::kMXP_SPI};
 
+  // ctre::phoenix6::hardware::Pigeon2 m_pigeon{2};
   ctre::phoenix6::hardware::Pigeon2 m_pigeon{2, "NKCANivore"};
 
   std::array<SwerveModule, 4> modules;
@@ -119,7 +120,7 @@ private:
 
   double prevOError;
 
-  bool useVision = false;
+  bool useVision = true;
 
   POIGenerator poiGenerator;
 
@@ -130,6 +131,8 @@ private:
   std::string_view baseLink1 = "base_link_1";
   std::string_view baseLink2 = "base_link_2";
   std::string_view baseLink = "base_link";
+  std::string_view timeLinkName = "time";
+
   std::shared_ptr<nt::NetworkTable> poseTable;
 
   nt::DoubleArraySubscriber baseLink1Subscribe;
@@ -140,4 +143,5 @@ private:
   PoseEstimator m_visionPoseEstimator;
 
   nt::DoubleArrayPublisher baseLinkPublisher;
+  nt::DoubleArrayPublisher timePublisher;
 };

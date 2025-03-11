@@ -59,6 +59,7 @@ SwerveDrive::SwerveDrive()
         {}, {.periodic = 0.01, .sendAll = true});
 
     baseLinkPublisher = poseTable->GetDoubleArrayTopic(baseLink).Publish();
+    timePublisher = poseTable->GetDoubleArrayTopic(timeLinkName).Publish();
 
     SetOffsets();
 
@@ -152,7 +153,7 @@ void SwerveDrive::Drive(frc::ChassisSpeeds speeds)
 {
     if (enable)
     {
-        auto dT = timer.Get();
+        auto dT = 20_ms;
         timer.Reset();
 
         auto prevVX = frc::SmartDashboard::GetNumber("drive/vx", 0.0);
@@ -162,7 +163,7 @@ void SwerveDrive::Drive(frc::ChassisSpeeds speeds)
         double velocityCommanded = std::sqrt(std::pow(speeds.vx.value(), 2) + std::pow(speeds.vy.value(), 2));
         double prevVelocity = std::sqrt(std::pow(prevVX, 2) + std::pow(prevVY, 2));
 
-        velocityCommanded = std::min(accelLimit * (dT.value() * 10000) + (prevVelocity), velocityCommanded);
+        velocityCommanded = std::min(accelLimit * (0.02) + (prevVelocity), velocityCommanded);
 
         Eigen::Vector2d prevVelocityVector(speeds.vx.value(), speeds.vy.value());
         Eigen::Vector2d a = prevVelocityVector.normalized() * velocityCommanded;
@@ -332,6 +333,7 @@ void SwerveDrive::UpdatePoseEstimate()
     auto result1 = baseLink1Subscribe.GetAtomic();
     auto result2 = baseLink2Subscribe.GetAtomic();
     // auto time = result.time; // time stamp
+    frc::SmartDashboard::PutBoolean("Vision", useVision);
 
     if (result1.value.size() > 0 && useVision)
     {
@@ -381,6 +383,8 @@ void SwerveDrive::PublishOdometry(frc::Pose2d odometryPose)
                              odoPoseQ.W(),
                              time};
     baseLinkPublisher.Set(poseDeconstruct, time);
+    double timearr[]{time};
+    timePublisher.Set(timearr, time);
 }
 
 void SwerveDrive::EnableDrive()
@@ -491,25 +495,30 @@ void SwerveDrive::ShuffleboardInit() {}
 void SwerveDrive::SetOffsets()
 {
     frc::SmartDashboard::SetPersistent("FrontLeftDegree");
-    auto FrontLeftDegree = frc::SmartDashboard::GetNumber("FrontLeftDegree", 0);
+
+    auto FrontLeftDegree = frc::SmartDashboard::GetNumber("FrontLeftDegree", -4.8);
+
     // frc::SmartDashboard::PutNumber("FrontLeftDegree", -4.8);
     frc::SmartDashboard::SetPersistent("FrontLeftDegree");
     frc::Rotation2d kFrontLeftOffset(-units::degree_t{FrontLeftDegree});
 
     frc::SmartDashboard::SetPersistent("FrontRightDegree");
-    auto FrontRightDegree = frc::SmartDashboard::GetNumber("FrontRightDegree", 0);
+    auto FrontRightDegree = frc::SmartDashboard::GetNumber("FrontRightDegree", -66);
+
     // frc::SmartDashboard::PutNumber("FrontRightDegree", -66);
     frc::SmartDashboard::SetPersistent("FrontRightDegree");
     frc::Rotation2d kFrontRightOffset(-units::degree_t{FrontRightDegree});
 
     frc::SmartDashboard::SetPersistent("BackLeftDegree");
-    auto BackLeftDegree = frc::SmartDashboard::GetNumber("BackLeftDegree", 0);
+    auto BackLeftDegree = frc::SmartDashboard::GetNumber("BackLeftDegree", 70);
+
     // frc::SmartDashboard::PutNumber("BackLeftDegree", 71);
     frc::SmartDashboard::SetPersistent("BackLeftDegree");
     frc::Rotation2d kBackLeftOffset(-units::degree_t{BackLeftDegree});
 
     frc::SmartDashboard::SetPersistent("BackRightDegree");
-    auto BackRightDegree = frc::SmartDashboard::GetNumber("BackRightDegree", 0);
+    auto BackRightDegree = frc::SmartDashboard::GetNumber("BackRightDegree", 178);
+
     // frc::SmartDashboard::PutNumber("BackRightDegree", 178);
     frc::SmartDashboard::SetPersistent("BackRightDegree");
     frc::Rotation2d kBackRightOffset(-units::degree_t{BackRightDegree});

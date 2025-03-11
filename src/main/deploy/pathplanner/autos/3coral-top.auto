@@ -7,7 +7,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "StartTopScoreA6"
+            "pathName": "StartTopScoreA1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Score L4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "A1ToHPS2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "HPS2ScoreA6"
           }
         },
         {

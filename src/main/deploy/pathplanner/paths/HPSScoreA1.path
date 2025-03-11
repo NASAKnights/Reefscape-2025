@@ -3,48 +3,51 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.9079545454530021,
-        "y": 1.290845959595689
+        "x": 1.1319340391604904,
+        "y": 0.9984317096636255
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.6804292929277493,
-        "y": 6.108648989898721
+        "x": 1.2441872817488597,
+        "y": 1.51195470620724
+      },
+      "isLocked": false,
+      "linkedName": "HPS"
+    },
+    {
+      "anchor": {
+        "x": 2.474417737136545,
+        "y": 5.428182346600627
+      },
+      "prevControl": {
+        "x": 1.7585019954389967,
+        "y": 4.900342520667046
+      },
+      "nextControl": {
+        "x": 2.896443067632946,
+        "y": 5.739338763500442
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.207386363636363,
-        "y": 5.132891414141414
+        "x": 5.120026769170468,
+        "y": 5.1371962300456095
       },
       "prevControl": {
-        "x": 4.536553030301487,
-        "y": 6.149305555555286
+        "x": 5.627285111708951,
+        "y": 5.863904824686429
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "A1"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "Intake",
-      "waypointRelativePos": 0,
-      "endWaypointRelativePos": null,
-      "command": null
-    },
-    {
-      "name": "Score L4",
-      "waypointRelativePos": 1.0,
-      "endWaypointRelativePos": null,
-      "command": null
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.0,
     "maxAcceleration": 3.0,
@@ -55,13 +58,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -118.72032679786948
+    "rotation": -119.99999999999999
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -122.8557219504331
+    "rotation": -125.00000000000001
   },
   "useDefaultConstraints": true
 }

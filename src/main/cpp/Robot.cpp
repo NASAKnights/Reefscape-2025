@@ -1,6 +1,7 @@
 // Copyright (c) FRC Team 122. All Rights Reserved.
 
 #include "Robot.hpp"
+
 Robot::Robot()
 {
     this->CreateRobot();
@@ -21,16 +22,34 @@ void Robot::RobotInit()
     frc::SmartDashboard::PutData("AddPOI", addPOICommand.get());
     frc::SmartDashboard::PutData("RemovePOI", removePOICommand.get());
 
-    // auto Po = frc::SmartDashboard::PutNumber("Note Po", 0.0);
-    // auto Px = frc::SmartDashboard::PutNumber("Note Px", 1);
-    // auto Py = frc::SmartDashboard::PutNumber("Note Py", 1);
-    // auto Do = frc::SmartDashboard::PutNumber("Note Do", 0.0);
+    // frc::SmartDashboard::PutNumber("FrontLeftDegree", 0.0);
+    // frc::SmartDashboard::PutNumber("FrontRightDegree", 0.0);
+    // frc::SmartDashboard::PutNumber("BackLeftDegree", 0.0);
+    // frc::SmartDashboard::PutNumber("BackRightDegree", 0.0);
 
-    std::string testAutoCalibration = "2mForward";
-    auto a4 = pathplanner::PathPlannerAuto(testAutoCalibration);
-    auto a4Pose = pathplanner::PathPlannerAuto::getPathGroupFromAutoFile(testAutoCalibration)[0]->getPathPoses()[0];
-    auto entry4 = std::make_pair(std::move(a4), a4Pose);
-    autoMap.emplace(1, std::move(entry4));
+    // m_chooser.SetDefaultOption("CHOOSE A OPTION", "");
+    // m_chooser.AddOption("A", "0");
+    // m_chooser.AddOption("A1", "1");
+    // m_chooser.AddOption("A2", "2");
+    // m_chooser.AddOption("A3", "3");
+    // m_chooser.AddOption("A4", "4");
+
+    // frc::Shuffleboard::GetTab("Auto Settings").Add(m_chooser).WithWidget(frc::BuiltInWidgets::kComboBoxChooser);
+
+    auto Po = frc::SmartDashboard::PutNumber("Note Po", 0.0);
+    auto Px = frc::SmartDashboard::PutNumber("Note Px", 1);
+    auto Py = frc::SmartDashboard::PutNumber("Note Py", 1);
+    auto Do = frc::SmartDashboard::PutNumber("Note Do", 0.0);
+
+    autoChooser = pathplanner::AutoBuilder::buildAutoChooser();
+
+    frc::SmartDashboard::PutData("Auto Chooser", &autoChooser);
+
+    // std::string testAutoCalibration = "3coral-bot";
+    // auto a4 = pathplanner::PathPlannerAuto(testAutoCalibration);
+    // auto a4Pose = pathplanner::PathPlannerAuto::getPathGroupFromAutoFile(testAutoCalibration)[0]->getPathPoses()[0];
+    // auto entry4 = std::make_pair(std::move(a4), a4Pose);
+    // autoMap.emplace(1, std::move(entry4));
 };
 
 // This function is called every 20 ms
@@ -48,7 +67,17 @@ void Robot::RobotPeriodic()
 // This function is called once each time the robot enters Disabled mode.
 void Robot::DisabledInit()
 {
-    m_LED_Controller.DefaultAnimation();
+    // m_LED_Controller.DefaultAnimation();
+}
+
+void Robot::SetAutonomousCommand(std::string a)
+{
+    // Elements in list, make this dynamic maybe?
+    std::string autoList[4] = {"1coral-mid", "1coral-mid", "1coral-mid", "1coral-mid"}; // CHANGE AUTOS
+    m_autonomousCommand = pathplanner::PathPlannerAuto(autoList[std::stoi(a)]).ToPtr();
+    autoStartPose = pathplanner::PathPlannerAuto::getPathGroupFromAutoFile(autoList[std::stoi(a)])[0]->getPathPoses()[0];
+
+    frc::SmartDashboard::PutString("AUTO SELECTED", a);
 }
 
 void Robot::AutonomousInit()
@@ -56,10 +85,11 @@ void Robot::AutonomousInit()
     // m_autonomousCommand = this->GetAutonomousCommand();
     m_elevator.HoldPosition();
     m_swerveDrive.TurnVisionOff(); // don't use vision during Auto
+    auto m_autonomousCommand = autoChooser.GetSelected();
 
-    auto start = std::move(autoMap.at(1)).second;
-    m_autonomousCommand = std::move(std::move(autoMap.at(1)).first).ToPtr();
-    m_swerveDrive.ResetPose(start);
+    // auto start = std::move(autoMap.at(1)).second;
+    // m_autonomousCommand = std::move(std::move(autoMap.at(1)).first).ToPtr();
+    m_swerveDrive.ResetPose(autoStartPose);
 
     if (m_autonomousCommand)
     {
@@ -80,21 +110,34 @@ void Robot::TeleopInit()
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
+    m_wrist.HoldPosition();
     m_elevator.HoldPosition();
+    /*
     if (m_wrist.GetState() != WristConstants::WristState::ZEROING)
     {
         m_wrist.SetAngle(m_wrist.GetMeasurement().value());
     }
+    */
 
     if (m_autonomousCommand)
     {
         m_autonomousCommand->Cancel();
     }
     m_swerveDrive.TurnVisionOn(); // Turn Vision back on for Teleop
-    m_LED_Controller.TeleopLED();
+    // m_LED_Controller.TeleopLED();
 }
 
-void Robot::TeleopPeriodic() {}
+void Robot::TeleopPeriodic()
+{
+    if (m_elevator.GetHeight() >= 0.35)
+    {
+        frc::SmartDashboard::PutNumber("drive/accelLim", 0.5);
+    }
+    else
+    {
+        frc::SmartDashboard::PutNumber("drive/accelLim", 4.0);
+    }
+}
 
 void Robot::TeleopExit()
 {
@@ -121,6 +164,15 @@ void Robot::SimulationPeriodic() {}
  */
 void Robot::CreateRobot()
 {
+
+    // pathplanner::NamedCommands::registerCommand("Score L1", std::move(PlaceL1(&m_wrist, &m_elevator)).ToPtr());
+    // pathplanner::NamedCommands::registerCommand("Score L2", std::move(PlaceL2(&m_wrist, &m_elevator)).ToPtr());
+    // pathplanner::NamedCommands::registerCommand("Score L3", std::move(PlaceL3(&m_wrist, &m_elevator)).ToPtr());
+    pathplanner::NamedCommands::registerCommand("Score L4", std::move(PlaceL4(&m_wrist, &m_elevator)).ToPtr());
+    pathplanner::NamedCommands::registerCommand("Intake", std::move(GrabCoral(&m_elevator, &m_wrist, &m_CoralIntake).ToPtr()));
+    pathplanner::NamedCommands::registerCommand("OuttakeCoral", std::move(RunCoralOuttake(&m_CoralIntake).ToPtr()));
+    // pathplanner::NamedCommands::registerCommand("Reset", std::move(Reset(&m_elevator, &m_wrist).ToPtr()));
+
     m_swerveDrive.SetDefaultCommand(frc2::RunCommand(
         [this]
         {
@@ -143,14 +195,16 @@ void Robot::CreateRobot()
         {&m_swerveDrive}));
 
     AddPeriodic([this]
-                { m_elevator.Periodic(); }, 5_ms, 1_ms);
+                { m_elevator.Periodic(); },
+                5_ms, 1_ms);
     AddPeriodic([this]
-                { m_wrist.Periodic(); }, 10_ms, 2_ms);
+                { m_wrist.Periodic(); },
+                10_ms, 2_ms);
 
     // Configure the button bindings
     BindCommands();
     m_swerveDrive.ResetHeading();
-    m_LED_Controller.DefaultAnimation();
+    // m_LED_Controller.DefaultAnimation();
 }
 
 /**
@@ -165,13 +219,13 @@ void Robot::BindCommands()
             frc2::InstantCommand([this]
                                  { return m_swerveDrive.ResetHeading(); })));
 
-    frc2::JoystickButton(&m_driverController, 5)
-        .WhileTrue(RunCoralOuttake(&m_CoralIntake).ToPtr());
+    // frc2::JoystickButton(&m_driverController, 5)
+    //     .WhileTrue(RunCoralOuttake(&m_CoralIntake).ToPtr());
 
-    // frc2::JoystickButton(&m_driverController, 2)
-    //     .OnTrue(frc2::CommandPtr(
-    //         frc2::InstantCommand([this]
-    //                              { return m_swerveDrive.SetOffsets(); })));
+    frc2::JoystickButton(&m_driverController, 2)
+        .OnTrue(frc2::CommandPtr(
+            frc2::InstantCommand([this]
+                                 { return m_swerveDrive.SetOffsets(); })));
 
     // frc2::JoystickButton(&m_driverController, 3)
     //     .OnTrue(frc2::CommandPtr(frc2::InstantCommand(
@@ -243,18 +297,21 @@ void Robot::BindCommands()
         .OnFalse(Reset(&m_elevator, &m_wrist).ToPtr());
 
     frc2::JoystickButton(&m_operatorController, 5)
-        .WhileTrue(RunCoralOuttake(&m_CoralIntake).ToPtr());
+        .WhileTrue(GrabAlgaeL3(&m_AlgaeIntake).ToPtr());
+
+    frc2::JoystickButton(&m_operatorController, 6)
+        .WhileTrue(GrabCoral(&m_elevator, &m_wrist, &m_CoralIntake).ToPtr())
+        .OnFalse(Reset(&m_elevator, &m_wrist).ToPtr());
 
     // frc2::JoystickButton(&m_operatorController, 6)
     //     .WhileTrue(GrabAlgaeL3(&m_AlgaeIntake).ToPtr());
     // ^ Rewrite command to include elevator
-    frc2::POVButton(&m_operatorController, 180)
-        .OnTrue(GrabCoral(&m_elevator, &m_wrist, &m_CoralIntake).ToPtr())
-        .OnFalse(Reset(&m_elevator, &m_wrist).ToPtr());
+    frc2::POVButton(&m_operatorController, 0)
+        .WhileTrue(RunCoralIntake(&m_CoralIntake).ToPtr());
 
     // Left Trigger
     frc2::JoystickButton(&m_operatorController, 7)
-        .WhileTrue(RunAlgaeOuttake(&m_AlgaeIntake).ToPtr());
+        .WhileTrue(ScoreAlgae(&m_wrist, &m_AlgaeIntake, &m_elevator).ToPtr());
 
     // Right Trigger
     frc2::JoystickButton(&m_operatorController, 8)
@@ -266,10 +323,34 @@ void Robot::BindCommands()
     // Option
     frc2::JoystickButton(&m_operatorController, 10)
         .WhileTrue(ClimbCage(&m_climber).ToPtr());
+
+    frc2::POVButton(&m_operatorController, 180) // Zero wrist
+        .OnTrue(frc2::CommandPtr(frc2::InstantCommand(
+            [this]
+            {
+                m_wrist.Zero();
+                return;
+            })));
+
+    // frc2::POVButton(&m_operatorController, 0) // Zero wrist
+    //     .OnTrue(frc2::CommandPtr(frc2::InstantCommand(
+    //         [this]
+    //         {
+    //             m_elevator.Zero();
+    //             return;
+    //         })));
 }
 
 void Robot::DisabledPeriodic()
 {
+    // if (m_chooser.GetSelected() != prevAuto)
+    // {
+    //     SetAutonomousCommand(m_chooser.GetSelected());
+    // }
+    // else
+    // {
+    //     prevAuto = m_chooser.GetSelected();
+    // }
 
     std::string poiName = std::string("POI/") + frc::SmartDashboard::GetString("POIName", "");
     frc::SmartDashboard::PutBoolean("IsPersist", frc::SmartDashboard::IsPersistent(poiName));
@@ -277,10 +358,6 @@ void Robot::DisabledPeriodic()
 
 void Robot::UpdateDashboard()
 {
-    // frc::ShuffleboardLayout& autoCommands =
-    //     frc::Shuffleboard::GetTab("Auto Config").GetLayout("Auto Selection",
-    //                                                        frc::BuiltInLayouts::kList);
-    // autoCommands.Add("NAME", commandName);
 
     // I don't know yet if this is the best way of doing this, I just wanted to
     // have this commented for later.
