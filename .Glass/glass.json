@@ -1,5 +1,10 @@
 {
   "NetworkTables": {
+    "persistent": {
+      "SmartDashboard": {
+        "open": true
+      }
+    },
     "transitory": {
       "SmartDashboard": {
         "Wrist": {
@@ -10,8 +15,11 @@
     },
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/Shuffleboard/Auto Settings/SendableChooser[0]": "String Chooser",
       "/SmartDashboard/AddPOI": "Command",
+      "/SmartDashboard/Auto Chooser": "String Chooser",
       "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/On-the-fly path": "Command",
       "/SmartDashboard/RemovePOI": "Command"
     }
   },
@@ -32,7 +40,7 @@
             0.0,
             0.8500000238418579
           ],
-          "height": 703,
+          "height": 468,
           "series": [
             {
               "color": [

@@ -16,7 +16,7 @@ class POIGenerator
 public:
   POIGenerator();
   void MakePOI();
-  frc::Pose2d GetPOI(std::string poiKey);
+  static frc::Pose2d GetPOI(std::string poiKey);
   void RemovePOI();
 
 private:

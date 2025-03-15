@@ -37,8 +37,11 @@ frc::Pose2d POIGenerator::GetPOI(std::string poiKey)
                 .Radians()
                 .value());
 
+        frc::SmartDashboard::PutBoolean("DIDIWORK?", true);
+
         return frc::Pose2d(x, y, o);
     }
+    frc::SmartDashboard::PutBoolean("DIDIWORK?", false);
     return frc::Pose2d(0_m, 0_m, 0_rad);
 }
 

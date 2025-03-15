@@ -18,6 +18,8 @@ void Robot::RobotInit()
     m_EnergyLog = wpi::log::DoubleLogEntry(log, "/PDP/Energy");
     m_TemperatureLog = wpi::log::DoubleLogEntry(log, "/PDP/Temperature");
 
+    frc::SmartDashboard::PutNumber("IM AT", 1);
+
     frc::SmartDashboard::PutString("POIName", "");
     frc::SmartDashboard::PutData("AddPOI", addPOICommand.get());
     frc::SmartDashboard::PutData("RemovePOI", removePOICommand.get());
@@ -226,6 +228,41 @@ void Robot::BindCommands()
         .OnTrue(frc2::CommandPtr(
             frc2::InstantCommand([this]
                                  { return m_swerveDrive.SetOffsets(); })));
+
+    using namespace pathplanner;
+    onTheFly = frc2::CommandPtr(frc2::cmd::RunOnce([&]()
+                                                   {
+                                                    frc::Pose2d currentPose = this->m_swerveDrive.GetPose();
+
+                                                    // The rotation component in these poses represents the direction of travel
+                                                    frc::Pose2d startPos = frc::Pose2d(currentPose.Translation(), frc::Rotation2d());
+                                                    frc::Pose2d endPos = m_poiGenerator.GetPOI(std::string("POI/") + frc::SmartDashboard::GetString("POIName", ""));
+
+                                                    frc::SmartDashboard::PutNumber("RAW END POSE", endPos.Translation().X().value());
+                                                    auto transformedEndPos = endPos.TransformBy(frc::Transform2d(0.3_m, 0_m, 0_rad));
+                                                    std::vector<Waypoint> waypoints = PathPlannerPath::waypointsFromPoses({startPos, endPos, transformedEndPos});
+                                                    // Paths must be used as shared pointers
+                                                    auto path = std::make_shared<PathPlannerPath>(
+                                                    waypoints, 
+                                                    PathConstraints(1.0_mps, 1.0_mps_sq, 360_deg_per_s, 540_deg_per_s_sq),
+                                                    std::nullopt, // Ideal starting state can be nullopt for on-the-fly paths
+                                                    GoalEndState(0_mps, endPos.Rotation())
+                                                    );
+
+                                                    // Prevent this path from being flipped on the red alliance, since the given positions are already correct
+                                                    path->preventFlipping = true;
+                                                    // TODO: WE MAY WANT TO CHANGE THIS
+
+                                                    m_pathfind = frc2::CommandPtr(AutoBuilder::followPath(path).Unwrap());
+                                                    m_pathfind.Schedule(); })
+                                    .Unwrap());
+    frc::SmartDashboard::PutData("On-the-fly path", onTheFly.get());
+
+    frc2::JoystickButton(&m_driverController, 3)
+        .OnTrue(onTheFly.get())
+        .OnFalse(frc2::CommandPtr(
+            frc2::InstantCommand([this]
+                                 { return m_pathfind.Cancel(); })));
 
     // frc2::JoystickButton(&m_driverController, 3)
     //     .OnTrue(frc2::CommandPtr(frc2::InstantCommand(

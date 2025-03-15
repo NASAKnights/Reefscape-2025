@@ -44,6 +44,8 @@
 #include "commands/ScoreAlgae.h"
 #include "commands/ClimbCage.h"
 #include "subsystems/IntakeAlgae.h"
+#include "commands/GrabCoralFar.h"
+#include "commands/GoToPoint.h"
 
 #include <units/angular_velocity.h>
 #include <units/velocity.h>
@@ -107,7 +109,7 @@ private:
 
     std::string_view baseLink = "base_link";
 
-    std::string targetKey = "POI/TestPersist";
+    std::string targetKey = "POI/POIREEF";
     std::string prevAuto = "";
 
     frc::PowerDistribution m_pdh =
@@ -126,6 +128,8 @@ private:
     wpi::log::DoubleLogEntry m_TemperatureLog;
     frc::SendableChooser<frc2::Command *> autoChooser;
     POIGenerator m_poiGenerator;
+    frc2::CommandPtr m_pathfind = frc2::InstantCommand().ToPtr();
+    frc2::CommandPtr onTheFly = frc2::InstantCommand().ToPtr();
 
     frc2::CommandPtr addPOICommand = frc2::CommandPtr(frc2::InstantCommand([this]
                                                                            { return m_poiGenerator.MakePOI(); }))

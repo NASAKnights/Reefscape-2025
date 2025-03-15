@@ -7,6 +7,7 @@
 #include <frc2/command/CommandHelper.h>
 #include <frc2/command/SequentialCommandGroup.h>
 #include "subsystems/SwerveDrive.hpp"
+#include "utils/POIGenerator.h"
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.
 // For more information, see:
