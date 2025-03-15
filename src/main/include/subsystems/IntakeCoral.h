@@ -7,6 +7,7 @@
 #include <frc2/command/SubsystemBase.h>
 #include <frc/DigitalInput.h>
 #include <ctre/phoenix/motorcontrol/can/TalonSRX.h>
+#include <rev/SparkMax.h>
 
 class IntakeCoral : public frc2::SubsystemBase
 {
@@ -29,7 +30,8 @@ public:
 
 private:
   bool Configure = false;
-  ctre::phoenix::motorcontrol::can::TalonSRX coralIntakeMotor{4};
+  rev::spark::SparkMax coralIntakeMotor;
+
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
 };
