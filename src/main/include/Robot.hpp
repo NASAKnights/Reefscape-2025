@@ -11,6 +11,7 @@
 #include <frc/TimedRobot.h>
 #include <frc/shuffleboard/Shuffleboard.h>
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <frc/AnalogInput.h>
 #include "utils/POIGenerator.h"
 
 #include <frc2/command/CommandPtr.h>
@@ -101,6 +102,7 @@ private:
     IntakeAlgae m_AlgaeIntake;
 
     frc::SendableChooser<std::string> m_chooser;
+    frc::AnalogInput batteryShunt{0};
 
     SwerveDrive m_swerveDrive;
     Wrist m_wrist;
@@ -126,6 +128,7 @@ private:
     wpi::log::DoubleLogEntry m_PowerLog;
     wpi::log::DoubleLogEntry m_EnergyLog;
     wpi::log::DoubleLogEntry m_TemperatureLog;
+    wpi::log::DoubleLogEntry m_BatteryLog;
     frc::SendableChooser<frc2::Command *> autoChooser;
     POIGenerator m_poiGenerator;
     frc2::CommandPtr m_pathfind = frc2::InstantCommand().ToPtr();

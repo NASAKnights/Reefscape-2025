@@ -17,6 +17,7 @@ void Robot::RobotInit()
     m_PowerLog = wpi::log::DoubleLogEntry(log, "/PDP/Power");
     m_EnergyLog = wpi::log::DoubleLogEntry(log, "/PDP/Energy");
     m_TemperatureLog = wpi::log::DoubleLogEntry(log, "/PDP/Temperature");
+    m_BatteryLog = wpi::log::DoubleLogEntry(log, "Robot/Battery");
 
     frc::SmartDashboard::PutNumber("IM AT", 1);
 
@@ -64,6 +65,7 @@ void Robot::RobotPeriodic()
     m_PowerLog.Append(m_pdh.GetTotalPower());
     m_EnergyLog.Append(m_pdh.GetTotalEnergy());
     m_TemperatureLog.Append(m_pdh.GetTemperature());
+    m_BatteryLog.Append(batteryShunt.GetVoltage());
 }
 
 // This function is called once each time the robot enters Disabled mode.
@@ -396,7 +398,8 @@ void Robot::DisabledPeriodic()
 
 void Robot::UpdateDashboard()
 {
-
+    frc::SmartDashboard::PutNumber("Robot/Battery Amps", batteryShunt.GetValue());
+    frc::SmartDashboard::PutNumber("Robot/PDH Total Current", m_pdh.GetTotalCurrent());
     // I don't know yet if this is the best way of doing this, I just wanted to
     // have this commented for later.
 }
