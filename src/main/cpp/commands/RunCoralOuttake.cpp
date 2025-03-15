@@ -16,7 +16,7 @@ void RunCoralOuttake::Initialize() {}
 // Called repeatedly when this Command is scheduled to run
 void RunCoralOuttake::Execute()
 {
-  m_intakeCoral->Outtake(0.5);
+  m_intakeCoral->Outtake(0.45);
 }
 
 // Called once the command ends or is interrupted.

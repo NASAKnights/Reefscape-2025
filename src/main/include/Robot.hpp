@@ -40,6 +40,7 @@
 #include "commands/GrabAlgaeL2.h"
 #include "commands/GrabAlgaeL3.h"
 #include "commands/GrabCoral.h"
+#include "commands/GrabCoralFar.h"
 #include "commands/ScoreAlgae.h"
 #include "commands/ClimbCage.h"
 #include "subsystems/IntakeAlgae.h"

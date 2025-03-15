@@ -297,7 +297,8 @@ void Robot::BindCommands()
         .OnFalse(Reset(&m_elevator, &m_wrist).ToPtr());
 
     frc2::JoystickButton(&m_operatorController, 5)
-        .WhileTrue(GrabAlgaeL3(&m_AlgaeIntake).ToPtr());
+        .WhileTrue(GrabCoralFar(&m_elevator, &m_wrist, &m_CoralIntake).ToPtr())
+        .OnFalse(Reset(&m_elevator, &m_wrist).ToPtr());
 
     frc2::JoystickButton(&m_operatorController, 6)
         .WhileTrue(GrabCoral(&m_elevator, &m_wrist, &m_CoralIntake).ToPtr())
