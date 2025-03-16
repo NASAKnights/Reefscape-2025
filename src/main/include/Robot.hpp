@@ -132,7 +132,7 @@ private:
     frc::SendableChooser<frc2::Command *> autoChooser;
     POIGenerator m_poiGenerator;
     frc2::CommandPtr m_pathfind = frc2::InstantCommand().ToPtr();
-    frc2::CommandPtr onTheFly = frc2::InstantCommand().ToPtr();
+    frc2::CommandPtr scoreClosest = frc2::InstantCommand().ToPtr();
 
     frc2::CommandPtr addPOICommand = frc2::CommandPtr(frc2::InstantCommand([this]
                                                                            { return m_poiGenerator.MakePOI(); }))
