@@ -103,8 +103,8 @@ private:
   studica::AHRS navx{studica::AHRS::NavXComType::kMXP_SPI};
 
   // ctre::phoenix6::hardware::Pigeon2 m_pigeon{2};
-  // ctre::phoenix6::hardware::Pigeon2 m_pigeon{2, "NKCANivore"};
-  ctre::phoenix6::hardware::Pigeon2 m_pigeon{2};
+  ctre::phoenix6::hardware::Pigeon2 m_pigeon{2, "NKCANivore"};
+  // ctre::phoenix6::hardware::Pigeon2 m_pigeon{2};
 
   std::array<SwerveModule, 4> modules;
   frc::SwerveDriveKinematics<4U> kSwerveKinematics;

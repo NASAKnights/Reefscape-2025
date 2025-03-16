@@ -133,7 +133,7 @@ void Robot::TeleopInit()
 
 void Robot::TeleopPeriodic()
 {
-    if (m_elevator.GetHeight() >= 0.35)
+    if (m_elevator.GetHeight() >= 0.35 && !m_pathfind.IsScheduled())
     {
         frc::SmartDashboard::PutNumber("drive/accelLim", 0.5);
     }
@@ -246,7 +246,7 @@ void Robot::BindCommands()
                                                     // Paths must be used as shared pointers
                                                     auto path = std::make_shared<PathPlannerPath>(
                                                     waypoints, 
-                                                    PathConstraints(1.0_mps, 1.0_mps_sq, 360_deg_per_s, 540_deg_per_s_sq),
+                                                    PathConstraints(1.5_mps, 2.0_mps_sq, 360_deg_per_s, 540_deg_per_s_sq),
                                                     std::nullopt, // Ideal starting state can be nullopt for on-the-fly paths
                                                     GoalEndState(0_mps, endPos.Rotation())
                                                     );
@@ -398,7 +398,7 @@ void Robot::DisabledPeriodic()
 
 void Robot::UpdateDashboard()
 {
-    frc::SmartDashboard::PutNumber("Robot/Battery Amps", batteryShunt.GetValue());
+    frc::SmartDashboard::PutNumber("Robot/Battery Amps", batteryShunt.GetVoltage());
     frc::SmartDashboard::PutNumber("Robot/PDH Total Current", m_pdh.GetTotalCurrent());
     // I don't know yet if this is the best way of doing this, I just wanted to
     // have this commented for later.
