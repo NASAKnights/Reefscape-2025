@@ -22,7 +22,7 @@ void RunCoralIntake::Execute()
 void RunCoralIntake::End(bool interrupted)
 {
   // m_intakeCoral->stopMotors();
-  m_intakeCoral->Intake(-0.15);
+  m_intakeCoral->Intake(-0.25);
 }
 
 // Returns true when the command should end.

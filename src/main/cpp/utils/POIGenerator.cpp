@@ -57,5 +57,7 @@ frc::Pose2d POIGenerator::GetClosestPOI()
     auto baseLink = DoubleArrayToPose2d(baseLinkPose);
     auto pose = baseLink.Nearest(poses);
     closestPOI.SetRobotPose(pose);
+    frc::SmartDashboard::PutNumber("TARGET POI X", pose.X().value());
+    frc::SmartDashboard::PutNumber("TARGET POI Y", pose.Y().value());
     return pose;
 }

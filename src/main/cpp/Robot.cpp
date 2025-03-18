@@ -247,15 +247,22 @@ void Robot::BindCommands()
                 Pose2d startPos = Pose2d(currentPose.Translation(), Rotation2d());
                 Pose2d endPos = m_poiGenerator.GetClosestPOI().TransformBy(offset);
 
-                auto transformedEndPos = endPos.TransformBy(Transform2d(0.3_m, 0_m, 0_rad));
+                auto transformedEndPos = endPos.TransformBy(Transform2d(0.6_m, 0_m, 0_rad));
                 std::vector<Waypoint> waypoints = PathPlannerPath::waypointsFromPoses({startPos, endPos, transformedEndPos});
                 // Paths must be used as shared pointers
+                // auto path = std::make_shared<PathPlannerPath>(
+                //     waypoints, 
+                //     std::vector<RotationTarget>({RotationTarget(0.25, endPos.Rotation())}),
+                //     std::vector<PointTowardsZone>(),
+                //     std::vector<ConstraintsZone>(),
+                //     std::vector<EventMarker>(),
+                //     PathConstraints(1.5_mps, 2.0_mps_sq, 360_deg_per_s, 940_deg_per_s_sq),
+                //     std::nullopt, // Ideal starting state can be nullopt for on-the-fly paths
+                //     GoalEndState(0_mps, endPos.Rotation()),
+                //     false
+                // );
                 auto path = std::make_shared<PathPlannerPath>(
                     waypoints, 
-                    std::vector<RotationTarget>({RotationTarget(0.1, endPos.Rotation())}),
-                    std::vector<PointTowardsZone>(),
-                    std::vector<ConstraintsZone>(),
-                    std::vector<EventMarker>(),
                     PathConstraints(1.5_mps, 2.0_mps_sq, 360_deg_per_s, 940_deg_per_s_sq),
                     std::nullopt, // Ideal starting state can be nullopt for on-the-fly paths
                     GoalEndState(0_mps, endPos.Rotation()),
