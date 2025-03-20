@@ -123,8 +123,9 @@ namespace ModuleConstants
         units::meter_t{0.092815210491};
     // meters / turn
 
-    // const auto kWheelEffectiveDiameterCoeff = 1.11016;
-    const auto kWheelEffectiveDiameterCoeff = 1.08426;
+    const auto kWheelEffectiveDiameterCoeff = 1.11016;
+    // const auto kWheelEffectiveDiameterCoeff = 1.08426;
+    // const auto kWheelEffectiveDiameterCoeff = 0.97561;
 
     const auto kWheelCircumference =
         kWheelDiameterMeters * std::numbers::pi * kWheelEffectiveDiameterCoeff / units::turn_t{1.0};
