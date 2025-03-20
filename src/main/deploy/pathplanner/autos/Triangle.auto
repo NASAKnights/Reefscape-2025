@@ -7,13 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "1mForward"
+            "pathName": "TRI1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "1mBack"
+            "pathName": "TRI2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "TRI3"
           }
         }
       ]

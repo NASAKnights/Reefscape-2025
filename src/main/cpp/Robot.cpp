@@ -90,7 +90,7 @@ void Robot::AutonomousInit()
     m_elevator.HoldPosition();
     m_swerveDrive.TurnVisionOff(); // don't use vision during Auto
     auto m_autonomousCommand = autoChooser.GetSelected();
-
+    m_CoralIntake.Intake(-0.25);
     // auto start = std::move(autoMap.at(1)).second;
     // m_autonomousCommand = std::move(std::move(autoMap.at(1)).first).ToPtr();
     m_swerveDrive.ResetPose(autoStartPose);
@@ -240,14 +240,14 @@ void Robot::BindCommands()
                 Pose2d currentPose = this->m_swerveDrive.GetPose();
                 // Select Left or Right Branch
                 frc::Transform2d offset = m_driverController.GetRawButton(7) ? 
-                    frc::Transform2d(0.0_m, 0.2_m, frc::Rotation2d()) :
+                    frc::Transform2d(0.0_m, 0.35_m, frc::Rotation2d()) :
                     frc::Transform2d(0.0_m, 0.0_m, frc::Rotation2d());
 
                 // The rotation component in these poses represents the direction of travel
                 Pose2d startPos = Pose2d(currentPose.Translation(), Rotation2d());
                 Pose2d endPos = m_poiGenerator.GetClosestPOI().TransformBy(offset);
 
-                auto transformedEndPos = endPos.TransformBy(Transform2d(0.65_m, 0_m, 0_rad));
+                auto transformedEndPos = endPos.TransformBy(Transform2d(0.35_m, 0_m, 0_rad));
                 std::vector<Waypoint> waypoints = PathPlannerPath::waypointsFromPoses({startPos, endPos, transformedEndPos});
                 // Paths must be used as shared pointers
                 auto path = std::make_shared<PathPlannerPath>(
