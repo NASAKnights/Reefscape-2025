@@ -32,6 +32,7 @@
 #include <frc/Timer.h>
 #include "subsystems/PoseEstimator.h"
 #include "utils/POIGenerator.h"
+#include "utils/PoseFilter.h"
 
 #include <frc/DriverStation.h>
 #include <frc/estimator/PoseEstimator.h>
@@ -138,6 +139,8 @@ private:
 
   nt::DoubleArraySubscriber baseLink1Subscribe;
   nt::DoubleArraySubscriber baseLink2Subscribe;
+  PoseFilter poseFilter1 = PoseFilter(5, 0.2, 0.2);
+  PoseFilter poseFilter2 = PoseFilter(5, 0.2, 0.2);
   frc::Quaternion rotation_q; // w, x, y, z
   frc::SwerveDrivePoseEstimator<4> m_poseEstimator;
   frc::Timer timer;

@@ -349,9 +349,12 @@ void SwerveDrive::UpdatePoseEstimate()
                                                  units::meter_t{compressedResults.at(1)},
                                                  units::meter_t{compressedResults.at(2)});
         frc::Pose3d cameraPose = frc::Pose3d(posTranslation, frc::Rotation3d(rotation_q));
-        frc::Pose2d visionMeasurement2d = cameraPose.ToPose2d();
-        m_poseEstimator.AddVisionMeasurement(visionMeasurement2d,
-                                             units::second_t{compressedResults.at(7)});
+        if (poseFilter1.IsPoseValid(cameraPose, compressedResults.at(7)))
+        {
+            frc::Pose2d visionMeasurement2d = cameraPose.ToPose2d();
+            m_poseEstimator.AddVisionMeasurement(visionMeasurement2d,
+                                                 units::second_t{compressedResults.at(7)});
+        }
     }
     if (result2.value.size() > 0 && useVision)
     {
@@ -363,9 +366,12 @@ void SwerveDrive::UpdatePoseEstimate()
                                                  units::meter_t{compressedResults.at(1)},
                                                  units::meter_t{compressedResults.at(2)});
         frc::Pose3d cameraPose = frc::Pose3d(posTranslation, frc::Rotation3d(rotation_q));
-        frc::Pose2d visionMeasurement2d = cameraPose.ToPose2d();
-        m_poseEstimator.AddVisionMeasurement(visionMeasurement2d,
-                                             units::second_t{compressedResults.at(7)});
+        if (poseFilter2.IsPoseValid(cameraPose, compressedResults.at(7)))
+        {
+            frc::Pose2d visionMeasurement2d = cameraPose.ToPose2d();
+            m_poseEstimator.AddVisionMeasurement(visionMeasurement2d,
+                                                 units::second_t{compressedResults.at(7)});
+        }
     }
 
     m_poseEstimator.Update(m_pigeon.GetRotation2d(), GetModulePositions());
