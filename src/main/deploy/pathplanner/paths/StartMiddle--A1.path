@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.8,
+        "x": 7.526788768529077,
         "y": 4.0
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.054103535353535,
-        "y": 4.8232954545454545
+        "x": 6.632344324084633,
+        "y": 4.782638888888889
       },
       "isLocked": false,
-      "linkedName": "A2"
+      "linkedName": "StartMiddle"
     },
     {
       "anchor": {
@@ -20,8 +20,8 @@
         "y": 5.194729012257697
       },
       "prevControl": {
-        "x": 5.750038793454068,
-        "y": 5.306534567813252
+        "x": 5.497546567666761,
+        "y": 5.735662236316989
       },
       "nextControl": null,
       "isLocked": false,

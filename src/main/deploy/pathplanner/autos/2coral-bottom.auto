@@ -30,7 +30,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "StartBottomScoreA3"
+                  "pathName": "StartBottom--A3"
                 }
               }
             ]
@@ -62,7 +62,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "A3toHP1"
+                  "pathName": "A3--HP1"
                 }
               },
               {
@@ -107,7 +107,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "HPSScoreA4"
+                  "pathName": "HPS--A4"
                 }
               },
               {

@@ -19,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "A1ToHPS2"
+            "pathName": "A1--HPS2"
           }
         },
         {
@@ -31,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "HPS2ScoreA6"
+            "pathName": "HPS2--A6"
           }
         },
         {
@@ -43,7 +43,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "A6ToHPS2"
+            "pathName": "A6--HPS2"
           }
         },
         {
@@ -55,7 +55,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "HPS2ScoreA6"
+            "pathName": "HPS2--A6"
           }
         },
         {
