@@ -8,6 +8,7 @@
 #include <frc2/command/SequentialCommandGroup.h>
 #include "subsystems/SwerveDrive.hpp"
 #include "utils/POIGenerator.h"
+#include "frc/Joystick.h"
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.
 // For more information, see:
@@ -17,7 +18,7 @@ class GoToPoint
                                  GoToPoint>
 {
 public:
-  GoToPoint(std::string point, SwerveDrive *swerve);
+  GoToPoint(SwerveDrive *swerve, POIGenerator *poiGen);
 
   void Initialize() override;
 
@@ -31,4 +32,6 @@ private:
   SwerveDrive *m_swerve;
   std::string m_POIName;
   frc2::CommandPtr m_pathCommand;
+  frc::Joystick m_driverController{DriveConstants::kDriverPort};
+  POIGenerator *m_poiGenerator;
 };
