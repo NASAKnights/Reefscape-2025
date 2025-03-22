@@ -138,6 +138,12 @@ frc::SwerveModuleState SwerveModule::GetCurrentState()
 
 frc::SwerveModulePosition SwerveModule::GetPosition()
 {
+  if constexpr (frc::RobotBase::IsSimulation())
+  {
+    frc::SmartDashboard::PutNumber("ServeDriveSimVelocity", m_driveSimVelocity.Get());
+    frc::SmartDashboard::PutNumber("ServeDriveSimPose", m_driveSimPosition.Get());
+    return {units::meter_t{m_driveSimVelocity.Get()}, frc::Rotation2d{units::radian_t{m_driveSimPosition.Get()}}};
+  }
   return {m_driveMotor.GetPosition().GetValue() * kDriveConversion,
           GetRotation()};
 }
@@ -157,6 +163,9 @@ void SwerveModule::SetDesiredState(frc::SwerveModuleState state)
   if constexpr (frc::RobotBase::IsSimulation())
   {
     m_steerSimPosition.Set(state.angle.Radians().value());
+    m_driveSimVelocity.Set(state.speed.value());
+    frc::SmartDashboard::PutNumber("sim_pose", m_driveSimPosition);
+    frc::SmartDashboard::PutNumber("sim_velo", m_driveSimVelocity);
   }
 }
 
