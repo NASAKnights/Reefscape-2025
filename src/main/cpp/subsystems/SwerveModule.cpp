@@ -141,7 +141,7 @@ frc::SwerveModulePosition SwerveModule::GetPosition()
   {
     frc::SmartDashboard::PutNumber("SwerveDriveSimVelocity", m_driveSimVelocity);
     frc::SmartDashboard::PutNumber("SwerveDriveSimPosition", m_driveSimPosition);
-    return {units::meter_t{m_driveSimVelocity}, frc::Rotation2d{units::radian_t{m_driveSimPosition}}};
+    return {units::meter_t{m_driveSimPosition}, frc::Rotation2d{units::radian_t{m_steerSimPosition}}};
   }
   return {m_driveMotor.GetPosition().GetValue() * kDriveConversion,
           GetRotation()};

@@ -25,7 +25,8 @@ SwerveDrive::SwerveDrive()
                                                                                                                                             frc::Rotation2d(m_pigeon.GetYaw().GetValue()), // TODO: YAW is CCW+ whereas this API is CW+ (Check if need to reverse)
                                                                                                                                             {modules[0].GetPosition(), modules[1].GetPosition(), modules[2].GetPosition(),
                                                                                                                                              modules[3].GetPosition()},
-                                                                                                                                            frc::Pose2d()}
+                                                                                                                                            frc::Pose2d()},
+      m_pigeonSim{m_pigeon}
 {
 
     // Add a function that loads the Robot Preferences, including
@@ -103,6 +104,11 @@ SwerveDrive::SwerveDrive()
         },
         this // Reference to this subsystem to set requirements
     );
+
+    if constexpr (frc::RobotBase::IsSimulation())
+    {
+        m_simTimer.Start();
+    }
 }
 
 // void SwerveDrive::InitPreferences()
@@ -149,6 +155,15 @@ void SwerveDrive::Periodic()
     PeriodicShuffleboard();
 }
 
+void SwerveDrive::SimulationPeriodic()
+{
+
+    units::second_t dt = m_simTimer.Get();
+    m_simTimer.Reset();
+    units::angle::degree_t delta = m_pigeon.GetAngularVelocityZWorld().GetValue() * dt;
+    m_pigeonSim.AddYaw(delta);
+}
+
 void SwerveDrive::Drive(frc::ChassisSpeeds speeds)
 {
     if (enable)
@@ -180,6 +195,11 @@ void SwerveDrive::Drive(frc::ChassisSpeeds speeds)
         for (int i = 0; i < 4; i++)
         {
             modules[i].SetDesiredState(states[i]);
+        }
+
+        if constexpr (frc::RobotBase::IsSimulation())
+        {
+            m_pigeonSim.SetAngularVelocityZ(speeds.omega);
         }
 
         frc::SmartDashboard::PutNumber("drive/vx", speeds.vx.value());
