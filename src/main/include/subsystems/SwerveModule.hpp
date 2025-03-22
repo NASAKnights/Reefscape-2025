@@ -62,5 +62,5 @@ private:
 
   double m_driveSimVelocity;
   double m_driveSimPosition;
-  hal::SimDouble m_steerSimPosition;
+  double m_steerSimPosition;
 };

@@ -25,11 +25,11 @@ SwerveModule::SwerveModule(int driveMotorID, int steerMotorID,
     : m_id{driveMotorID / 10}, m_driveMotor{driveMotorID, "NKCANivore"},
       m_steerMotor{steerMotorID, "NKCANivore"},
       m_steerEncoder{steerEncoderId, "NKCANivore"}, m_angleOffset{angleOffset},
-      m_driveSim("TalonFX", driveMotorID), m_steerSim("TalonFX", steerMotorID),
-      m_steerSimPosition(m_steerSim.GetDouble("Position"))
+      m_driveSim("TalonFX", driveMotorID), m_steerSim("TalonFX", steerMotorID)
 {
   m_driveSimVelocity = m_driveSim.GetDouble("Velocity");
   m_driveSimPosition = m_driveSim.GetDouble("Position");
+  m_steerSimPosition = m_steerSim.GetDouble("Position");
   configs::TalonFXConfiguration driveConfig{};
   configs::TalonFXConfiguration steerConfig{};
   configs::CANcoderConfiguration CANcoderConfig{};
@@ -161,7 +161,7 @@ void SwerveModule::SetDesiredState(frc::SwerveModuleState state)
 
   if constexpr (frc::RobotBase::IsSimulation())
   {
-    m_steerSimPosition.Set(state.angle.Radians().value());
+    m_steerSimPosition = state.angle.Radians().value();
     m_driveSimVelocity = state.speed.value();
     frc::SmartDashboard::PutNumber("sim_pose", m_driveSimPosition);
     frc::SmartDashboard::PutNumber("sim_velo", m_driveSimVelocity);
