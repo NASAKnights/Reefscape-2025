@@ -6,6 +6,9 @@
 
 #include <studica/AHRS.h>
 #include <ctre/phoenix6/Pigeon2.hpp>
+#include <ctre/phoenix6/sim/Pigeon2SimState.hpp>
+#include <ctre/phoenix6/StatusSignal.hpp>
+#include <frc/RobotBase.h>
 #include <frc/SPI.h>
 #include <frc/controller/PIDController.h>
 #include <frc/geometry/Pose2d.h>
@@ -45,6 +48,11 @@
 #include <pathplanner/lib/config/RobotConfig.h>
 #include <pathplanner/lib/controllers/PPHolonomicDriveController.h>
 
+#include <units/angle.h>
+#include <units/time.h>
+#include <units/angular_velocity.h>
+#include <units/math.h>
+
 #include "Constants.hpp"
 #include "SwerveModule.hpp"
 
@@ -57,6 +65,7 @@ public:
    * Will be called periodically whenever the CommandScheduler runs.
    */
   void Periodic() override;
+  void SimulationPeriodic();
 
   void Drive(frc::ChassisSpeeds);
 
@@ -148,4 +157,8 @@ private:
 
   nt::DoubleArrayPublisher baseLinkPublisher;
   nt::DoubleArrayPublisher timePublisher;
+
+  /* Simulation */
+  frc::Timer m_simTimer;
+  ctre::phoenix6::sim::Pigeon2SimState m_pigeonSim;
 };
