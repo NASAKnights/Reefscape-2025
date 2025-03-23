@@ -35,6 +35,7 @@
 #include <frc/Timer.h>
 #include "subsystems/PoseEstimator.h"
 #include "utils/POIGenerator.h"
+#include "utils/PoseFilter.h"
 
 #include <frc/DriverStation.h>
 #include <frc/estimator/PoseEstimator.h>
@@ -113,6 +114,7 @@ private:
 
   // ctre::phoenix6::hardware::Pigeon2 m_pigeon{2};
   ctre::phoenix6::hardware::Pigeon2 m_pigeon{2, "NKCANivore"};
+  // ctre::phoenix6::hardware::Pigeon2 m_pigeon{2};
 
   std::array<SwerveModule, 4> modules;
   frc::SwerveDriveKinematics<4U> kSwerveKinematics;
@@ -146,6 +148,8 @@ private:
 
   nt::DoubleArraySubscriber baseLink1Subscribe;
   nt::DoubleArraySubscriber baseLink2Subscribe;
+  PoseFilter poseFilter1 = PoseFilter(5, 0.2, 0.2);
+  PoseFilter poseFilter2 = PoseFilter(5, 0.2, 0.2);
   frc::Quaternion rotation_q; // w, x, y, z
   frc::SwerveDrivePoseEstimator<4> m_poseEstimator;
   frc::Timer timer;

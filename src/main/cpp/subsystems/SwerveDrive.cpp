@@ -23,6 +23,7 @@ SwerveDrive::SwerveDrive()
                          DriveConstants::kBackLeftPosition, DriveConstants::kBackRightPosition}},
       pidX{0.9, 1e-4, 0}, pidY{0.9, 1e-4, 0}, pidRot{0.15, 0, 0}, networkTableInst(nt::NetworkTableInstance::GetDefault()), m_poseEstimator{kSwerveKinematics,
                                                                                                                                             frc::Rotation2d(m_pigeon.GetYaw().GetValue()), // TODO: YAW is CCW+ whereas this API is CW+ (Check if need to reverse)
+                                                                                                                                            // frc::Rotation2d(units::radian_t{navx.GetYaw()}), // TODO: YAW is CCW+ whereas this API is CW+ (Check if need to reverse)
                                                                                                                                             {modules[0].GetPosition(), modules[1].GetPosition(), modules[2].GetPosition(),
                                                                                                                                              modules[3].GetPosition()},
                                                                                                                                             frc::Pose2d()},
@@ -240,6 +241,7 @@ void SwerveDrive::SetSlow() {}
 frc::Rotation2d SwerveDrive::GetHeading()
 {
     return m_pigeon.GetRotation2d();
+    // return navx.GetRotation2d();
 }
 
 void SwerveDrive::ResetHeading()
@@ -247,6 +249,7 @@ void SwerveDrive::ResetHeading()
     if (enable == true)
     {
         m_pigeon.Reset();
+        // navx.Reset();
     }
 }
 
@@ -283,7 +286,8 @@ void SwerveDrive::UpdateOdometry()
 void SwerveDrive::SetVision()
 {
 
-    m_poseEstimator.ResetPosition(m_pigeon.GetRotation2d(), GetModulePositions(), GetVision());
+    // m_poseEstimator.ResetPosition(m_pigeon.GetRotation2d(), GetModulePositions(), GetVision());
+    m_poseEstimator.ResetPosition(navx.GetRotation2d(), GetModulePositions(), GetVision());
 }
 
 frc::Pose2d SwerveDrive::GetVision()
@@ -365,9 +369,12 @@ void SwerveDrive::UpdatePoseEstimate()
                                                  units::meter_t{compressedResults.at(1)},
                                                  units::meter_t{compressedResults.at(2)});
         frc::Pose3d cameraPose = frc::Pose3d(posTranslation, frc::Rotation3d(rotation_q));
-        frc::Pose2d visionMeasurement2d = cameraPose.ToPose2d();
-        m_poseEstimator.AddVisionMeasurement(visionMeasurement2d,
-                                             units::second_t{compressedResults.at(7)});
+        if (poseFilter1.IsPoseValid(cameraPose, compressedResults.at(7)))
+        {
+            frc::Pose2d visionMeasurement2d = cameraPose.ToPose2d();
+            m_poseEstimator.AddVisionMeasurement(visionMeasurement2d,
+                                                 units::second_t{compressedResults.at(7)});
+        }
     }
     if (result2.value.size() > 0 && useVision)
     {
@@ -379,12 +386,16 @@ void SwerveDrive::UpdatePoseEstimate()
                                                  units::meter_t{compressedResults.at(1)},
                                                  units::meter_t{compressedResults.at(2)});
         frc::Pose3d cameraPose = frc::Pose3d(posTranslation, frc::Rotation3d(rotation_q));
-        frc::Pose2d visionMeasurement2d = cameraPose.ToPose2d();
-        m_poseEstimator.AddVisionMeasurement(visionMeasurement2d,
-                                             units::second_t{compressedResults.at(7)});
+        if (poseFilter2.IsPoseValid(cameraPose, compressedResults.at(7)))
+        {
+            frc::Pose2d visionMeasurement2d = cameraPose.ToPose2d();
+            m_poseEstimator.AddVisionMeasurement(visionMeasurement2d,
+                                                 units::second_t{compressedResults.at(7)});
+        }
     }
 
     m_poseEstimator.Update(m_pigeon.GetRotation2d(), GetModulePositions());
+    // m_poseEstimator.Update(navx.GetRotation2d(), GetModulePositions());
     m_field.SetRobotPose(m_poseEstimator.GetEstimatedPosition());
 }
 

@@ -15,13 +15,14 @@ void RunCoralIntake::Initialize() {}
 // Called repeatedly when this Command is scheduled to run
 void RunCoralIntake::Execute()
 {
-  m_intakeCoral->Intake(-1.0);
+  m_intakeCoral->Intake(-0.45);
 }
 
 // Called once the command ends or is interrupted.
 void RunCoralIntake::End(bool interrupted)
 {
   // m_intakeCoral->stopMotors();
+  m_intakeCoral->Intake(-0.25);
 }
 
 // Returns true when the command should end.

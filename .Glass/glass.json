@@ -1,7 +1,15 @@
 {
   "NetworkTables": {
+    "persistent": {
+      "SmartDashboard": {
+        "open": true
+      }
+    },
     "transitory": {
       "SmartDashboard": {
+        "Elevator": {
+          "open": true
+        },
         "Wrist": {
           "open": true
         },
@@ -10,8 +18,12 @@
     },
     "types": {
       "/FMSInfo": "FMSInfo",
+      "/Shuffleboard/Auto Settings/SendableChooser[0]": "String Chooser",
       "/SmartDashboard/AddPOI": "Command",
+      "/SmartDashboard/Auto Chooser": "String Chooser",
+      "/SmartDashboard/ClosestPOI": "Field2d",
       "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/On-the-fly path": "Command",
       "/SmartDashboard/RemovePOI": "Command"
     }
   },
@@ -21,6 +33,9 @@
   "NetworkTables Settings": {
     "mode": "Client (NT4)",
     "serverTeam": "122"
+  },
+  "NetworkTables View": {
+    "visible": false
   },
   "Plots": {
     "Plot <0>": {
@@ -32,7 +47,7 @@
             0.0,
             0.8500000238418579
           ],
-          "height": 703,
+          "height": 468,
           "series": [
             {
               "color": [

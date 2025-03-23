@@ -1,0 +1,66 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.3212997523517673,
+        "y": 0.9107645693771371
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.635588080749315,
+        "y": 2.470105931533568
+      },
+      "isLocked": false,
+      "linkedName": "HPS"
+    },
+    {
+      "anchor": {
+        "x": 3.8096316677950397,
+        "y": 2.840262435860889
+      },
+      "prevControl": {
+        "x": 3.5848156697427256,
+        "y": 2.7309108605647743
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "A4"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.28786107113486853,
+      "rotationDegrees": 35.0
+    }
+  ],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "TURN VISION ON :)",
+      "waypointRelativePos": 0.2,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 2.0,
+    "maxAcceleration": 1.75,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 59.99999999999999
+  },
+  "reversed": false,
+  "folder": null,
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -125.00000000000001
+  },
+  "useDefaultConstraints": true
+}

@@ -30,7 +30,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "StartBottomScoreA3"
+                  "pathName": "StartBottom--A3"
                 }
               }
             ]
@@ -40,41 +40,67 @@
           "type": "race",
           "data": {
             "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "OuttakeCoral"
-                }
-              },
               {
                 "type": "wait",
                 "data": {
                   "waitTime": 0.5
                 }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "OuttakeCoral"
+                }
               }
             ]
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "A3toHP1"
+            "name": "TURN VISION OFF :("
           }
         },
         {
-          "type": "race",
+          "type": "parallel",
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "Intake"
+                  "pathName": "A3--HP1"
                 }
               },
               {
-                "type": "wait",
+                "type": "sequential",
                 "data": {
-                  "waitTime": 3.0
+                  "commands": [
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 0.25
+                      }
+                    },
+                    {
+                      "type": "race",
+                      "data": {
+                        "commands": [
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "Intake"
+                            }
+                          },
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 10.0
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
                 }
               }
             ]
@@ -87,7 +113,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "HPSScoreA4"
+                  "pathName": "HPS--A4"
                 }
               },
               {

@@ -23,7 +23,10 @@ using namespace ModuleConstants;
 SwerveModule::SwerveModule(int driveMotorID, int steerMotorID,
                            int steerEncoderId, frc::Rotation2d angleOffset)
     : m_id{driveMotorID / 10}, m_driveMotor{driveMotorID, "NKCANivore"},
+      // : m_id{driveMotorID / 10}, m_driveMotor{driveMotorID},
       m_steerMotor{steerMotorID, "NKCANivore"},
+      // m_steerMotor{steerMotorID},
+
       m_steerEncoder{steerEncoderId, "NKCANivore"}, m_angleOffset{angleOffset},
       m_driveSim("TalonFX", driveMotorID), m_steerSim("TalonFX", steerMotorID)
 {

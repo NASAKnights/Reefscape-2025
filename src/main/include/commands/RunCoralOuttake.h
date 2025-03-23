@@ -7,6 +7,7 @@
 #include <frc2/command/Command.h>
 #include <frc2/command/CommandHelper.h>
 #include <subsystems/IntakeCoral.h>
+#include <frc/smartdashboard/SmartDashboard.h>
 
 class RunCoralOuttake
     : public frc2::CommandHelper<frc2::Command, RunCoralOuttake>
