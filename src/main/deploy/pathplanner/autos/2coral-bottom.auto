@@ -56,6 +56,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "TURN VISION OFF :("
+          }
+        },
+        {
           "type": "parallel",
           "data": {
             "commands": [
@@ -72,7 +78,7 @@
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 1.0
+                        "waitTime": 0.25
                       }
                     },
                     {

@@ -10,6 +10,7 @@ void GoToPoint::Initialize()
 {
   using namespace pathplanner;
   using namespace frc;
+  m_swerve->TurnVisionOn();
   Pose2d currentPose = m_swerve->GetPose();
   // Select Left or Right Branch
   frc::Transform2d offset = m_driverController.GetRawButton(7) ? frc::Transform2d(0.0_m, 0.35_m, frc::Rotation2d()) : frc::Transform2d(0.0_m, 0.0_m, frc::Rotation2d());
@@ -44,6 +45,7 @@ void GoToPoint::Execute()
 
 void GoToPoint::End(bool interrupted)
 {
+  m_swerve->TurnVisionOff();
   m_pathCommand.Cancel();
 }
 

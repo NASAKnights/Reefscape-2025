@@ -86,7 +86,7 @@ void Robot::AutonomousInit()
 {
     // m_autonomousCommand = this->GetAutonomousCommand();
     m_elevator.HoldPosition();
-    m_swerveDrive.TurnVisionOff(); // don't use vision during Auto
+    // m_swerveDrive.TurnVisionOff(); // don't use vision during Auto
     auto m_autonomousCommand = autoChooser.GetSelected();
     m_CoralIntake.Intake(-0.25);
     // auto start = std::move(autoMap.at(1)).second;
@@ -173,12 +173,21 @@ void Robot::CreateRobot()
     pathplanner::NamedCommands::registerCommand("Score L4", std::move(PlaceL4(&m_wrist, &m_elevator)).ToPtr());
     pathplanner::NamedCommands::registerCommand("Intake", std::move(GrabCoral(&m_elevator, &m_wrist, &m_CoralIntake).ToPtr()));
     pathplanner::NamedCommands::registerCommand("OuttakeCoral", std::move(RunCoralOuttake(&m_CoralIntake).ToPtr()));
+    pathplanner::NamedCommands::registerCommand("Vision", std::move(GoToPoint(&m_swerveDrive, &m_poiGenerator).ToPtr()));
+    pathplanner::NamedCommands::registerCommand("TURN VISION OFF :(", frc2::CommandPtr(
+                                                                          frc2::InstantCommand([&]
+                                                                                               { return m_swerveDrive.TurnVisionOff(); })));
+    pathplanner::NamedCommands::registerCommand("TURN VISION ON :)", frc2::CommandPtr(
+                                                                         frc2::InstantCommand([&]
+                                                                                              { return m_swerveDrive.TurnVisionOn(); })));
+
     // pathplanner::NamedCommands::registerCommand("Reset", std::move(Reset(&m_elevator, &m_wrist).ToPtr()));
 
     m_swerveDrive.SetDefaultCommand(frc2::RunCommand(
         [this]
         {
-            auto approach = m_driverController.GetRawButton(5);
+            // auto approach = m_driverController.GetRawButton(5);
+            bool approach = 0;
 
             auto leftXAxis = MathUtilNK::calculateAxis(m_driverController.GetRawAxis(1),
                                                        DriveConstants::kDefaultAxisDeadband);
@@ -229,46 +238,52 @@ void Robot::BindCommands()
     //         frc2::InstantCommand([this]
     //                              { return m_swerveDrive.SetOffsets(); })));
 
-    // scoreClosest = frc2::CommandPtr(
-    //     frc2::cmd::RunOnce(
-    //         [&]()
-    //         {
-    //             using namespace pathplanner;
-    //             using namespace frc;
-    //             Pose2d currentPose = this->m_swerveDrive.GetPose();
-    //             // Select Left or Right Branch
-    //             frc::Transform2d offset = m_driverController.GetRawButton(7) ?
-    //                 frc::Transform2d(0.0_m, 0.35_m, frc::Rotation2d()) :
-    //                 frc::Transform2d(0.0_m, 0.0_m, frc::Rotation2d());
+    scoreClosest = frc2::CommandPtr(
+        frc2::cmd::RunOnce(
+            [&]()
+            {
+                using namespace pathplanner;
+                using namespace frc;
+                Pose2d currentPose = this->m_swerveDrive.GetPose();
+                // Select Left or Right Branch
+                frc::Transform2d offset = m_driverController.GetRawButton(7) ?
+                    frc::Transform2d(0.0_m, 0.35_m, frc::Rotation2d()) :
+                    frc::Transform2d(0.0_m, 0.0_m, frc::Rotation2d());
 
-    //             // The rotation component in these poses represents the direction of travel
-    //             Pose2d startPos = Pose2d(currentPose.Translation(), Rotation2d());
-    //             Pose2d endPos = m_poiGenerator.GetClosestPOI().TransformBy(offset);
+                // The rotation component in these poses represents the direction of travel
+                Pose2d startPos = Pose2d(currentPose.Translation(), Rotation2d());
+                Pose2d endPos = m_poiGenerator.GetClosestPOI().TransformBy(offset);
 
-    //             auto transformedEndPos = endPos.TransformBy(Transform2d(0.35_m, 0_m, 0_rad));
-    //             std::vector<Waypoint> waypoints = PathPlannerPath::waypointsFromPoses({startPos, endPos, transformedEndPos});
-    //             // Paths must be used as shared pointers
-    //             auto path = std::make_shared<PathPlannerPath>(
-    //                 waypoints,
-    //                 std::vector<RotationTarget>({RotationTarget(0.25, endPos.Rotation())}),
-    //                 std::vector<PointTowardsZone>(),
-    //                 std::vector<ConstraintsZone>(),
-    //                 std::vector<EventMarker>(),
-    //                 PathConstraints(1.5_mps, 2.0_mps_sq, 360_deg_per_s, 940_deg_per_s_sq),
-    //                 std::nullopt, // Ideal starting state can be nullopt for on-the-fly paths
-    //                 GoalEndState(0_mps, endPos.Rotation()),
-    //                 false
-    //             );
+                auto transformedEndPos = endPos.TransformBy(Transform2d(0.35_m, 0_m, 0_rad));
+                std::vector<Waypoint> waypoints = PathPlannerPath::waypointsFromPoses({startPos, endPos, transformedEndPos});
+                // Paths must be used as shared pointers
+                auto path = std::make_shared<PathPlannerPath>(
+                    waypoints,
+                    std::vector<RotationTarget>({RotationTarget(0.25, endPos.Rotation())}),
+                    std::vector<PointTowardsZone>(),
+                    std::vector<ConstraintsZone>(),
+                    std::vector<EventMarker>(),
+                    PathConstraints(1.5_mps, 2.0_mps_sq, 360_deg_per_s, 940_deg_per_s_sq),
+                    std::nullopt, // Ideal starting state can be nullopt for on-the-fly paths
+                    GoalEndState(0_mps, endPos.Rotation()),
+                    false
+                );
 
-    //             // Prevent this path from being flipped on the red alliance, since the given positions are already correct
-    //             path->preventFlipping = true;
+                // Prevent this path from being flipped on the red alliance, since the given positions are already correct
+                path->preventFlipping = true;
 
-    //             m_pathfind = frc2::CommandPtr(AutoBuilder::followPath(path).Unwrap());
-    //             m_pathfind.Schedule(); })
-    //         .Unwrap());
+                m_pathfind = frc2::CommandPtr(AutoBuilder::followPath(path).Unwrap());
+                m_pathfind.Schedule(); })
+            .Unwrap());
+
+    // frc2::JoystickButton(&m_driverController, 3)
+    // .WhileTrue(GoToPoint(&m_swerveDrive, &m_poiGenerator).ToPtr());
 
     frc2::JoystickButton(&m_driverController, 3)
-        .WhileTrue(GoToPoint(&m_swerveDrive, &m_poiGenerator).ToPtr());
+        .OnTrue(scoreClosest.get())
+        .OnFalse(frc2::CommandPtr(
+            frc2::InstantCommand([this]
+                                 { return m_pathfind.Cancel(); })));
 
     // frc2::JoystickButton(&m_driverController, 3)
     //     .OnTrue(frc2::CommandPtr(frc2::InstantCommand(

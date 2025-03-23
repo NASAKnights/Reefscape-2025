@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.4983146780572978,
-        "y": 1.1016545886188702
+        "x": 1.3212997523517673,
+        "y": 0.9107645693771371
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.465763856720354,
-        "y": 2.0457863054090635
+        "x": 3.635588080749315,
+        "y": 2.470105931533568
       },
       "isLocked": false,
       "linkedName": "HPS"
@@ -20,21 +20,33 @@
         "y": 2.840262435860889
       },
       "prevControl": {
-        "x": 3.4864787850983463,
-        "y": 2.2775199098489156
+        "x": 3.5848156697427256,
+        "y": 2.7309108605647743
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "A4"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.28786107113486853,
+      "rotationDegrees": 35.0
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "TURN VISION ON :)",
+      "waypointRelativePos": 0.2,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
-    "maxVelocity": 0.1,
-    "maxAcceleration": 0.1,
+    "maxVelocity": 2.0,
+    "maxAcceleration": 1.75,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0,
     "nominalVoltage": 12.0,
@@ -42,7 +54,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 59.344432139719785
+    "rotation": 59.99999999999999
   },
   "reversed": false,
   "folder": null,
