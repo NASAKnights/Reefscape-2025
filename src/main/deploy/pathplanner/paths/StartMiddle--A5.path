@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.526788768529077,
+        "y": 4.0
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 5.757189611425688,
+        "y": 1.803324945443963
+      },
+      "isLocked": false,
+      "linkedName": "StartMiddle"
+    },
+    {
+      "anchor": {
+        "x": 3.1237373737373737,
+        "y": 4.025
+      },
+      "prevControl": {
+        "x": 2.0656301222206386,
+        "y": 1.7627016157333024
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "A5"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 2.0,
+    "maxAcceleration": 1.75,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "reversed": false,
+  "folder": "Start Mid",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 180.0
+  },
+  "useDefaultConstraints": true
+}

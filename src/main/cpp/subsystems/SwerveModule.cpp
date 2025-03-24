@@ -23,13 +23,16 @@ using namespace ModuleConstants;
 SwerveModule::SwerveModule(int driveMotorID, int steerMotorID,
                            int steerEncoderId, frc::Rotation2d angleOffset)
     : m_id{driveMotorID / 10}, m_driveMotor{driveMotorID, "NKCANivore"},
+      // : m_id{driveMotorID / 10}, m_driveMotor{driveMotorID},
       m_steerMotor{steerMotorID, "NKCANivore"},
+      // m_steerMotor{steerMotorID},
+
       m_steerEncoder{steerEncoderId, "NKCANivore"}, m_angleOffset{angleOffset},
-      m_driveSim("TalonFX", driveMotorID), m_steerSim("TalonFX", steerMotorID),
-      m_driveSimVelocity(m_driveSim.GetDouble("Velocity")),
-      m_driveSimPosition(m_driveSim.GetDouble("Position")),
-      m_steerSimPosition(m_steerSim.GetDouble("Position"))
+      m_driveSim("TalonFX", driveMotorID), m_steerSim("TalonFX", steerMotorID)
 {
+  m_driveSimVelocity = m_driveSim.GetDouble("Velocity");
+  m_driveSimPosition = m_driveSim.GetDouble("Position");
+  m_steerSimPosition = m_steerSim.GetDouble("Position");
   configs::TalonFXConfiguration driveConfig{};
   configs::TalonFXConfiguration steerConfig{};
   configs::CANcoderConfiguration CANcoderConfig{};
@@ -124,10 +127,9 @@ void SwerveModule::SimulationPeriodic()
 
   units::second_t dt = m_simTimer.Get();
   m_simTimer.Reset();
-  m_driveSimPosition.Set(m_driveSimPosition.Get() +
-                         m_driveSimVelocity.Get() * dt.value());
+  m_driveSimPosition += m_driveSimVelocity * dt.value();
   frc::SmartDashboard::PutNumber(std::to_string(m_id) + "Module Position",
-                                 m_driveSimPosition.Get());
+                                 m_driveSimPosition);
 }
 
 frc::SwerveModuleState SwerveModule::GetCurrentState()
@@ -138,6 +140,12 @@ frc::SwerveModuleState SwerveModule::GetCurrentState()
 
 frc::SwerveModulePosition SwerveModule::GetPosition()
 {
+  if constexpr (frc::RobotBase::IsSimulation())
+  {
+    frc::SmartDashboard::PutNumber("SwerveDriveSimVelocity", m_driveSimVelocity);
+    frc::SmartDashboard::PutNumber("SwerveDriveSimPosition", m_driveSimPosition);
+    return {units::meter_t{m_driveSimPosition}, frc::Rotation2d{units::radian_t{m_steerSimPosition}}};
+  }
   return {m_driveMotor.GetPosition().GetValue() * kDriveConversion,
           GetRotation()};
 }
@@ -156,7 +164,10 @@ void SwerveModule::SetDesiredState(frc::SwerveModuleState state)
 
   if constexpr (frc::RobotBase::IsSimulation())
   {
-    m_steerSimPosition.Set(state.angle.Radians().value());
+    m_steerSimPosition = state.angle.Radians().value();
+    m_driveSimVelocity = state.speed.value();
+    frc::SmartDashboard::PutNumber("sim_pose", m_driveSimPosition);
+    frc::SmartDashboard::PutNumber("sim_velo", m_driveSimVelocity);
   }
 }
 

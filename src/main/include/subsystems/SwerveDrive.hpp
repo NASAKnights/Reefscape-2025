@@ -6,6 +6,9 @@
 
 #include <studica/AHRS.h>
 #include <ctre/phoenix6/Pigeon2.hpp>
+#include <ctre/phoenix6/sim/Pigeon2SimState.hpp>
+#include <ctre/phoenix6/StatusSignal.hpp>
+#include <frc/RobotBase.h>
 #include <frc/SPI.h>
 #include <frc/controller/PIDController.h>
 #include <frc/geometry/Pose2d.h>
@@ -32,6 +35,7 @@
 #include <frc/Timer.h>
 #include "subsystems/PoseEstimator.h"
 #include "utils/POIGenerator.h"
+#include "utils/PoseFilter.h"
 
 #include <frc/DriverStation.h>
 #include <frc/estimator/PoseEstimator.h>
@@ -43,6 +47,11 @@
 // #include <pathplanner/lib/util/ReplanningConfig.h>
 #include <pathplanner/lib/config/RobotConfig.h>
 #include <pathplanner/lib/controllers/PPHolonomicDriveController.h>
+
+#include <units/angle.h>
+#include <units/time.h>
+#include <units/angular_velocity.h>
+#include <units/math.h>
 
 #include "Constants.hpp"
 #include "SwerveModule.hpp"
@@ -56,6 +65,7 @@ public:
    * Will be called periodically whenever the CommandScheduler runs.
    */
   void Periodic() override;
+  void SimulationPeriodic();
 
   void Drive(frc::ChassisSpeeds);
 
@@ -104,6 +114,7 @@ private:
 
   // ctre::phoenix6::hardware::Pigeon2 m_pigeon{2};
   ctre::phoenix6::hardware::Pigeon2 m_pigeon{2, "NKCANivore"};
+  // ctre::phoenix6::hardware::Pigeon2 m_pigeon{2};
 
   std::array<SwerveModule, 4> modules;
   frc::SwerveDriveKinematics<4U> kSwerveKinematics;
@@ -137,6 +148,8 @@ private:
 
   nt::DoubleArraySubscriber baseLink1Subscribe;
   nt::DoubleArraySubscriber baseLink2Subscribe;
+  PoseFilter poseFilter1 = PoseFilter(5, 0.2, 0.2);
+  PoseFilter poseFilter2 = PoseFilter(5, 0.2, 0.2);
   frc::Quaternion rotation_q; // w, x, y, z
   frc::SwerveDrivePoseEstimator<4> m_poseEstimator;
   frc::Timer timer;
@@ -144,4 +157,8 @@ private:
 
   nt::DoubleArrayPublisher baseLinkPublisher;
   nt::DoubleArrayPublisher timePublisher;
+
+  /* Simulation */
+  frc::Timer m_simTimer;
+  ctre::phoenix6::sim::Pigeon2SimState m_pigeonSim;
 };
