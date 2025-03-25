@@ -23,9 +23,11 @@ SwerveDrive::SwerveDrive()
                          DriveConstants::kBackLeftPosition, DriveConstants::kBackRightPosition}},
       pidX{0.9, 1e-4, 0}, pidY{0.9, 1e-4, 0}, pidRot{0.15, 0, 0}, networkTableInst(nt::NetworkTableInstance::GetDefault()), m_poseEstimator{kSwerveKinematics,
                                                                                                                                             frc::Rotation2d(m_pigeon.GetYaw().GetValue()), // TODO: YAW is CCW+ whereas this API is CW+ (Check if need to reverse)
+                                                                                                                                            // frc::Rotation2d(units::radian_t{navx.GetYaw()}), // TODO: YAW is CCW+ whereas this API is CW+ (Check if need to reverse)
                                                                                                                                             {modules[0].GetPosition(), modules[1].GetPosition(), modules[2].GetPosition(),
                                                                                                                                              modules[3].GetPosition()},
-                                                                                                                                            frc::Pose2d()}
+                                                                                                                                            frc::Pose2d()},
+      m_pigeonSim{m_pigeon}
 {
 
     // Add a function that loads the Robot Preferences, including
@@ -59,6 +61,7 @@ SwerveDrive::SwerveDrive()
         {}, {.periodic = 0.01, .sendAll = true});
 
     baseLinkPublisher = poseTable->GetDoubleArrayTopic(baseLink).Publish();
+    timePublisher = poseTable->GetDoubleArrayTopic(timeLinkName).Publish();
 
     SetOffsets();
 
@@ -102,6 +105,11 @@ SwerveDrive::SwerveDrive()
         },
         this // Reference to this subsystem to set requirements
     );
+
+    if constexpr (frc::RobotBase::IsSimulation())
+    {
+        m_simTimer.Start();
+    }
 }
 
 // void SwerveDrive::InitPreferences()
@@ -148,11 +156,20 @@ void SwerveDrive::Periodic()
     PeriodicShuffleboard();
 }
 
+void SwerveDrive::SimulationPeriodic()
+{
+
+    units::second_t dt = m_simTimer.Get();
+    m_simTimer.Reset();
+    units::angle::degree_t delta = m_pigeon.GetAngularVelocityZWorld().GetValue() * dt;
+    m_pigeonSim.AddYaw(delta);
+}
+
 void SwerveDrive::Drive(frc::ChassisSpeeds speeds)
 {
     if (enable)
     {
-        auto dT = timer.Get();
+        auto dT = 20_ms;
         timer.Reset();
 
         auto prevVX = frc::SmartDashboard::GetNumber("drive/vx", 0.0);
@@ -162,7 +179,7 @@ void SwerveDrive::Drive(frc::ChassisSpeeds speeds)
         double velocityCommanded = std::sqrt(std::pow(speeds.vx.value(), 2) + std::pow(speeds.vy.value(), 2));
         double prevVelocity = std::sqrt(std::pow(prevVX, 2) + std::pow(prevVY, 2));
 
-        velocityCommanded = std::min(accelLimit * (dT.value() * 10000) + (prevVelocity), velocityCommanded);
+        velocityCommanded = std::min(accelLimit * (0.02) + (prevVelocity), velocityCommanded);
 
         Eigen::Vector2d prevVelocityVector(speeds.vx.value(), speeds.vy.value());
         Eigen::Vector2d a = prevVelocityVector.normalized() * velocityCommanded;
@@ -179,6 +196,11 @@ void SwerveDrive::Drive(frc::ChassisSpeeds speeds)
         for (int i = 0; i < 4; i++)
         {
             modules[i].SetDesiredState(states[i]);
+        }
+
+        if constexpr (frc::RobotBase::IsSimulation())
+        {
+            m_pigeonSim.SetAngularVelocityZ(speeds.omega);
         }
 
         frc::SmartDashboard::PutNumber("drive/vx", speeds.vx.value());
@@ -219,6 +241,7 @@ void SwerveDrive::SetSlow() {}
 frc::Rotation2d SwerveDrive::GetHeading()
 {
     return m_pigeon.GetRotation2d();
+    // return navx.GetRotation2d();
 }
 
 void SwerveDrive::ResetHeading()
@@ -226,6 +249,7 @@ void SwerveDrive::ResetHeading()
     if (enable == true)
     {
         m_pigeon.Reset();
+        // navx.Reset();
     }
 }
 
@@ -262,7 +286,8 @@ void SwerveDrive::UpdateOdometry()
 void SwerveDrive::SetVision()
 {
 
-    m_poseEstimator.ResetPosition(m_pigeon.GetRotation2d(), GetModulePositions(), GetVision());
+    // m_poseEstimator.ResetPosition(m_pigeon.GetRotation2d(), GetModulePositions(), GetVision());
+    m_poseEstimator.ResetPosition(navx.GetRotation2d(), GetModulePositions(), GetVision());
 }
 
 frc::Pose2d SwerveDrive::GetVision()
@@ -332,6 +357,7 @@ void SwerveDrive::UpdatePoseEstimate()
     auto result1 = baseLink1Subscribe.GetAtomic();
     auto result2 = baseLink2Subscribe.GetAtomic();
     // auto time = result.time; // time stamp
+    frc::SmartDashboard::PutBoolean("Vision", useVision);
 
     if (result1.value.size() > 0 && useVision)
     {
@@ -343,9 +369,12 @@ void SwerveDrive::UpdatePoseEstimate()
                                                  units::meter_t{compressedResults.at(1)},
                                                  units::meter_t{compressedResults.at(2)});
         frc::Pose3d cameraPose = frc::Pose3d(posTranslation, frc::Rotation3d(rotation_q));
-        frc::Pose2d visionMeasurement2d = cameraPose.ToPose2d();
-        m_poseEstimator.AddVisionMeasurement(visionMeasurement2d,
-                                             units::second_t{compressedResults.at(7)});
+        if (poseFilter1.IsPoseValid(cameraPose, compressedResults.at(7)))
+        {
+            frc::Pose2d visionMeasurement2d = cameraPose.ToPose2d();
+            m_poseEstimator.AddVisionMeasurement(visionMeasurement2d,
+                                                 units::second_t{compressedResults.at(7)});
+        }
     }
     if (result2.value.size() > 0 && useVision)
     {
@@ -357,12 +386,16 @@ void SwerveDrive::UpdatePoseEstimate()
                                                  units::meter_t{compressedResults.at(1)},
                                                  units::meter_t{compressedResults.at(2)});
         frc::Pose3d cameraPose = frc::Pose3d(posTranslation, frc::Rotation3d(rotation_q));
-        frc::Pose2d visionMeasurement2d = cameraPose.ToPose2d();
-        m_poseEstimator.AddVisionMeasurement(visionMeasurement2d,
-                                             units::second_t{compressedResults.at(7)});
+        if (poseFilter2.IsPoseValid(cameraPose, compressedResults.at(7)))
+        {
+            frc::Pose2d visionMeasurement2d = cameraPose.ToPose2d();
+            m_poseEstimator.AddVisionMeasurement(visionMeasurement2d,
+                                                 units::second_t{compressedResults.at(7)});
+        }
     }
 
     m_poseEstimator.Update(m_pigeon.GetRotation2d(), GetModulePositions());
+    // m_poseEstimator.Update(navx.GetRotation2d(), GetModulePositions());
     m_field.SetRobotPose(m_poseEstimator.GetEstimatedPosition());
 }
 
@@ -381,6 +414,8 @@ void SwerveDrive::PublishOdometry(frc::Pose2d odometryPose)
                              odoPoseQ.W(),
                              time};
     baseLinkPublisher.Set(poseDeconstruct, time);
+    double timearr[]{time};
+    timePublisher.Set(timearr, time);
 }
 
 void SwerveDrive::EnableDrive()
@@ -491,22 +526,31 @@ void SwerveDrive::ShuffleboardInit() {}
 void SwerveDrive::SetOffsets()
 {
     frc::SmartDashboard::SetPersistent("FrontLeftDegree");
-    auto FrontLeftDegree = frc::SmartDashboard::GetNumber("FrontLeftDegree", 0);
+
+    auto FrontLeftDegree = frc::SmartDashboard::GetNumber("FrontLeftDegree", -4.8);
+
+    // frc::SmartDashboard::PutNumber("FrontLeftDegree", -4.8);
     frc::SmartDashboard::SetPersistent("FrontLeftDegree");
     frc::Rotation2d kFrontLeftOffset(-units::degree_t{FrontLeftDegree});
 
     frc::SmartDashboard::SetPersistent("FrontRightDegree");
-    auto FrontRightDegree = frc::SmartDashboard::GetNumber("FrontRightDegree", 0);
+    auto FrontRightDegree = frc::SmartDashboard::GetNumber("FrontRightDegree", -66);
+
+    // frc::SmartDashboard::PutNumber("FrontRightDegree", -66);
     frc::SmartDashboard::SetPersistent("FrontRightDegree");
     frc::Rotation2d kFrontRightOffset(-units::degree_t{FrontRightDegree});
 
     frc::SmartDashboard::SetPersistent("BackLeftDegree");
-    auto BackLeftDegree = frc::SmartDashboard::GetNumber("BackLeftDegree", 0);
+    auto BackLeftDegree = frc::SmartDashboard::GetNumber("BackLeftDegree", 70);
+
+    // frc::SmartDashboard::PutNumber("BackLeftDegree", 71);
     frc::SmartDashboard::SetPersistent("BackLeftDegree");
     frc::Rotation2d kBackLeftOffset(-units::degree_t{BackLeftDegree});
 
     frc::SmartDashboard::SetPersistent("BackRightDegree");
-    auto BackRightDegree = frc::SmartDashboard::GetNumber("BackRightDegree", 0);
+    auto BackRightDegree = frc::SmartDashboard::GetNumber("BackRightDegree", 178);
+
+    // frc::SmartDashboard::PutNumber("BackRightDegree", 178);
     frc::SmartDashboard::SetPersistent("BackRightDegree");
     frc::Rotation2d kBackRightOffset(-units::degree_t{BackRightDegree});
 

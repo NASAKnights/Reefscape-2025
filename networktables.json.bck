@@ -1,16 +1,24 @@
 [
   {
-    "name": "/SmartDashboard/POI TEST SIM",
+    "name": "/SmartDashboard/POI/Test",
     "type": "double[]",
-    "value": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 40.296759],
+    "value": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 42.672042],
     "properties": {
       "persistent": true
     }
   },
   {
-    "name": "/SmartDashboard/POI",
+    "name": "/SmartDashboard/POI/Test1",
     "type": "double[]",
-    "value": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 243.357898],
+    "value": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 710.054288],
+    "properties": {
+      "persistent": true
+    }
+  },
+  {
+    "name": "/SmartDashboard/POI/Test2",
+    "type": "double[]",
+    "value": [9.962750400000001, 4.057394024242425, 0.0, 0.0, 0.0, 0.0, 1.0, 808.913694],
     "properties": {
       "persistent": true
     }

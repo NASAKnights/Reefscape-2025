@@ -4,7 +4,7 @@
 
 #include "subsystems/IntakeCoral.h"
 
-IntakeCoral::IntakeCoral() {};
+IntakeCoral::IntakeCoral() : coralIntakeMotor{4, rev::spark::SparkLowLevel::MotorType::kBrushless} {};
 
 // This method will be called once per scheduler run
 void IntakeCoral::Periodic() {}
@@ -13,31 +13,38 @@ void IntakeCoral::SetConfig()
 {
     if (!Configure)
     {
-        ctre::phoenix::motorcontrol::can::TalonSRXConfiguration config;
-        config.peakCurrentLimit = 40;
-        config.peakCurrentDuration = 1500;
-        config.continuousCurrentLimit = 30;
-        coralIntakeMotor.ConfigAllSettings(config);
+        // ctre::phoenix::motorcontrol::can::TalonSRXConfiguration config;
+        // config.peakCurrentLimit = 40;
+        // config.peakCurrentDuration = 1500;
+        // config.continuousCurrentLimit = 18;
+        // coralIntakeMotor.ConfigAllSettings(config);
+        // coralIntakeMotor.SetNeutralMode(ctre::phoenix::motorcontrol::NeutralMode::Brake);
+
+        rev::spark::SparkBaseConfig config;
+        config.SetIdleMode(rev::spark::SparkBaseConfig::kBrake);
+        config.SmartCurrentLimit(20);
+        coralIntakeMotor.Configure(config, rev::spark::SparkBase::ResetMode::kResetSafeParameters, rev::spark::SparkBase::PersistMode::kPersistParameters);
+
         Configure = true;
     }
 }
 
 void IntakeCoral::Intake(double Speed)
 {
-    coralIntakeMotor.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, Speed);
+    coralIntakeMotor.Set(Speed);
 }
 
 void IntakeCoral::Outtake(double Speed)
 {
-    coralIntakeMotor.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, Speed);
+    coralIntakeMotor.Set(Speed);
 }
 
 void IntakeCoral::stopMotors()
 {
-    coralIntakeMotor.Set(ctre::phoenix::motorcontrol::ControlMode::PercentOutput, 0.0);
+    coralIntakeMotor.Set(0.0);
 }
 
 bool IntakeCoral::hasCoral()
 {
-    return coralIntakeMotor.IsFwdLimitSwitchClosed();
+    return coralIntakeMotor.GetReverseLimitSwitch().Get();
 }

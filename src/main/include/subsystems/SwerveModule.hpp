@@ -60,7 +60,7 @@ private:
   frc::sim::SimDeviceSim m_driveSim;
   frc::sim::SimDeviceSim m_steerSim;
 
-  hal::SimDouble m_driveSimVelocity;
-  hal::SimDouble m_driveSimPosition;
-  hal::SimDouble m_steerSimPosition;
+  double m_driveSimVelocity;
+  double m_driveSimPosition;
+  double m_steerSimPosition;
 };

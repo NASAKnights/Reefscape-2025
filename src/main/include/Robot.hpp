@@ -11,6 +11,7 @@
 #include <frc/TimedRobot.h>
 #include <frc/shuffleboard/Shuffleboard.h>
 #include <frc/smartdashboard/SmartDashboard.h>
+#include <frc/AnalogInput.h>
 #include "utils/POIGenerator.h"
 
 #include <frc2/command/CommandPtr.h>
@@ -23,6 +24,7 @@
 #include <pathplanner/lib/auto/AutoBuilder.h>
 #include <pathplanner/lib/auto/NamedCommands.h>
 #include <pathplanner/lib/commands/PathPlannerAuto.h>
+#include <pathplanner/lib/auto/AutoBuilder.h>
 
 #include "subsystems/SwerveDrive.hpp"
 #include "subsystems/Elevator.h"
@@ -39,9 +41,12 @@
 #include "commands/GrabAlgaeL2.h"
 #include "commands/GrabAlgaeL3.h"
 #include "commands/GrabCoral.h"
+#include "commands/GrabCoralFar.h"
 #include "commands/ScoreAlgae.h"
 #include "commands/ClimbCage.h"
 #include "subsystems/IntakeAlgae.h"
+#include "commands/GrabCoralFar.h"
+#include "commands/GoToPoint.h"
 
 #include <units/angular_velocity.h>
 #include <units/velocity.h>
@@ -89,12 +94,15 @@ private:
 
     std::map<int, std::pair<pathplanner::PathPlannerAuto, frc::Pose2d>> autoMap;
 
-    LEDController m_LED_Controller;
+    // LEDController m_LED_Controller;
 
     // Subsystems
 
     IntakeCoral m_CoralIntake;
     IntakeAlgae m_AlgaeIntake;
+
+    frc::SendableChooser<std::string> m_chooser;
+    frc::AnalogInput batteryShunt{0};
 
     SwerveDrive m_swerveDrive;
     Wrist m_wrist;
@@ -103,7 +111,8 @@ private:
 
     std::string_view baseLink = "base_link";
 
-    std::string targetKey = "POI/TestPersist";
+    std::string targetKey = "POI/POIREEF";
+    std::string prevAuto = "";
 
     frc::PowerDistribution m_pdh =
         frc::PowerDistribution{1, frc::PowerDistribution::ModuleType::kRev};
@@ -119,8 +128,11 @@ private:
     wpi::log::DoubleLogEntry m_PowerLog;
     wpi::log::DoubleLogEntry m_EnergyLog;
     wpi::log::DoubleLogEntry m_TemperatureLog;
-
+    wpi::log::DoubleLogEntry m_BatteryLog;
+    frc::SendableChooser<frc2::Command *> autoChooser;
     POIGenerator m_poiGenerator;
+    frc2::CommandPtr m_pathfind = frc2::InstantCommand().ToPtr();
+    frc2::CommandPtr scoreClosest = frc2::InstantCommand().ToPtr();
 
     frc2::CommandPtr addPOICommand = frc2::CommandPtr(frc2::InstantCommand([this]
                                                                            { return m_poiGenerator.MakePOI(); }))
@@ -133,6 +145,12 @@ private:
     // Robot Container methods
     void CreateRobot();
     void BindCommands();
+
+    frc::Pose2d autoStartPose;
+
     frc2::CommandPtr GetAutonomousCommand();
+    void SetAutonomousCommand(std::string a);
+    // std::function<void(std::string)> SetAutonomousCommand(std::string a);
+    // void SetTAutonomousCommand(std::string a);
     void UpdateDashboard();
 };
