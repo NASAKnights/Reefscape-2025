@@ -11,7 +11,8 @@
 PlaceL3::PlaceL3(Wrist *wrist, Elevator *elevator, IntakeAlgae *algaeIntake)
 {
   // AddCommands(frc2::ParallelCommandGroup(SetElevatorHeight{elevator, 0.78}, MoveWristToAngle{wrist, 30.0}, RunAlgaeIntake(algaeIntake)));
-  AddCommands(frc2::ParallelCommandGroup(SetElevatorHeight{elevator, 0.64}, MoveWristToAngle{wrist, 30.0}));
+  // adjusted to correct value for COMFIT, originally 0.64
+  AddCommands(frc2::ParallelCommandGroup(SetElevatorHeight{elevator, 0.604}, MoveWristToAngle{wrist, 30.0}));
   //,
   // frc2::SequentialCommandGroup(ScoreCoral{m_wrist, m_intakeCoral}, Reset(m_elevator, m_wrist)));
   // TODO set height and angle to correct values

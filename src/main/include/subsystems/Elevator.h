@@ -98,7 +98,7 @@ namespace ElevatorConstants
     // when the cable becomes tensioned and stage 2 begins to move
     // relative to stage 1.
     // TODO need to measure this
-    static const units::meter_t kInitialHeightCorrection = 0.02_m;
+    static const units::meter_t kInitialHeightCorrection = 0.036_m;
 
     // piecewise linear fit breakpoint count
     static const int kHallPwlPoints = 10;

@@ -12,7 +12,8 @@ Reset::Reset(Elevator *Elevator, Wrist *Wrist)
 {
   // SetElevatorHeight{}, MoveWristToAngle{};
   // Add your commands here, e.g.
-  AddCommands(frc2::ParallelCommandGroup(SetElevatorHeight{Elevator, 0.1}, MoveWristToAngle{Wrist, 90.0}));
+  // adjusted to correct value for COMFIT, originally 0.1
+  AddCommands(frc2::ParallelCommandGroup(SetElevatorHeight{Elevator, 0.064}, MoveWristToAngle{Wrist, 90.0}));
   // AddCommands(SetElevatorHeight{Elevator, 0.1}, MoveWristToAngle{Wrist, 90.0});
   // TODO set height and angle to correct values
   //  AddCommands(FooCommand{}, BarCommand{});

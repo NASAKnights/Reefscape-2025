@@ -449,11 +449,12 @@ void Elevator::AutoCalibrateHeight()
 {
     if (units::meters_per_second_t{std::abs(GetEncoderVelocity())} < ElevatorConstants::kAutoCalMaxVelocity)
     {
+        frc::SmartDashboard::PutNumber("/Elevator/Calibrate vel", 10);
         double encoderHeight = GetEncoderHeight();
         double stage1Height = encoderHeight / 2.0;
         if (units::meter_t{stage1Height} > ElevatorConstants::kAutoCalMinHeight)
         {
-
+            frc::SmartDashboard::PutNumber("/Elevator/Calibrate stage", 10);
             // apply the previously determined height correction to get an estimate of the
             // height of stage2 (carriage) relative to stage 1
             double stage2HeightEstimate = stage1Height - m_heightCorrection;
@@ -461,9 +462,11 @@ void Elevator::AutoCalibrateHeight()
             // using the estimated height, get the height of stage2 (carriage) relative to
             // stage 1
             double stage2Height = GetHallHeight(stage2HeightEstimate);
+            frc::SmartDashboard::PutNumber("/Elevator/Calibration height", stage2Height);
             // if no data, return the estimated total height
             if (stage2Height > -999.0)
             {
+                frc::SmartDashboard::PutNumber("/Elevator/Calibrate valid", 10);
                 m_heightCorrection = stage1Height - stage2Height;
             }
             frc::SmartDashboard::PutNumber("/Elevator/Elevator Height Correction", m_heightCorrection);

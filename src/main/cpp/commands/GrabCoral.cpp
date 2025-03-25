@@ -11,7 +11,8 @@ GrabCoral::GrabCoral(Elevator *elevator, Wrist *wrist, IntakeCoral *intakeCoral)
 {
   // elevator .31, wrist 80
   // AddCommands(frc2::ParallelCommandGroup(SetElevatorHeight(elevator, 0.35),
-  AddCommands(frc2::ParallelCommandGroup(SetElevatorHeight(elevator, 0.19),
+  // adjusted to correct value for COMFIT, originally 0.19
+  AddCommands(frc2::ParallelCommandGroup(SetElevatorHeight(elevator, 0.154),
                                          MoveWristToAngle(wrist, 65.0),
                                          RunCoralIntake(intakeCoral)),
               Reset(elevator, wrist));

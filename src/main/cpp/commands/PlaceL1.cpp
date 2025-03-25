@@ -11,7 +11,8 @@
 PlaceL1::PlaceL1(Wrist *wrist, Elevator *elevator)
 {
   // AddCommands(frc2::ParallelCommandGroup(SetElevatorHeight{elevator, 0.145}, MoveWristToAngle{wrist, 35.0}));
-  AddCommands(frc2::ParallelCommandGroup(SetElevatorHeight{elevator, 0.05}, MoveWristToAngle{wrist, 40.0}));
+  // adjusted to correct value for COMFIT, originally 0.05
+  AddCommands(frc2::ParallelCommandGroup(SetElevatorHeight{elevator, 0.014}, MoveWristToAngle{wrist, 40.0}));
   //,
   // frc2::SequentialCommandGroup(ScoreCoral{m_wrist, m_intakeCoral}, Reset(m_elevator, m_wrist)));
   // TODO set height and angle to correct values
