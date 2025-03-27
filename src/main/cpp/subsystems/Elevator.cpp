@@ -331,6 +331,8 @@ double Elevator::GetHallHeight(double heightEstimate)
     double positionEstimate = heightEstimate - ElevatorConstants::kHallMagnetHeights[index];
     int magnetCount = ElevatorConstants::kHallMagnetCounts[index];
     double position = GetHallPosition(positionEstimate, magnetCount);
+    frc::SmartDashboard::PutNumber("/Elevator/ELEVATOR_HALL_MAG_INDEX", position);
+    frc::SmartDashboard::PutNumber("/Elevator/ELEVATOR_HALL_MAG_POSITION", position);
     if (position < -999.0)
         return position;
     else
