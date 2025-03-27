@@ -484,6 +484,11 @@ void Elevator::AutoCalibrateHeight()
             {
                 frc::SmartDashboard::PutNumber("/Elevator/Calibrate valid", 10);
                 m_heightCorrection = stage1Height - stage2Height;
+                if (m_heightCorrection > ElevatorConstants::kMaxHallCalibration || m_heightCorrection < -ElevatorConstants::kMaxHallCalibration)
+                {
+                    m_heightCorrection = ElevatorConstants::kInitialHeightCorrection.value();
+                    frc::SmartDashboard::PutBoolean("/Elevator/Elevator Correction Failure", true);
+                }
             }
             frc::SmartDashboard::PutNumber("/Elevator/Elevator Height Correction", m_heightCorrection);
         }
