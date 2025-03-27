@@ -11,8 +11,7 @@ GrabCoralFar::GrabCoralFar(Elevator *elevator, Wrist *wrist, IntakeCoral *intake
 {
   // Add your commands here, e.g.
   // AddCommands(FooCommand{}, BarCommand{});
-  // adjusted to correct value for COMFIT, originally 0.1
-  AddCommands(frc2::ParallelCommandGroup(SetElevatorHeight(elevator, 0.064),
+  AddCommands(frc2::ParallelCommandGroup(SetElevatorHeight(elevator, 0.1),
                                          MoveWristToAngle(wrist, 70.0),
                                          RunCoralIntake(intakeCoral)),
               Reset(elevator, wrist));
