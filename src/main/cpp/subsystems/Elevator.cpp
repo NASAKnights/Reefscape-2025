@@ -151,6 +151,13 @@ void Elevator::Periodic()
 
     // update the hall sensor raw pwm measurement
     m_hallPwm = GetHallPWM();
+    // update the proximity sensor raw pwm measurement
+    double proxPwm = GetProximityPWM();
+    // normalize to positive value from 0 to 1.0 in case candi is counting revolutions
+    proxPwm = (proxPwm < 0 ? -1 : 1) * proxPwm;
+    proxPwm -= std::trunc(proxPwm);
+    frc::SmartDashboard::PutNumber("/Algae/ProximityPWM", proxPwm);
+
     switch (m_ElevatorState)
     {
     case ElevatorConstants::ZEROING:
@@ -346,6 +353,13 @@ double Elevator::GetHallPWM()
     return signal.GetValueAsDouble();
 }
 
+// gets the raw proximity value (duty cycle) from the candi
+double Elevator::GetProximityPWM()
+{
+    ctre::phoenix6::StatusSignal<units::angle::turn_t> signal = m_candi.GetPWM2Position(true);
+    return signal.GetValueAsDouble();
+}
+
 // returns the position of the magnet holder center relative to the hall sensor center in meters
 // position_estimate is used to determine the integer part of the mag field rotation
 // position_estimate must be accurate to within +/-0.75 inches (0.5 rotation of the mag field)
@@ -356,7 +370,7 @@ double Elevator::GetHallPosition(double positionEstimate, int magnetCount)
     double pwm = m_hallPwm;
     // normalize to positive value from 0 to 1.0 in case candi is counting revolutions
     pwm = (pwm < 0 ? -1 : 1) * pwm;
-    pwm = pwm - std::trunc(pwm);
+    pwm -= std::trunc(pwm);
     // pwm < 0.025 or pwm > 0.95 represents fault
     // 0.025 < pwm < 0.09 represents no data yet
     // 0.91 < pwm < 0.95 indeterminate, ignore

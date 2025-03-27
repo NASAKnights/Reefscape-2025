@@ -174,6 +174,7 @@ private:
     double GetEncoderVelocity(); // meters per second
     double GetHallHeight(double heightEstimate);
     double GetHallPWM();
+    double GetProximityPWM();
     double GetHallPosition(double positionEstimate, int magnetCount);
     double InterpolatePWL(const double *xs, const double *ys, int count, double x);
     void AutoCalibrateHeight();
