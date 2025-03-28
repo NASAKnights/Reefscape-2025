@@ -59,6 +59,7 @@ SwerveDrive::SwerveDrive()
         {}, {.periodic = 0.01, .sendAll = true});
     baseLink2Subscribe = poseTable->GetDoubleArrayTopic(baseLink2).Subscribe(
         {}, {.periodic = 0.01, .sendAll = true});
+    visionStdDevSub = poseTable->GetDoubleArrayTopic(visionStdDev).Subscribe({}, {.periodic = 0.01, .sendAll = true});
 
     baseLinkPublisher = poseTable->GetDoubleArrayTopic(baseLink).Publish();
     timePublisher = poseTable->GetDoubleArrayTopic(timeLinkName).Publish();
@@ -86,8 +87,8 @@ SwerveDrive::SwerveDrive()
         },                                                         // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
         std::make_shared<pathplanner::PPHolonomicDriveController>( // PPHolonomicController is the built in path following
                                                                    // controller for holonomic drive trains
-            pathplanner::PIDConstants(5, 0.0, 0.0),                // Translation PID constants
-            pathplanner::PIDConstants(5, 0.0, 0.0)                 // Rotation PID constants
+            pathplanner::PIDConstants(2.5, 0.0, 0.0),              // Translation PID constants
+            pathplanner::PIDConstants(2.5, 0.0, 0.0)               // Rotation PID constants
             ),
         pathplannerConfig,
         []()
@@ -356,11 +357,20 @@ void SwerveDrive::UpdatePoseEstimate()
 {
     auto result1 = baseLink1Subscribe.GetAtomic();
     auto result2 = baseLink2Subscribe.GetAtomic();
+    auto resultStdDev = visionStdDevSub.GetAtomic();
     // auto time = result.time; // time stamp
-    frc::SmartDashboard::PutBoolean("Vision", useVision);
+    frc::SmartDashboard::PutBoolean("Vision", false);
+    // frc::SmartDashboard::PutNumberArray("Bad Vis", result1.value);
+
+    // if (resultStdDev.value.size() > 0 && useVision)
+    // {
+
+    // }
 
     if (result1.value.size() > 0 && useVision)
     {
+        frc::SmartDashboard::PutBoolean("Vision", true);
+
         auto compressedResults = result1.value;
         rotation_q = frc::Quaternion(compressedResults.at(6), compressedResults.at(3),
                                      compressedResults.at(4), compressedResults.at(5));

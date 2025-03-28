@@ -47,7 +47,7 @@ namespace ElevatorConstants
     static constexpr units::meter_t simLowerLimit = -0.1_in;
 
     static constexpr units::meters_per_second_t kMaxVelocity = 60.0_in / 1_s;                      // 61.55
-    static constexpr units::meters_per_second_squared_t kMaxAcceleration = 160.0_in / (1_s * 1_s); // 460_in / (1_s * 1_s);
+    static constexpr units::meters_per_second_squared_t kMaxAcceleration = 250.0_in / (1_s * 1_s); // 460_in / (1_s * 1_s);
 
     static constexpr double kP = 14.5; // 0.6 - 15
 

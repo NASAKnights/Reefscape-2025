@@ -21,5 +21,5 @@ class PlaceL3
                                  PlaceL3>
 {
 public:
-  PlaceL3(Wrist *wrist, Elevator *elevator, IntakeAlgae *intakeAlgae);
+  PlaceL3(Wrist *wrist, Elevator *elevator);
 };

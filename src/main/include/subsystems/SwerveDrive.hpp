@@ -142,12 +142,14 @@ private:
   std::string_view baseLink1 = "base_link_1";
   std::string_view baseLink2 = "base_link_2";
   std::string_view baseLink = "base_link";
+  std::string_view visionStdDev = "vision_stddev";
   std::string_view timeLinkName = "time";
 
   std::shared_ptr<nt::NetworkTable> poseTable;
 
   nt::DoubleArraySubscriber baseLink1Subscribe;
   nt::DoubleArraySubscriber baseLink2Subscribe;
+  nt::DoubleArraySubscriber visionStdDevSub;
   PoseFilter poseFilter1 = PoseFilter(5, 0.2, 0.2);
   PoseFilter poseFilter2 = PoseFilter(5, 0.2, 0.2);
   frc::Quaternion rotation_q; // w, x, y, z

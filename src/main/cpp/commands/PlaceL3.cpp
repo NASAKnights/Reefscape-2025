@@ -8,7 +8,7 @@
 // NOTE:  Consider using this command inline, rather than writing a subclass.
 // For more information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-PlaceL3::PlaceL3(Wrist *wrist, Elevator *elevator, IntakeAlgae *algaeIntake)
+PlaceL3::PlaceL3(Wrist *wrist, Elevator *elevator)
 {
   // AddCommands(frc2::ParallelCommandGroup(SetElevatorHeight{elevator, 0.78}, MoveWristToAngle{wrist, 30.0}, RunAlgaeIntake(algaeIntake)));
   AddCommands(frc2::ParallelCommandGroup(SetElevatorHeight{elevator, 0.64}, MoveWristToAngle{wrist, 30.0}));

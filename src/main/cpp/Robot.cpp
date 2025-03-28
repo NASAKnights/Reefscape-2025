@@ -28,29 +28,15 @@ void Robot::RobotInit()
     // frc::SmartDashboard::PutNumber("BackLeftDegree", 0.0);
     // frc::SmartDashboard::PutNumber("BackRightDegree", 0.0);
 
-    // m_chooser.SetDefaultOption("CHOOSE A OPTION", "");
-    // m_chooser.AddOption("A", "0");
-    // m_chooser.AddOption("A1", "1");
-    // m_chooser.AddOption("A2", "2");
-    // m_chooser.AddOption("A3", "3");
-    // m_chooser.AddOption("A4", "4");
-
-    // frc::Shuffleboard::GetTab("Auto Settings").Add(m_chooser).WithWidget(frc::BuiltInWidgets::kComboBoxChooser);
-
     auto Po = frc::SmartDashboard::PutNumber("Note Po", 0.0);
     auto Px = frc::SmartDashboard::PutNumber("Note Px", 1);
     auto Py = frc::SmartDashboard::PutNumber("Note Py", 1);
     auto Do = frc::SmartDashboard::PutNumber("Note Do", 0.0);
 
     autoChooser = pathplanner::AutoBuilder::buildAutoChooser();
+    // autoChooser.SetDefaultOption("AAA", );
 
     frc::SmartDashboard::PutData("Auto Chooser", &autoChooser);
-
-    // std::string testAutoCalibration = "3coral-bot";
-    // auto a4 = pathplanner::PathPlannerAuto(testAutoCalibration);
-    // auto a4Pose = pathplanner::PathPlannerAuto::getPathGroupFromAutoFile(testAutoCalibration)[0]->getPathPoses()[0];
-    // auto entry4 = std::make_pair(std::move(a4), a4Pose);
-    // autoMap.emplace(1, std::move(entry4));
 };
 
 // This function is called every 20 ms
@@ -166,14 +152,51 @@ void Robot::SimulationPeriodic() {}
  */
 void Robot::CreateRobot()
 {
+    scoreClosest = frc2::CommandPtr(
+        frc2::cmd::RunOnce(
+            [&]()
+            {
+                using namespace pathplanner;
+                using namespace frc;
+                Pose2d currentPose = this->m_swerveDrive.GetPose();
+                // Select Left or Right Branch
+                frc::Transform2d offset = m_driverController.GetRawButton(7) ?
+                    frc::Transform2d(0.0_m, 0.35_m, frc::Rotation2d()) :
+                    frc::Transform2d(0.0_m, 0.0_m, frc::Rotation2d());
 
-    // pathplanner::NamedCommands::registerCommand("Score L1", std::move(PlaceL1(&m_wrist, &m_elevator)).ToPtr());
-    // pathplanner::NamedCommands::registerCommand("Score L2", std::move(PlaceL2(&m_wrist, &m_elevator)).ToPtr());
-    // pathplanner::NamedCommands::registerCommand("Score L3", std::move(PlaceL3(&m_wrist, &m_elevator)).ToPtr());
+                // The rotation component in these poses represents the direction of travel
+                Pose2d startPos = Pose2d(currentPose.Translation(), Rotation2d());
+                Pose2d endPos = m_poiGenerator.GetClosestPOI().TransformBy(offset);
+
+                auto transformedEndPos = endPos.TransformBy(Transform2d(0.35_m, 0_m, 0_rad));
+                std::vector<Waypoint> waypoints = PathPlannerPath::waypointsFromPoses({startPos, endPos, transformedEndPos});
+                // Paths must be used as shared pointers
+                auto path = std::make_shared<PathPlannerPath>(
+                    waypoints,
+                    std::vector<RotationTarget>({RotationTarget(0.25, endPos.Rotation())}),
+                    std::vector<PointTowardsZone>(),
+                    std::vector<ConstraintsZone>(),
+                    std::vector<EventMarker>(),
+                    PathConstraints(1_mps, 2.0_mps_sq, 360_deg_per_s, 940_deg_per_s_sq),
+                    std::nullopt, // Ideal starting state can be nullopt for on-the-fly paths
+                    GoalEndState(0_mps, endPos.Rotation()),
+                    false
+                );
+
+                // Prevent this path from being flipped on the red alliance, since the given positions are already correct
+                path->preventFlipping = true;
+
+                m_pathfind = frc2::CommandPtr(AutoBuilder::followPath(path).Unwrap());
+                m_pathfind.Schedule(); })
+            .Unwrap());
+
+    pathplanner::NamedCommands::registerCommand("Score L1", std::move(PlaceL1(&m_wrist, &m_elevator)).ToPtr());
+    pathplanner::NamedCommands::registerCommand("Score L2", std::move(PlaceL2(&m_wrist, &m_elevator)).ToPtr());
+    pathplanner::NamedCommands::registerCommand("Score L3", std::move(PlaceL3(&m_wrist, &m_elevator)).ToPtr());
     pathplanner::NamedCommands::registerCommand("Score L4", std::move(PlaceL4(&m_wrist, &m_elevator)).ToPtr());
     pathplanner::NamedCommands::registerCommand("Intake", std::move(GrabCoral(&m_elevator, &m_wrist, &m_CoralIntake).ToPtr()));
     pathplanner::NamedCommands::registerCommand("OuttakeCoral", std::move(RunCoralOuttake(&m_CoralIntake).ToPtr()));
-    pathplanner::NamedCommands::registerCommand("Vision", std::move(GoToPoint(&m_swerveDrive, &m_poiGenerator).ToPtr()));
+    // pathplanner::NamedCommands::registerCommand("Vision", std::move(GoToPoint(&m_swerveDrive, &m_poiGenerator).ToPtr()));
     pathplanner::NamedCommands::registerCommand("TURN VISION OFF :(", frc2::CommandPtr(
                                                                           frc2::InstantCommand([&]
                                                                                                { return m_swerveDrive.TurnVisionOff(); })));
@@ -181,7 +204,7 @@ void Robot::CreateRobot()
                                                                          frc2::InstantCommand([&]
                                                                                               { return m_swerveDrive.TurnVisionOn(); })));
 
-    // pathplanner::NamedCommands::registerCommand("Reset", std::move(Reset(&m_elevator, &m_wrist).ToPtr()));
+    pathplanner::NamedCommands::registerCommand("Reset", std::move(Reset(&m_elevator, &m_wrist).ToPtr()));
 
     m_swerveDrive.SetDefaultCommand(frc2::RunCommand(
         [this]
@@ -237,44 +260,6 @@ void Robot::BindCommands()
     //     .OnTrue(frc2::CommandPtr(
     //         frc2::InstantCommand([this]
     //                              { return m_swerveDrive.SetOffsets(); })));
-
-    scoreClosest = frc2::CommandPtr(
-        frc2::cmd::RunOnce(
-            [&]()
-            {
-                using namespace pathplanner;
-                using namespace frc;
-                Pose2d currentPose = this->m_swerveDrive.GetPose();
-                // Select Left or Right Branch
-                frc::Transform2d offset = m_driverController.GetRawButton(7) ?
-                    frc::Transform2d(0.0_m, 0.35_m, frc::Rotation2d()) :
-                    frc::Transform2d(0.0_m, 0.0_m, frc::Rotation2d());
-
-                // The rotation component in these poses represents the direction of travel
-                Pose2d startPos = Pose2d(currentPose.Translation(), Rotation2d());
-                Pose2d endPos = m_poiGenerator.GetClosestPOI().TransformBy(offset);
-
-                auto transformedEndPos = endPos.TransformBy(Transform2d(0.35_m, 0_m, 0_rad));
-                std::vector<Waypoint> waypoints = PathPlannerPath::waypointsFromPoses({startPos, endPos, transformedEndPos});
-                // Paths must be used as shared pointers
-                auto path = std::make_shared<PathPlannerPath>(
-                    waypoints,
-                    std::vector<RotationTarget>({RotationTarget(0.25, endPos.Rotation())}),
-                    std::vector<PointTowardsZone>(),
-                    std::vector<ConstraintsZone>(),
-                    std::vector<EventMarker>(),
-                    PathConstraints(1.5_mps, 2.0_mps_sq, 360_deg_per_s, 940_deg_per_s_sq),
-                    std::nullopt, // Ideal starting state can be nullopt for on-the-fly paths
-                    GoalEndState(0_mps, endPos.Rotation()),
-                    false
-                );
-
-                // Prevent this path from being flipped on the red alliance, since the given positions are already correct
-                path->preventFlipping = true;
-
-                m_pathfind = frc2::CommandPtr(AutoBuilder::followPath(path).Unwrap());
-                m_pathfind.Schedule(); })
-            .Unwrap());
 
     // frc2::JoystickButton(&m_driverController, 3)
     // .WhileTrue(GoToPoint(&m_swerveDrive, &m_poiGenerator).ToPtr());
@@ -351,7 +336,7 @@ void Robot::BindCommands()
         .OnFalse(Reset(&m_elevator, &m_wrist).ToPtr());
     // Triangle
     frc2::JoystickButton(&m_operatorController, 4)
-        .OnTrue(PlaceL3(&m_wrist, &m_elevator, &m_AlgaeIntake).ToPtr())
+        .OnTrue(PlaceL3(&m_wrist, &m_elevator).ToPtr())
         .OnFalse(Reset(&m_elevator, &m_wrist).ToPtr());
 
     frc2::JoystickButton(&m_operatorController, 5)
