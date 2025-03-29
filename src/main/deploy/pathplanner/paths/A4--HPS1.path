@@ -31,7 +31,20 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "OuttakeCoral",
+      "waypointRelativePos": 0.0,
+      "endWaypointRelativePos": 0.06399450569509345,
+      "command": null
+    },
+    {
+      "name": "Intake",
+      "waypointRelativePos": 0.20663594753942757,
+      "endWaypointRelativePos": 1.0,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 3.5,
     "maxAcceleration": 3.5,
