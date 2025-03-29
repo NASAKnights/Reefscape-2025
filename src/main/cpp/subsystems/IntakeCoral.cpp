@@ -7,7 +7,10 @@
 IntakeCoral::IntakeCoral() : coralIntakeMotor{4, rev::spark::SparkLowLevel::MotorType::kBrushless} {};
 
 // This method will be called once per scheduler run
-void IntakeCoral::Periodic() {}
+void IntakeCoral::Periodic()
+{
+    hasCoral();
+}
 
 void IntakeCoral::SetConfig()
 {
@@ -46,5 +49,6 @@ void IntakeCoral::stopMotors()
 
 bool IntakeCoral::hasCoral()
 {
+    frc::SmartDashboard::PutNumber("HAS CORAL", coralIntakeMotor.GetReverseLimitSwitch().Get());
     return coralIntakeMotor.GetReverseLimitSwitch().Get();
 }

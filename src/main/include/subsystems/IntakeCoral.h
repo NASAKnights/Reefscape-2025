@@ -8,6 +8,7 @@
 #include <frc/DigitalInput.h>
 #include <ctre/phoenix/motorcontrol/can/TalonSRX.h>
 #include <rev/SparkMax.h>
+#include <frc/smartdashboard/SmartDashboard.h>
 
 class IntakeCoral : public frc2::SubsystemBase
 {

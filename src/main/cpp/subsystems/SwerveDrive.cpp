@@ -87,8 +87,8 @@ SwerveDrive::SwerveDrive()
         },                                                         // Method that will drive the robot given ROBOT RELATIVE ChassisSpeeds
         std::make_shared<pathplanner::PPHolonomicDriveController>( // PPHolonomicController is the built in path following
                                                                    // controller for holonomic drive trains
-            pathplanner::PIDConstants(2.5, 0.0, 0.0),              // Translation PID constants
-            pathplanner::PIDConstants(2.5, 0.0, 0.0)               // Rotation PID constants
+            pathplanner::PIDConstants(5, 0.0, 0.0),                // Translation PID constants
+            pathplanner::PIDConstants(5, 0.0, 0.0)                 // Rotation PID constants
             ),
         pathplannerConfig,
         []()
@@ -340,7 +340,7 @@ void SwerveDrive::UpdatePoseEstimate()
     }
     else
     {
-        m_poseEstimator.SetVisionMeasurementStdDevs({1000.0, 1000.0, 1000.0});
+        m_poseEstimator.SetVisionMeasurementStdDevs({1, 1, 1});
     }
 
     if (result1.value.size() > 0)

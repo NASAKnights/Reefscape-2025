@@ -34,13 +34,13 @@
                     {
                       "type": "named",
                       "data": {
-                        "name": "Intake"
+                        "name": "RunIntake"
                       }
                     },
                     {
                       "type": "wait",
                       "data": {
-                        "waitTime": 1.0
+                        "waitTime": 5.0
                       }
                     }
                   ]
@@ -82,7 +82,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Intake"
+                  "name": "RunIntake"
                 }
               },
               {

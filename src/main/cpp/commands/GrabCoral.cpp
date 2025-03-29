@@ -11,9 +11,9 @@ GrabCoral::GrabCoral(Elevator *elevator, Wrist *wrist, IntakeCoral *intakeCoral)
 {
   // elevator .31, wrist 80
   // AddCommands(frc2::ParallelCommandGroup(SetElevatorHeight(elevator, 0.35),
-  AddCommands(frc2::ParallelDeadlineGroup(RunCoralIntake(intakeCoral),
-                                          SetElevatorHeight(elevator, 0.19),
-                                          MoveWristToAngle(wrist, 65.0)));
+  AddCommands(frc2::ParallelCommandGroup(RunCoralIntake(intakeCoral),
+                                         SetElevatorHeight(elevator, 0.19),
+                                         MoveWristToAngle(wrist, 65.0)));
   // Add your commands here, e.g.
   // AddCommands(FooCommand{}, BarCommand{});
 }
