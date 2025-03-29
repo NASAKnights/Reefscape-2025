@@ -47,7 +47,7 @@ SwerveDrive::SwerveDrive()
     speeds = frc::ChassisSpeeds();
     networkTableInst.StartServer();
     frc::SmartDashboard::PutData("Field", &m_field);
-    auto visionStdDevs = wpi::array<double, 3U>{0.9, 0.9, 1.8};
+    auto visionStdDevs = wpi::array<double, 3U>{0.2, 0.2, 0.9};
     m_poseEstimator.SetVisionMeasurementStdDevs(visionStdDevs);
 
     m_visionPoseEstimator = PoseEstimator();
@@ -148,7 +148,12 @@ void SwerveDrive::Periodic()
     // sensor fusion? EKF (eek kinda fun) (extended Kalman filter)
 
     PublishOdometry(m_poseEstimator.GetEstimatedPosition());
-    UpdatePoseEstimate();
+    if (useVision)
+    {
+        UpdatePoseEstimate();
+    }
+    m_poseEstimator.Update(m_pigeon.GetRotation2d(), GetModulePositions());
+    m_field.SetRobotPose(m_poseEstimator.GetEstimatedPosition());
 
     // PrintNetworkTableValues();
 
@@ -284,37 +289,6 @@ void SwerveDrive::UpdateOdometry()
 {
     // odometry.Update(GetHeading(), GetModulePositions());
 }
-void SwerveDrive::SetVision()
-{
-
-    // m_poseEstimator.ResetPosition(m_pigeon.GetRotation2d(), GetModulePositions(), GetVision());
-    m_poseEstimator.ResetPosition(navx.GetRotation2d(), GetModulePositions(), GetVision());
-}
-
-frc::Pose2d SwerveDrive::GetVision()
-{
-    auto result2 = baseLink2Subscribe.GetAtomic();
-    // auto time = result.time; // time stamp
-    if (result2.value.size() > 0)
-    {
-        auto compressedResults = result2.value;
-        rotation_q = frc::Quaternion(compressedResults.at(6), compressedResults.at(3),
-                                     compressedResults.at(4), compressedResults.at(5));
-
-        auto posTranslation = frc::Translation3d(units::meter_t{compressedResults.at(0)},
-                                                 units::meter_t{compressedResults.at(1)},
-                                                 units::meter_t{compressedResults.at(2)});
-        frc::Pose3d cameraPose = frc::Pose3d(posTranslation, frc::Rotation3d(rotation_q));
-        frc::Pose2d visionMeasurement2d = cameraPose.ToPose2d();
-        return visionMeasurement2d;
-    }
-    else
-    {
-
-        return frc::Pose2d{};
-    }
-}
-
 frc::ChassisSpeeds SwerveDrive::getRobotRelativeSpeeds()
 {
     auto temp = kSwerveKinematics.ToChassisSpeeds(
@@ -358,16 +332,18 @@ void SwerveDrive::UpdatePoseEstimate()
     auto result1 = baseLink1Subscribe.GetAtomic();
     auto result2 = baseLink2Subscribe.GetAtomic();
     auto resultStdDev = visionStdDevSub.GetAtomic();
-    // auto time = result.time; // time stamp
     frc::SmartDashboard::PutBoolean("Vision", false);
-    // frc::SmartDashboard::PutNumberArray("Bad Vis", result1.value);
 
-    // if (resultStdDev.value.size() > 0 && useVision)
-    // {
+    if (resultStdDev.value.size() > 0)
+    {
+        m_poseEstimator.SetVisionMeasurementStdDevs({resultStdDev.value[0], resultStdDev.value[1], resultStdDev.value[2]});
+    }
+    else
+    {
+        m_poseEstimator.SetVisionMeasurementStdDevs({1000.0, 1000.0, 1000.0});
+    }
 
-    // }
-
-    if (result1.value.size() > 0 && useVision)
+    if (result1.value.size() > 0)
     {
         frc::SmartDashboard::PutBoolean("Vision", true);
 
@@ -386,7 +362,7 @@ void SwerveDrive::UpdatePoseEstimate()
                                                  units::second_t{compressedResults.at(7)});
         }
     }
-    if (result2.value.size() > 0 && useVision)
+    if (result2.value.size() > 0)
     {
         auto compressedResults = result2.value;
         rotation_q = frc::Quaternion(compressedResults.at(6), compressedResults.at(3),
@@ -403,10 +379,7 @@ void SwerveDrive::UpdatePoseEstimate()
                                                  units::second_t{compressedResults.at(7)});
         }
     }
-
-    m_poseEstimator.Update(m_pigeon.GetRotation2d(), GetModulePositions());
     // m_poseEstimator.Update(navx.GetRotation2d(), GetModulePositions());
-    m_field.SetRobotPose(m_poseEstimator.GetEstimatedPosition());
 }
 
 void SwerveDrive::PublishOdometry(frc::Pose2d odometryPose)

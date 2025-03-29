@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.1863329326133076,
-        "y": 2.2798823655767135
+        "x": 2.0190385801742083,
+        "y": 0.4400202059880155
       },
       "isLocked": false,
       "linkedName": "HPS"
     },
     {
       "anchor": {
-        "x": 3.172667162557013,
-        "y": 1.8606417474344346
+        "x": 3.1783652946098098,
+        "y": 2.03
       },
       "prevControl": {
-        "x": 2.775446960185798,
-        "y": 1.3931528426902824
+        "x": 2.8915770764342867,
+        "y": 1.620423977855504
       },
       "nextControl": {
-        "x": 3.406304869246341,
-        "y": 2.1356102282798703
+        "x": 3.465153512785333,
+        "y": 2.4395760221444958
       },
       "isLocked": false,
       "linkedName": null
@@ -36,48 +36,67 @@
         "y": 2.8245527894202405
       },
       "prevControl": {
-        "x": 3.5820561223919816,
-        "y": 2.559613932119731
+        "x": 3.599476102647435,
+        "y": 2.6137235934683036
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "A4"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.5,
-      "rotationDegrees": 56.93021810976097
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.65,
+      "minWaypointRelativePos": 1.1262361045195677,
       "maxWaypointRelativePos": 2.0,
       "constraints": {
-        "maxVelocity": 0.8,
+        "maxVelocity": 1.0,
         "maxAcceleration": 2.0,
-        "maxAngularVelocity": 540.0,
-        "maxAngularAcceleration": 720.0,
+        "maxAngularVelocity": 1000.0,
+        "maxAngularAcceleration": 1000.0,
         "nominalVoltage": 12.0,
         "unlimited": false
       }
     }
   ],
-  "pointTowardsZones": [],
-  "eventMarkers": [],
+  "pointTowardsZones": [
+    {
+      "fieldPosition": {
+        "x": 4.0,
+        "y": 3.2
+      },
+      "rotationOffset": 0.0,
+      "minWaypointRelativePos": 0.703655492479556,
+      "maxWaypointRelativePos": 1.2866587416033877,
+      "name": "Point Towards Zone"
+    }
+  ],
+  "eventMarkers": [
+    {
+      "name": "Score L4",
+      "waypointRelativePos": 0.33421311423043226,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "OuttakeCoral",
+      "waypointRelativePos": 1.95,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 4.0,
-    "maxAcceleration": 3.0,
-    "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0,
+    "maxAcceleration": 4.0,
+    "maxAngularVelocity": 1000.0,
+    "maxAngularAcceleration": 1000.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 59.99999999999999
+    "rotation": 56.94779177540668
   },
   "reversed": false,
   "folder": null,

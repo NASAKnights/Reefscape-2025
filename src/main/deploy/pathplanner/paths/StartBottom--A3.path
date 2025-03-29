@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.527179616234322,
-        "y": 0.7514159599486879
+        "x": 7.562752896386224,
+        "y": 1.8728246688842773
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.512499888647378,
-        "y": 0.557750921999715
+        "x": 6.4431653058989635,
+        "y": 2.203126686350593
       },
       "isLocked": false,
       "linkedName": "StartBottom"
@@ -20,8 +20,8 @@
         "y": 2.8123134119963207
       },
       "prevControl": {
-        "x": 6.060472178720579,
-        "y": 1.3802474199780772
+        "x": 5.394204271161879,
+        "y": 2.214182247986664
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,7 +32,7 @@
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.7,
+      "minWaypointRelativePos": 0.5572401385441003,
       "maxWaypointRelativePos": 1.0,
       "constraints": {
         "maxVelocity": 0.8,
@@ -45,12 +45,25 @@
     }
   ],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "Score L4",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "OuttakeCoral",
+      "waypointRelativePos": 0.9792660151686624,
+      "endWaypointRelativePos": null,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 4.0,
-    "maxAcceleration": 3.0,
-    "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0,
+    "maxAcceleration": 4.0,
+    "maxAngularVelocity": 1000.0,
+    "maxAngularAcceleration": 1000.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
@@ -62,7 +75,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 132.74571103391278
+    "rotation": 146.87091273998237
   },
   "useDefaultConstraints": true
 }

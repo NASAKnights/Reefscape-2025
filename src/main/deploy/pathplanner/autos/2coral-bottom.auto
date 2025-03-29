@@ -57,9 +57,22 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "wait",
+                      "type": "race",
                       "data": {
-                        "waitTime": 0.15
+                        "commands": [
+                          {
+                            "type": "named",
+                            "data": {
+                              "name": "OuttakeCoral"
+                            }
+                          },
+                          {
+                            "type": "wait",
+                            "data": {
+                              "waitTime": 0.15
+                            }
+                          }
+                        ]
                       }
                     },
                     {
@@ -75,7 +88,7 @@
                           {
                             "type": "wait",
                             "data": {
-                              "waitTime": 3.0
+                              "waitTime": 2.5
                             }
                           }
                         ]

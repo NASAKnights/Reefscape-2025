@@ -30,7 +30,7 @@ void RunCoralOuttake::Execute()
 // Called once the command ends or is interrupted.
 void RunCoralOuttake::End(bool interrupted)
 {
-  m_intakeCoral->stopMotors();
+  // m_intakeCoral->stopMotors();
 }
 
 // Returns true when the command should end.

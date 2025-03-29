@@ -189,13 +189,12 @@ void Robot::CreateRobot()
                 m_pathfind = frc2::CommandPtr(AutoBuilder::followPath(path).Unwrap());
                 m_pathfind.Schedule(); })
             .Unwrap());
-
-    pathplanner::NamedCommands::registerCommand("Score L1", std::move(PlaceL1(&m_wrist, &m_elevator)).ToPtr());
-    pathplanner::NamedCommands::registerCommand("Score L2", std::move(PlaceL2(&m_wrist, &m_elevator)).ToPtr());
-    pathplanner::NamedCommands::registerCommand("Score L3", std::move(PlaceL3(&m_wrist, &m_elevator)).ToPtr());
-    pathplanner::NamedCommands::registerCommand("Score L4", std::move(PlaceL4(&m_wrist, &m_elevator)).ToPtr());
-    pathplanner::NamedCommands::registerCommand("Intake", std::move(GrabCoral(&m_elevator, &m_wrist, &m_CoralIntake).ToPtr()));
-    pathplanner::NamedCommands::registerCommand("OuttakeCoral", std::move(RunCoralOuttake(&m_CoralIntake).ToPtr()));
+    pathplanner::EventTrigger("Score L1").OnTrue(std::move(PlaceL1(&m_wrist, &m_elevator)).ToPtr());
+    pathplanner::EventTrigger("Score L2").OnTrue(std::move(PlaceL2(&m_wrist, &m_elevator)).ToPtr());
+    pathplanner::EventTrigger("Score L3").OnTrue(std::move(PlaceL3(&m_wrist, &m_elevator)).ToPtr());
+    pathplanner::EventTrigger("Score L4").OnTrue(std::move(PlaceL4(&m_wrist, &m_elevator)).ToPtr());
+    pathplanner::EventTrigger("Intake").WhileTrue(std::move(GrabCoral(&m_elevator, &m_wrist, &m_CoralIntake).ToPtr()));
+    pathplanner::EventTrigger("OuttakeCoral").WhileTrue(std::move(RunCoralOuttake(&m_CoralIntake).ToPtr()));
     // pathplanner::NamedCommands::registerCommand("Vision", std::move(GoToPoint(&m_swerveDrive, &m_poiGenerator).ToPtr()));
     pathplanner::NamedCommands::registerCommand("TURN VISION OFF :(", frc2::CommandPtr(
                                                                           frc2::InstantCommand([&]
@@ -204,7 +203,7 @@ void Robot::CreateRobot()
                                                                          frc2::InstantCommand([&]
                                                                                               { return m_swerveDrive.TurnVisionOn(); })));
 
-    pathplanner::NamedCommands::registerCommand("Reset", std::move(Reset(&m_elevator, &m_wrist).ToPtr()));
+    pathplanner::EventTrigger("Reset").OnTrue(std::move(Reset(&m_elevator, &m_wrist).ToPtr()));
 
     m_swerveDrive.SetDefaultCommand(frc2::RunCommand(
         [this]
