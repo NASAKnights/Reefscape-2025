@@ -9,7 +9,7 @@ class PoseFilter
 {
 public:
     PoseFilter(size_t maxSize, double positionTolerance, double rotationTolerance)
-        : maxSize_(maxSize), positionTolerance_(positionTolerance), rotationTolerance_(rotationTolerance), stable_(false) {}
+        : maxSize_(maxSize), positionTolerance_(positionTolerance), rotationTolerance_(rotationTolerance) {}
 
     /**
      * Checks if a new Pose3d is valid before adding it to the history queue.
@@ -60,10 +60,10 @@ public:
         if (poses_.size() > maxSize_)
         {
             poses_.pop_front();
-            stable_ = true; // Only mark stable after the queue is full
+            return true; // Only mark stable after the queue is full
         }
 
-        return stable_;
+        return false;
     }
 
     /**
@@ -73,15 +73,14 @@ public:
     {
         poses_.clear();
         lastPose_.reset();
-        stable_ = false;
         lastTimestamp_.reset();
     }
 
-    /**
-     * Returns whether the filter has reached stability.
-     * @return True if the queue is full, False otherwise.
-     */
-    [[nodiscard]] bool IsStable() const { return stable_; }
+    // /**
+    //  * Returns whether the filter has reached stability.
+    //  * @return True if the queue is full, False otherwise.
+    //  */
+    // [[nodiscard]] bool IsStable() const { return stable_; }
 
 private:
     std::deque<Eigen::Matrix4d> poses_;       // Stores recent pose history
@@ -89,6 +88,5 @@ private:
     size_t maxSize_;                          // Number of poses to store before stability
     double positionTolerance_;                // Position threshold for jumps
     double rotationTolerance_;                // Rotation threshold for jumps
-    bool stable_;                             // Whether the filter has stabilized
     std::optional<double> lastTimestamp_;     // Last recorded timestamp
 };

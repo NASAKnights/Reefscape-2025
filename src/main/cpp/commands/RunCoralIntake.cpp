@@ -28,6 +28,5 @@ void RunCoralIntake::End(bool interrupted)
 // Returns true when the command should end.
 bool RunCoralIntake::IsFinished()
 {
-  // TODO FIX BASED OFF SWITCH
-  return false;
+  return m_intakeCoral->hasCoral();
 }
