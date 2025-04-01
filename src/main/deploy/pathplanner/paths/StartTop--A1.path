@@ -8,11 +8,27 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.712340320339226,
-        "y": 6.572662597099486
+        "x": 7.1034833322101045,
+        "y": 7.0862097777486595
       },
       "isLocked": false,
       "linkedName": "StartTop"
+    },
+    {
+      "anchor": {
+        "x": 6.121222250926453,
+        "y": 6.542323043979832
+      },
+      "prevControl": {
+        "x": 6.443632522983181,
+        "y": 6.825111129917332
+      },
+      "nextControl": {
+        "x": 5.66227095171573,
+        "y": 6.1397739607437565
+      },
+      "isLocked": false,
+      "linkedName": null
     },
     {
       "anchor": {
@@ -20,18 +36,50 @@
         "y": 5.1809320882625425
       },
       "prevControl": {
-        "x": 5.504211612416297,
-        "y": 5.562322676121899
+        "x": 5.4240810068058725,
+        "y": 5.613944790154761
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "A1"
     }
   ],
-  "rotationTargets": [],
-  "constraintZones": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": -119.99999999999999
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 1.3,
+      "maxWaypointRelativePos": 2.0,
+      "constraints": {
+        "maxVelocity": 1.0,
+        "maxAcceleration": 1.0,
+        "maxAngularVelocity": 600.0,
+        "maxAngularAcceleration": 1200.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "Score L4",
+      "waypointRelativePos": 1.2739839319470694,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "OuttakeCoral",
+      "waypointRelativePos": 1.965855387523624,
+      "endWaypointRelativePos": 2.0,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 4.0,
     "maxAcceleration": 3.0,

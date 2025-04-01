@@ -168,7 +168,7 @@ void Robot::CreateRobot()
                 Pose2d startPos = Pose2d(currentPose.Translation(), Rotation2d());
                 Pose2d endPos = m_poiGenerator.GetClosestPOI().TransformBy(offset);
 
-                auto transformedEndPos = endPos.TransformBy(Transform2d(0.35_m, 0_m, 0_rad));
+                auto transformedEndPos = endPos.TransformBy(Transform2d(0.33_m, 0_m, 0_rad));
                 std::vector<Waypoint> waypoints = PathPlannerPath::waypointsFromPoses({startPos, endPos, transformedEndPos});
                 // Paths must be used as shared pointers
                 auto path = std::make_shared<PathPlannerPath>(

@@ -8,8 +8,8 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.1863329326133076,
-        "y": 2.2798823655767135
+        "x": 2.2760625267246293,
+        "y": 1.2243416832953244
       },
       "isLocked": false,
       "linkedName": "HPS"
@@ -20,12 +20,12 @@
         "y": 1.8606417474344346
       },
       "prevControl": {
-        "x": 2.775446960185798,
-        "y": 1.3931528426902824
+        "x": 2.739920583309578,
+        "y": 1.3201384558509122
       },
       "nextControl": {
-        "x": 3.406304869246341,
-        "y": 2.1356102282798703
+        "x": 3.5524952320483676,
+        "y": 2.3350494762093565
       },
       "isLocked": false,
       "linkedName": null
@@ -36,8 +36,8 @@
         "y": 2.8245527894202405
       },
       "prevControl": {
-        "x": 3.5820561223919816,
-        "y": 2.559613932119731
+        "x": 3.5774603108763015,
+        "y": 2.5910634158416617
       },
       "nextControl": null,
       "isLocked": false,
@@ -46,14 +46,14 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.5,
+      "waypointRelativePos": 0.930818256578948,
       "rotationDegrees": 56.93021810976097
     }
   ],
   "constraintZones": [
     {
       "name": "Constraints Zone",
-      "minWaypointRelativePos": 0.65,
+      "minWaypointRelativePos": 1.1,
       "maxWaypointRelativePos": 2.0,
       "constraints": {
         "maxVelocity": 0.8,
@@ -71,6 +71,12 @@
       "name": "Score L4",
       "waypointRelativePos": 0.42369008287091137,
       "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "OuttakeCoral",
+      "waypointRelativePos": 1.9677162098298642,
+      "endWaypointRelativePos": 2.0,
       "command": null
     }
   ],

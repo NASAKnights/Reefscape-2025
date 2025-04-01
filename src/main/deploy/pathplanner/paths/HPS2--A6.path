@@ -38,9 +38,15 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "TURN VISION ON :)",
-      "waypointRelativePos": 0.5880493856332707,
+      "name": "Score L4",
+      "waypointRelativePos": 0.5217538988657845,
       "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "OuttakeCoral",
+      "waypointRelativePos": 0.9667710302457465,
+      "endWaypointRelativePos": 1.0,
       "command": null
     }
   ],

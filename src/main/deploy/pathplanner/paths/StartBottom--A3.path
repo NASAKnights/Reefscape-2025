@@ -51,6 +51,12 @@
       "waypointRelativePos": 0.2939963652708822,
       "endWaypointRelativePos": null,
       "command": null
+    },
+    {
+      "name": "OuttakeCoral",
+      "waypointRelativePos": 0.97,
+      "endWaypointRelativePos": 1.0,
+      "command": null
     }
   ],
   "globalConstraints": {
