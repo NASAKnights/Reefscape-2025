@@ -194,6 +194,8 @@ void Robot::CreateRobot()
     pathplanner::EventTrigger("Score L3").OnTrue(std::move(PlaceL3(&m_wrist, &m_elevator)).ToPtr());
     pathplanner::EventTrigger("Score L4").OnTrue(std::move(PlaceL4(&m_wrist, &m_elevator)).ToPtr());
     pathplanner::EventTrigger("Intake").WhileTrue(std::move(GrabCoral(&m_elevator, &m_wrist, &m_CoralIntake).ToPtr()));
+    pathplanner::NamedCommands::registerCommand("IntakeNAMED", std::move(GrabCoral(&m_elevator, &m_wrist, &m_CoralIntake).ToPtr()));
+
     pathplanner::NamedCommands::registerCommand("RunIntake", std::move(RunCoralIntake(&m_CoralIntake).ToPtr()));
     pathplanner::EventTrigger("OuttakeCoral").WhileTrue(std::move(RunCoralOuttake(&m_CoralIntake).ToPtr()));
     // pathplanner::NamedCommands::registerCommand("Vision", std::move(GoToPoint(&m_swerveDrive, &m_poiGenerator).ToPtr()));
