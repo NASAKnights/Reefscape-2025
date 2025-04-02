@@ -3,33 +3,68 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.0400883838383836,
-        "y": 6.83030303030303
+        "x": 1.1794220353477767,
+        "y": 7.049926729974344
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.363044568514667,
-        "y": 5.220294802224174
+        "x": 1.919737382828304,
+        "y": 5.509463899272459
+      },
+      "isLocked": false,
+      "linkedName": "HPS2"
+    },
+    {
+      "anchor": {
+        "x": 1.6236204523588942,
+        "y": 4.292
+      },
+      "prevControl": {
+        "x": 1.0391081708234466,
+        "y": 4.867100908187259
+      },
+      "nextControl": {
+        "x": 2.0085444160584403,
+        "y": 3.91327378996189
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 3.1542297979797977,
-        "y": 3.974179292929293
+        "x": 3.1237373737373737,
+        "y": 4.025
       },
       "prevControl": {
-        "x": 2.5572569063514825,
-        "y": 4.872964894971185
+        "x": 2.449465809768135,
+        "y": 4.025
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "A5"
     }
   ],
-  "rotationTargets": [],
-  "constraintZones": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 1,
+      "rotationDegrees": 0.0
+    }
+  ],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 0.9799592391304346,
+      "maxWaypointRelativePos": 2.0,
+      "constraints": {
+        "maxVelocity": 1.0,
+        "maxAcceleration": 1.0,
+        "maxAngularVelocity": 600.0,
+        "maxAngularAcceleration": 1200.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
@@ -40,28 +75,34 @@
     },
     {
       "name": "Score L4",
-      "waypointRelativePos": 1.0,
+      "waypointRelativePos": 1.1297849716446107,
       "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "OuttakeCoral",
+      "waypointRelativePos": 1.95,
+      "endWaypointRelativePos": 1.0,
       "command": null
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 3.5,
-    "maxAcceleration": 3.5,
-    "maxAngularVelocity": 540.0,
-    "maxAngularAcceleration": 720.0,
+    "maxVelocity": 4.0,
+    "maxAcceleration": 7.9,
+    "maxAngularVelocity": 1200.0,
+    "maxAngularAcceleration": 1800.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 1.206048779219923
+    "rotation": 0.0
   },
   "reversed": false,
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 128.0887728809753
+    "rotation": 125.00000000000001
   },
   "useDefaultConstraints": false
 }

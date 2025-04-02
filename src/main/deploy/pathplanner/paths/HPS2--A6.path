@@ -8,11 +8,27 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.212922035347777,
-        "y": 6.9621767299743444
+        "x": 2.5103703544625247,
+        "y": 6.550239311300533
       },
       "isLocked": false,
       "linkedName": "HPS2"
+    },
+    {
+      "anchor": {
+        "x": 3.172667162557013,
+        "y": 6.139
+      },
+      "prevControl": {
+        "x": 2.7399208941655617,
+        "y": 6.679503540465975
+      },
+      "nextControl": {
+        "x": 3.552494959205476,
+        "y": 5.664592052777271
+      },
+      "isLocked": false,
+      "linkedName": null
     },
     {
       "anchor": {
@@ -20,8 +36,8 @@
         "y": 5.204343865806727
       },
       "prevControl": {
-        "x": 3.4365944582026797,
-        "y": 6.052593865806727
+        "x": 3.6569544900618878,
+        "y": 5.437833250945019
       },
       "nextControl": null,
       "isLocked": false,
@@ -30,23 +46,37 @@
   ],
   "rotationTargets": [
     {
-      "waypointRelativePos": 0.6035027754934201,
-      "rotationDegrees": -59.99999999999999
+      "waypointRelativePos": 0.930818256578948,
+      "rotationDegrees": -56.93
     }
   ],
-  "constraintZones": [],
+  "constraintZones": [
+    {
+      "name": "Constraints Zone",
+      "minWaypointRelativePos": 1.1,
+      "maxWaypointRelativePos": 2.0,
+      "constraints": {
+        "maxVelocity": 0.8,
+        "maxAcceleration": 2.0,
+        "maxAngularVelocity": 540.0,
+        "maxAngularAcceleration": 720.0,
+        "nominalVoltage": 12.0,
+        "unlimited": false
+      }
+    }
+  ],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
       "name": "Score L4",
-      "waypointRelativePos": 0.5217538988657845,
+      "waypointRelativePos": 0.42369008287091137,
       "endWaypointRelativePos": null,
       "command": null
     },
     {
       "name": "OuttakeCoral",
-      "waypointRelativePos": 0.9667710302457465,
-      "endWaypointRelativePos": 1.0,
+      "waypointRelativePos": 1.9677162098298642,
+      "endWaypointRelativePos": 2.0,
       "command": null
     }
   ],
