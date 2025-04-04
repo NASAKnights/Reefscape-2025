@@ -15,6 +15,7 @@
 // #include <rev/CANSparkMax.h>
 #include <rev/SparkMax.h>
 #include <units/angle.h>
+#include <units/dimensionless.h>
 #include <units/length.h>
 #include <units/mass.h>
 #include <units/time.h>
@@ -49,8 +50,9 @@ namespace ElevatorConstants
     static constexpr units::meter_t simLowerLimit = -0.1_in;
 
     // simulation position and velocity standard deviations
-    static constexpr units::meter_t simPositionStdDev = 0.001_m;
-    static constexpr units::meters_per_second_t simVelocityStdDev = 0.01_mps;
+    static constexpr units::meter_t kSimEncoderPositionStdDev = 0.001_m;
+    static constexpr units::meter_t kSimHallPositionStdDev = 0.001_m;
+    static constexpr units::meters_per_second_t kSimVelocityStdDev = 0.01_mps;
 
     static constexpr units::meters_per_second_t kMaxVelocity = 60.0_in / 1_s;                      // 61.55
     static constexpr units::meters_per_second_squared_t kMaxAcceleration = 250.0_in / (1_s * 1_s); // 460_in / (1_s * 1_s);
@@ -206,6 +208,10 @@ private:
     frc::Timer m_simTimer;
 
     frc::sim::ElevatorSim m_elevatorSim;
+
+    std::default_random_engine m_randomGenerator;
+    std::normal_distribution<double> m_hallSimDistribution{0.0, ElevatorConstants::kSimHallPositionStdDev.value()};
+    std::normal_distribution<double> m_encoderSimDistribution{0.0, ElevatorConstants::kSimEncoderPositionStdDev.value()};
 
     ElevatorConstants::ElevatorState m_ElevatorState;
 

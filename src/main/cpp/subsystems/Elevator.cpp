@@ -29,7 +29,7 @@ Elevator::Elevator()
       m_elevatorSim(frc::DCMotor::NEO(ElevatorConstants::kNumMotors), ElevatorConstants::kElevatorGearing,
                     ElevatorConstants::kCarriageMass, ElevatorConstants::kElevatorDrumRadius,
                     ElevatorConstants::simLowerLimit, ElevatorConstants::simUpperLimit, false, 0_m,
-                    {ElevatorConstants::simPositionStdDev.value(), ElevatorConstants::simVelocityStdDev.value()})
+                    {0.0, 0.0})
 {
 
     m_encoderLeft.SetPosition(0.0);
@@ -58,6 +58,7 @@ Elevator::Elevator()
     if constexpr (frc::RobotBase::IsSimulation())
     {
         m_simTimer.Start();
+        frc::SmartDashboard::PutNumber("/Elevator/Tensioning", 0.0);
     }
 }
 
@@ -255,6 +256,7 @@ void Elevator::SimulationPeriodic()
 {
     m_elevatorSim.Update(m_simTimer.Get());
     m_simTimer.Reset();
+    frc::SmartDashboard::PutNumber("/Elevator/Sim Actual Height", m_elevatorSim.GetPosition().value());
 }
 void Elevator::UseOutput(double output, State setpoint)
 {
@@ -310,7 +312,12 @@ double Elevator::GetEncoderHeight()
 {
     if constexpr (frc::RobotBase::IsSimulation())
     {
-        return m_elevatorSim.GetPosition().value();
+        // see derivation in GetHallSimPWM()
+        double tensioning = frc::SmartDashboard::GetNumber("/Elevator/Tensioning", 0.0);
+        double stage1 = (m_elevatorSim.GetPosition().value() - tensioning) / 2.0;
+        // add random noise to the actual position of stage 1
+        return 2.0 * stage1 +
+               m_encoderSimDistribution(m_randomGenerator);
     }
     // average the left and right encoder distance to get the encoder estimated height
     return ((GetEncoderDistance(m_encoderLeft) + GetEncoderDistance(m_encoderRight)) / 2.0).value();
@@ -319,6 +326,10 @@ double Elevator::GetEncoderHeight()
 // returns the vertical velocity of the carriage (relative to ground)
 double Elevator::GetEncoderVelocity()
 {
+    if constexpr (frc::RobotBase::IsSimulation())
+    {
+        return m_elevatorSim.GetVelocity().value();
+    }
     // average the two encoder velocities (returns rpm)
     double rpm = (m_encoderLeft.GetVelocity() + m_encoderRight.GetVelocity()) / 2.0;
     return rpm / 60.0 * 2.0 * std::numbers::pi * ElevatorConstants::kElevatorDrumRadius.value() / ElevatorConstants::kElevatorGearing;
@@ -362,21 +373,32 @@ double Elevator::GetHallPWM()
 
 double Elevator::GetHallSimPWM()
 {
-    double height = m_elevatorSim.GetPosition().value();
+    double tensioning = frc::SmartDashboard::GetNumber("/Elevator/Tensioning", 0.0);
+    /* assume elevator sim height is reality
+    actual_stage_2 = actual_stage_1 + tensioning
+    actual = actual_stage_1 + actual_stage_2
+    actual = 2 * actual_stage_1 + tensioning
+    actual_stage_1 = (actual - tensioning) / 2
+    actual_stage_2 = (actual - tensioning) / 2 + tensioning
+    actual_stage_2 = (actual + tensioning) / 2
+    */
+    double stage2_height = (m_elevatorSim.GetPosition().value() + tensioning) / 2.0;
     // find the closest magnet holder using the sim height
     double dist;
     int index = -1;
     double mindist = 1000.0;
     for (int i = 0; i < ElevatorConstants::kHallMagnetHolderCount; i++)
     {
-        dist = std::abs(height - ElevatorConstants::kHallMagnetHeights[i]);
+        dist = std::abs(stage2_height - ElevatorConstants::kHallMagnetHeights[i]);
         if (dist < mindist)
         {
             mindist = dist;
             index = i;
         }
     }
-    double position = height - ElevatorConstants::kHallMagnetHeights[index];
+    double position = stage2_height - ElevatorConstants::kHallMagnetHeights[index];
+    // add random noise
+    position += m_hallSimDistribution(m_randomGenerator);
     int magnetCount = ElevatorConstants::kHallMagnetCounts[index];
     double rot;
     switch (magnetCount)
