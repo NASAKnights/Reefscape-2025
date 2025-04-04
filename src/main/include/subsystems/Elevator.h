@@ -48,6 +48,10 @@ namespace ElevatorConstants
     static constexpr units::meter_t simUpperLimit = 57.1_in;
     static constexpr units::meter_t simLowerLimit = -0.1_in;
 
+    // simulation position and velocity standard deviations
+    static constexpr units::meter_t simPositionStdDev = 0.001_m;
+    static constexpr units::meters_per_second_t simVelocityStdDev = 0.01_mps;
+
     static constexpr units::meters_per_second_t kMaxVelocity = 60.0_in / 1_s;                      // 61.55
     static constexpr units::meters_per_second_squared_t kMaxAcceleration = 250.0_in / (1_s * 1_s); // 460_in / (1_s * 1_s);
 
@@ -153,7 +157,6 @@ public:
     void printLog();
     // void Emergency_Stop();
     void SimulationPeriodic();
-    void SimulationInit();
     double GetHeight();
     void UseOutput(double output, State setpoint);
     units::meter_t GetMeasurement();
@@ -176,6 +179,7 @@ private:
     double GetEncoderVelocity(); // meters per second
     double GetHallHeight(double heightEstimate);
     double GetHallPWM();
+    double GetHallSimPWM();
     double GetProximityPWM();
     double GetHallPosition(double positionEstimate, int magnetCount);
     double InterpolatePWL(const double *xs, const double *ys, int count, double x);
@@ -200,7 +204,6 @@ private:
     ctre::phoenix6::hardware::CANdi m_candi;
 
     frc::Timer m_simTimer;
-    frc::Timer *m_timer;
 
     frc::sim::ElevatorSim m_elevatorSim;
 
