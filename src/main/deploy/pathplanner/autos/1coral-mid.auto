@@ -5,34 +5,9 @@
     "data": {
       "commands": [
         {
-          "type": "wait",
+          "type": "path",
           "data": {
-            "waitTime": 0.25
-          }
-        },
-        {
-          "type": "parallel",
-          "data": {
-            "commands": [
-              {
-                "type": "named",
-                "data": {
-                  "name": "Score L4"
-                }
-              },
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "StartMiddle--A2"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "OuttakeCoral"
+            "pathName": "StartMiddle--A2"
           }
         }
       ]
