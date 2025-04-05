@@ -144,7 +144,7 @@ namespace ElevatorConstants
     // TODO make these measurement and update values below
     static double kHallMagnetHeights[kHallMagnetHolderCount] = {0.0100, 0.1180, 0.3022, 0.7245};
 
-    static const bool kDisableHallSensor = true;
+    static const bool kDisableHallSensor = false;
 
     static double kMaxHallCalibration = 0.02;
 }
