@@ -254,6 +254,7 @@ void Elevator::Periodic()
 }
 void Elevator::SimulationPeriodic()
 {
+    frc::SmartDashboard::PutNumber("/Elevator/Sim Timer", m_simTimer.Get().value());
     m_elevatorSim.Update(m_simTimer.Get());
     m_simTimer.Reset();
     frc::SmartDashboard::PutNumber("/Elevator/Sim Actual Height", m_elevatorSim.GetPosition().value());

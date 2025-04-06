@@ -236,6 +236,15 @@ void Robot::CreateRobot()
     AddPeriodic([this]
                 { m_wrist.Periodic(); },
                 10_ms, 2_ms);
+    if (frc::RobotBase::IsSimulation())
+    {
+        AddPeriodic([this]
+                    { m_elevator.SimulationPeriodic(); },
+                    5_ms, 1_ms);
+        AddPeriodic([this]
+                    { m_wrist.SimulationPeriodic(); },
+                    10_ms, 2_ms);
+    }
 
     // Configure the button bindings
     BindCommands();
