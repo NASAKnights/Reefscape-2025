@@ -49,6 +49,8 @@ public:
 
 private:
   std::string_view robotPoseLink = "base_link";
+  nt::StructPublisher<frc::Pose2d> poiPublisher;
+  nt::DoubleArrayPublisher poiPublisherDeprecated;
   std::vector<frc::Pose2d> poses{};
   frc::Pose2d closestPOI; // Field object
   nt::NetworkTableInstance networkTableInst;
