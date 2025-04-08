@@ -110,7 +110,8 @@ private:
     Climber m_climber;
 
     std::string_view baseLink = "base_link";
-    nt::StructPublisher<frc::Pose2d> posePublisher;
+    nt::StructPublisher<frc::Pose3d> elevator3dPOS;
+    nt::NetworkTableInstance networkTableInst;
 
     std::string targetKey = "POI/POIREEF";
     std::string prevAuto = "";

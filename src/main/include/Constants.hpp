@@ -77,7 +77,7 @@ namespace DriveConstants
     const auto kWheelbaseMeters = 0.4_m;  // Add to shuffleboard
 
     const double kDefaultAxisDeadband = 0.15;
-    const units::meters_per_second_t kMaxTranslationalVelocity{4.5}; // Add to shuffleboard
+    const units::meters_per_second_t kMaxTranslationalVelocity{4}; // Add to shuffleboard
 
     const units::radians_per_second_t kMaxRotationalVelocity{4}; // Add to shuffleboard
     const bool kIsFieldRelative = true;

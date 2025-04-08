@@ -2,7 +2,7 @@
 
 #include "Robot.hpp"
 
-Robot::Robot()
+Robot::Robot() : networkTableInst(nt::NetworkTableInstance::GetDefault())
 {
     this->CreateRobot();
 }
@@ -37,6 +37,9 @@ void Robot::RobotInit()
     // autoChooser.SetDefaultOption("AAA", );
 
     frc::SmartDashboard::PutData("Auto Chooser", &autoChooser);
+
+    auto sdTable = networkTableInst.GetTable("SmartDashboard");
+    elevator3dPOS = sdTable->GetStructTopic<frc::Pose3d>("Elevator 3D Pose").Publish();
 };
 
 // This function is called every 20 ms
@@ -50,6 +53,10 @@ void Robot::RobotPeriodic()
     m_EnergyLog.Append(m_pdh.GetTotalEnergy());
     m_TemperatureLog.Append(m_pdh.GetTemperature());
     m_BatteryLog.Append(batteryShunt.GetVoltage());
+
+    auto pose = m_swerveDrive.GetPose();
+
+    elevator3dPOS.Set(frc::Pose3d(pose.X(), pose.Y(), units::length::meter_t(m_elevator.GetHeight()), frc::Rotation3d(pose.Rotation())), nt::Now());
 }
 
 // This function is called once each time the robot enters Disabled mode.
