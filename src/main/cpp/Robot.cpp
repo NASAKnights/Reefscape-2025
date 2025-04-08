@@ -213,8 +213,8 @@ void Robot::CreateRobot()
     m_swerveDrive.SetDefaultCommand(frc2::RunCommand(
         [this]
         {
-            // auto approach = m_driverController.GetRawButton(5);
-            bool approach = 0;
+            auto controllerIn = m_driverController.GetRawButton(5);
+            // bool approach = 0;
 
             auto leftXAxis = MathUtilNK::calculateAxis(m_driverController.GetRawAxis(1),
                                                        DriveConstants::kDefaultAxisDeadband);
@@ -223,12 +223,21 @@ void Robot::CreateRobot()
             auto rightXAxis = MathUtilNK::calculateAxis(m_driverController.GetRawAxis(2),
                                                         DriveConstants::kDefaultAxisDeadband);
 
-            m_swerveDrive.WeightedDriving(approach, leftXAxis, leftYAxis, rightXAxis, targetKey);
+            // m_swerveDrive.WeightedDriving(approach, leftXAxis, leftYAxis, rightXAxis, targetKey);
 
-            // m_swerveDrive.Drive(frc::ChassisSpeeds::FromFieldRelativeSpeeds(
-            //     -leftXAxis * DriveConstants::kMaxTranslationalVelocity,
-            //     -leftYAxis * DriveConstants::kMaxTranslationalVelocity,
-            //     -rightXAxis * DriveConstants::kMaxRotationalVelocity, m_swerveDrive.GetHeading()));
+            if (controllerIn)
+                // Robot-Oriented Drive
+                m_swerveDrive.Drive(frc::ChassisSpeeds::FromFieldRelativeSpeeds(
+                    -leftXAxis * DriveConstants::kMaxTranslationalVelocity,
+                    -leftYAxis * DriveConstants::kMaxTranslationalVelocity,
+                    -rightXAxis * DriveConstants::kMaxRotationalVelocity, frc::Rotation2d()));
+            else
+            {
+                m_swerveDrive.Drive(frc::ChassisSpeeds::FromFieldRelativeSpeeds(
+                    -leftXAxis * DriveConstants::kMaxTranslationalVelocity,
+                    -leftYAxis * DriveConstants::kMaxTranslationalVelocity,
+                    -rightXAxis * DriveConstants::kMaxRotationalVelocity, m_swerveDrive.GetHeading()));
+            }
         },
         {&m_swerveDrive}));
 
@@ -391,15 +400,6 @@ void Robot::BindCommands()
 
 void Robot::DisabledPeriodic()
 {
-    // if (m_chooser.GetSelected() != prevAuto)
-    // {
-    //     SetAutonomousCommand(m_chooser.GetSelected());
-    // }
-    // else
-    // {
-    //     prevAuto = m_chooser.GetSelected();
-    // }
-
     std::string poiName = std::string("POI/") + frc::SmartDashboard::GetString("POIName", "");
     frc::SmartDashboard::PutBoolean("IsPersist", frc::SmartDashboard::IsPersistent(poiName));
 }

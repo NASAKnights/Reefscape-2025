@@ -104,7 +104,7 @@ public:
   void PeriodicShuffleboard();
   void ShuffleboardInit();
   void SetOffsets();
-  void WeightedDriving(bool approach, double leftXAxis, double leftYAxis, double rightXAxis, std::string poiKey);
+  void WeightedDriving(bool approach, double leftXAxis, double leftYAxis, double rightXAxis, std::string poiKey); // DEPRECATED
 
 private:
   // Components (e.g. motor controllers and sensors) should generally be

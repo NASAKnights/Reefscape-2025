@@ -9,9 +9,11 @@ POIGenerator::POIGenerator() : networkTableInst(nt::NetworkTableInstance::GetDef
     auto poseTable = networkTableInst.GetTable("ROS2Bridge");
 
     baseLinkSubscriber = poseTable->GetDoubleArrayTopic(robotPoseLink).Subscribe({}, {.periodic = 0.01, .sendAll = true});
-    auto inst = nt::NetworkTableInstance::GetDefault();
-    frc::SmartDashboard::PutData("ClosestPOI", &closestPOI);
-    std::vector<nt::Topic> topics = inst.GetTopics("/SmartDashboard/POI");
+    nt::StructPublisher<frc::Pose2d> publisher = poseTable->GetStructTopic<frc::Pose2d>("MYPOSEPOI").Publish();
+    // frc::SmartDashboard::PutData("Field/ClosestPOI", &closestPOI);
+    publisher.Set(closestPOI);
+
+    std::vector<nt::Topic> topics = networkTableInst.GetTopics("/SmartDashboard/POI");
     std::string prefix = "/SmartDashboard/";
     for (auto topic : topics)
     {
@@ -55,9 +57,14 @@ frc::Pose2d POIGenerator::GetClosestPOI()
 {
     std::vector<double> baseLinkPose = baseLinkSubscriber.GetAtomic().value;
     auto baseLink = DoubleArrayToPose2d(baseLinkPose);
-    auto pose = baseLink.Nearest(poses);
-    closestPOI.SetRobotPose(pose);
-    frc::SmartDashboard::PutNumber("TARGET POI X", pose.X().value());
-    frc::SmartDashboard::PutNumber("TARGET POI Y", pose.Y().value());
-    return pose;
+    if (poses.size() > 0)
+    {
+        auto pose = baseLink.Nearest(poses);
+        closestPOI = pose;
+        return pose;
+    }
+    else
+    {
+        return frc::Pose2d(0_m, 0.0_m, frc::Rotation2d());
+    }
 }
