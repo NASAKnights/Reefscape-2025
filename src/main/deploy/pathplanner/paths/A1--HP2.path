@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.1740810068058725,
-        "y": 5.1809320882625425
+        "x": 5.2522263819377155,
+        "y": 5.1652770043501555
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.427581664920079,
-        "y": 6.263181934109454
+        "x": 5.505727040051922,
+        "y": 6.247526850197067
       },
       "isLocked": false,
       "linkedName": "A1"
@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "Intake",
-      "waypointRelativePos": 0.4128686067099883,
+      "waypointRelativePos": 0.3322084711720228,
       "endWaypointRelativePos": 1.0,
       "command": null
     }

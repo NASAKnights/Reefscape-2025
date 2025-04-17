@@ -16,11 +16,11 @@
     },
     {
       "anchor": {
-        "x": 5.8,
+        "x": 5.825037859891677,
         "y": 4.0
       },
       "prevControl": {
-        "x": 6.379356060606061,
+        "x": 6.404393920497738,
         "y": 4.010164141414141
       },
       "nextControl": null,
@@ -31,7 +31,20 @@
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [],
+  "eventMarkers": [
+    {
+      "name": "Score L4",
+      "waypointRelativePos": 0.05421491020793948,
+      "endWaypointRelativePos": null,
+      "command": null
+    },
+    {
+      "name": "OuttakeCoral",
+      "waypointRelativePos": 0.973276524102079,
+      "endWaypointRelativePos": 1.0,
+      "command": null
+    }
+  ],
   "globalConstraints": {
     "maxVelocity": 4.0,
     "maxAcceleration": 3.0,
