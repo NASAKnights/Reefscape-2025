@@ -47,6 +47,7 @@
 #include "subsystems/IntakeAlgae.h"
 #include "commands/GrabCoralFar.h"
 #include "commands/GoToPoint.h"
+#include "commands/AutoWheelOffsets.h"
 
 #include <units/angular_velocity.h>
 #include <units/velocity.h>

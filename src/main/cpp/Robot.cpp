@@ -268,6 +268,9 @@ void Robot::BindCommands()
     // frc2::JoystickButton(&m_driverController, 3)
     // .WhileTrue(GoToPoint(&m_swerveDrive, &m_poiGenerator).ToPtr());
 
+    frc2::JoystickButton(&m_driverController, 9)
+        .WhileTrue(AutoWheelOffsets().ToPtr());
+
     frc2::JoystickButton(&m_driverController, 3)
         .OnTrue(scoreClosest.get())
         .OnFalse(frc2::CommandPtr(
