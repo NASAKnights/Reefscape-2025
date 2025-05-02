@@ -6,7 +6,8 @@
 
 #include <frc2/command/Command.h>
 #include <frc2/command/CommandHelper.h>
-
+#include <frc/geometry/Rotation2d.h>
+#include <frc/geometry/Rotation3d.h>
 /**
  * An example command.
  *
@@ -15,8 +16,9 @@
  * Command will *not* work!
  */
 class AutoWheelOffsets
-    : public frc2::CommandHelper<frc2::Command, AutoWheelOffsets> {
- public:
+    : public frc2::CommandHelper<frc2::Command, AutoWheelOffsets>
+{
+public:
   /* You should consider using the more terse Command factories API instead
    * https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands
    */

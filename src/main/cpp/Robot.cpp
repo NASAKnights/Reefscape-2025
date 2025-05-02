@@ -22,6 +22,7 @@ void Robot::RobotInit()
     frc::SmartDashboard::PutString("POIName", "");
     frc::SmartDashboard::PutData("AddPOI", addPOICommand.get());
     frc::SmartDashboard::PutData("RemovePOI", removePOICommand.get());
+    frc::SmartDashboard::PutData("Set", AutoWheelOffsets().ToPtr().get());
 
     // frc::SmartDashboard::PutNumber("FrontLeftDegree", 0.0);
     // frc::SmartDashboard::PutNumber("FrontRightDegree", 0.0);
@@ -269,7 +270,7 @@ void Robot::BindCommands()
     // .WhileTrue(GoToPoint(&m_swerveDrive, &m_poiGenerator).ToPtr());
 
     frc2::JoystickButton(&m_driverController, 9)
-        .WhileTrue(AutoWheelOffsets().ToPtr());
+        .OnTrue(AutoWheelOffsets().ToPtr());
 
     frc2::JoystickButton(&m_driverController, 3)
         .OnTrue(scoreClosest.get())

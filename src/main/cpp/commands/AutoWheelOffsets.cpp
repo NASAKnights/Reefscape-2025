@@ -14,15 +14,25 @@ AutoWheelOffsets::AutoWheelOffsets()
 void AutoWheelOffsets::Initialize()
 {
 
-  double WheelOffsets = frc::SmartDashboard::GetNumber("Module " + std::to_string(1) + "/" + " Reported Angle", 0);
+  // double WheelOffsets = frc::SmartDashboard::GetNumber("Module " + std::to_string(1) + "/" + " Reported Angle", 0);
+  // double WheelOffsets = frc::SmartDashboard::GetNumber("Module " + std::to_string(1) + "/ Reported Angle", 0);
 
-  frc::SmartDashboard::PutNumber("FrontLeftDegree", WheelOffsets);
+  // frc::SmartDashboard::SetDefaultNumber("FrontLeftDegree 2", 0.1);
+
+  // frc::SmartDashboard::PutNumber("FrontLeftDegree", WheelOffsets);
   // frc::SmartDashboard::PutNumber ("FrontLeftDegree", "Module " + std::to_string(m_id) + "/" + " Reported Angle");
-  frc::SmartDashboard::SetPersistent("FrontLeftDegree");
+  // frc::SmartDashboard::SetPersistent("FrontLeftDegree");
+
+  // frc::Rotation2d kFrontLeftOffset(-units::degree_t{WheelOffsets});
 }
 
 // Called repeatedly when this Command is scheduled to run
-void AutoWheelOffsets::Execute() {}
+void AutoWheelOffsets::Execute()
+{
+  double WheelOffsets = frc::SmartDashboard::GetNumber("Module " + std::to_string(1) + "/ Reported Angle", 0);
+  frc::SmartDashboard::PutNumber("FrontLeftDegree", WheelOffsets);
+  frc::Rotation2d kFrontLeftOffset(-units::degree_t{WheelOffsets});
+}
 
 // Called once the command ends or is interrupted.
 void AutoWheelOffsets::End(bool interrupted) {}
