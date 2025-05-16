@@ -8,6 +8,7 @@
 #include <frc2/command/CommandHelper.h>
 #include <frc/geometry/Rotation2d.h>
 #include <frc/geometry/Rotation3d.h>
+#include "subsystems/SwerveDrive.hpp"
 /**
  * An example command.
  *
@@ -22,7 +23,7 @@ public:
   /* You should consider using the more terse Command factories API instead
    * https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands
    */
-  AutoWheelOffsets();
+  AutoWheelOffsets(SwerveDrive *swerve);
 
   void Initialize() override;
 
@@ -31,4 +32,7 @@ public:
   void End(bool interrupted) override;
 
   bool IsFinished() override;
+
+private:
+  SwerveDrive *m_swerve;
 };

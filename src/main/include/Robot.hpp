@@ -143,6 +143,8 @@ private:
                                                                               { return m_poiGenerator.RemovePOI(); }))
                                             .IgnoringDisable(true);
 
+    frc2::CommandPtr autoWheelOffsetsCommand = AutoWheelOffsets(&m_swerveDrive).ToPtr().IgnoringDisable(true);
+
     // Robot Container methods
     void CreateRobot();
     void BindCommands();
