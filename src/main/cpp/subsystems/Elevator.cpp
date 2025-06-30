@@ -29,7 +29,7 @@ Elevator::Elevator()
       m_elevatorSim(frc::DCMotor::NEO(ElevatorConstants::kNumMotors), ElevatorConstants::kElevatorGearing,
                     ElevatorConstants::kCarriageMass, ElevatorConstants::kElevatorDrumRadius,
                     ElevatorConstants::simLowerLimit, ElevatorConstants::simUpperLimit, false, 0_m,
-                    {0.001})
+                    {0.0001})
 {
 
     m_encoderLeft.SetPosition(0.0);
@@ -250,7 +250,7 @@ void Elevator::SimulationInit()
 }
 void Elevator::SimulationPeriodic()
 {
-    m_elevatorSim.Update(ElevatorConstants::kDt);
+    m_elevatorSim.Update(20_ms);
     m_simTimer.Reset();
 }
 void Elevator::UseOutput(double output, State setpoint)
