@@ -29,8 +29,7 @@ namespace TurretConstants
 {
   enum TurretState
   {
-    MOVE,
-    HOLD,
+    TRACKING,
     ZEROING,
     DISABLED,
   };
@@ -39,8 +38,8 @@ namespace TurretConstants
   const double kAngleI = 0.0;
   const double kAngleD = 0.0; // 0.0001
   const double kIZone = 1.0;
-  const auto kArmVelLimit = units::degrees_per_second_t(360.0);
-  const auto kArmAccelLimit = units::angular_acceleration::degrees_per_second_squared_t(1000); // Mech limit 27 rad/s^2(1500 degree_second_squared)
+  const auto kTurretVelLimit = units::degrees_per_second_t(360.0);
+  const auto kTurretAccelLimit = units::degrees_per_second_squared_t(1500); // Mech limit 27 rad/s^2(1500 degree_second_squared)
   const units::degree_t kTolerancePos = 1_deg;
   const units::degrees_per_second_t kToleranceVel = 0.5_deg_per_s;
   const int kAngleMotorId = 2;
@@ -55,11 +54,21 @@ namespace TurretConstants
   const int kWristPeakCurrentLimit = 60;
   const double kWristPeakCurrentDuration = 0.1;
 
+  double targetangle = 0.0;
+
 }
-class turret
+class Turret
 {
 public:
-  turret();
+  Turret();
+  void Periodic();
+  void SimulationPeriodic();
+  void Enable();
+  void Disable();
+  void GetTurretAngle();
+  void GetTurretSpeed();
+  void GetTargetAngle();
+  void SetTurretAngle(double targetAngle);
   void printLog();
 
   TurretConstants::TurretState m_turretState;
