@@ -52,6 +52,8 @@
 #include <units/velocity.h>
 
 #include "subsystems/Elevator.h"
+#include "subsystems/Wrist.h"
+#include "subsystems/Turret.h"
 
 #include "subsystems/LEDController.h"
 #include "subsystems/Climber.h"
@@ -108,8 +110,13 @@ private:
     Wrist m_wrist;
     Elevator m_elevator;
     Climber m_climber;
+    Turret m_turret;
 
     std::string_view baseLink = "base_link";
+
+    nt::StructPublisher<frc::Pose3d> TurretPose3D;
+    nt::StructArrayPublisher<frc::Pose3d> modelPosePublisher;
+    nt::NetworkTableInstance networkTableInst;
 
     std::string targetKey = "POI/POIREEF";
     std::string prevAuto = "";

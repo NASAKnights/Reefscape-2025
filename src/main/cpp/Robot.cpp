@@ -37,6 +37,8 @@ void Robot::RobotInit()
     // autoChooser.SetDefaultOption("AAA", );
 
     frc::SmartDashboard::PutData("Auto Chooser", &autoChooser);
+    auto sdTable = networkTableInst.GetTable("SmartDashboard");
+    modelPosePublisher = sdTable->GetStructArrayTopic<frc::Pose3d>("ModelPoses").Publish();
 };
 
 // This function is called every 20 ms
@@ -50,6 +52,12 @@ void Robot::RobotPeriodic()
     m_EnergyLog.Append(m_pdh.GetTotalEnergy());
     m_TemperatureLog.Append(m_pdh.GetTemperature());
     m_BatteryLog.Append(batteryShunt.GetVoltage());
+
+    frc::Pose2d pose = frc::Pose2d(units::length::meter_t{0.0}, units::length::meter_t{0.0}, frc::Rotation2d{});
+    frc::Pose3d TurretPose3D = frc::Pose3d(pose.X(), pose.Y(), 0.0_m, frc::Rotation3d(0.0_rad, 0.0_rad, units::radian_t{m_turret.GetMeasurement()}));
+    std::vector<frc::Pose3d> modelPoses = {
+        TurretPose3D};
+    modelPosePublisher.Set(modelPoses, 0);
 }
 
 // This function is called once each time the robot enters Disabled mode.
@@ -125,6 +133,8 @@ void Robot::TeleopPeriodic()
     {
         frc::SmartDashboard::PutNumber("drive/accelLim", 4.0);
     }
+
+    m_turret.SetAngle((m_operatorController.GetRawAxis(1) * 135));
 }
 
 void Robot::TeleopExit()
@@ -379,7 +389,6 @@ void Robot::BindCommands()
                 m_wrist.Zero();
                 return;
             })));
-
     // frc2::POVButton(&m_operatorController, 0) // Zero wrist
     //     .OnTrue(frc2::CommandPtr(frc2::InstantCommand(
     //         [this]
