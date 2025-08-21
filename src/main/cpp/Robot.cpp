@@ -134,7 +134,7 @@ void Robot::TeleopPeriodic()
         frc::SmartDashboard::PutNumber("drive/accelLim", 4.0);
     }
 
-    m_turret.SetAngle((m_operatorController.GetRawAxis(1) * 135));
+    m_turret.SetAngle(MathUtilNK::calculateAxis(m_operatorController.GetRawAxis(0), DriveConstants::kDefaultAxisDeadband) * 135);
 }
 
 void Robot::TeleopExit()

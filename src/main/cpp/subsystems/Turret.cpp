@@ -52,7 +52,7 @@ units::degree_t Turret::GetMeasurement()
         return m_TurretSim.GetAngle();
     }
 
-    return units::degree_t{m_encoder.GetPosition().GetValue()};
+    return units::degree_t{m_motor.GetPosition().GetValue()};
 }
 
 void Turret::SetAngle(double TurretAngleGoal)

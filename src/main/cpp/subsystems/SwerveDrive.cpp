@@ -340,7 +340,7 @@ void SwerveDrive::UpdatePoseEstimate()
     }
     else
     {
-        m_poseEstimator.SetVisionMeasurementStdDevs({1, 1, 1});
+        m_poseEstimator.SetVisionMeasurementStdDevs({1.0, 1.0, 1.0});
     }
 
     if (result1.value.size() > 0)

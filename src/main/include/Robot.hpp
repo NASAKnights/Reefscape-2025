@@ -63,6 +63,9 @@
 #include "commands/ClimbCage.h"
 #include "commands/DeployClimb.h"
 
+#include <networktables/StructTopic.h>
+#include <networktables/StructArrayTopic.h>
+
 #include <cmath>
 
 class Robot : public frc::TimedRobot

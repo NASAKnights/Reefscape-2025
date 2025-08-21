@@ -34,9 +34,9 @@ namespace TurretConstants
     DISABLED
   };
 
-  const double kAngleP = 0.3;
+  const double kAngleP = 100.0;
   const double kAngleI = 0.0;
-  const double kAngleD = 0.0; // 0.0001
+  const double kAngleD = 10.0; // 0.0001
   const double kIZone = 1.0;
   const auto kTurretVelLimit = units::degrees_per_second_t(360.0);
   const auto kTurretAccelLimit = units::angular_acceleration::degrees_per_second_squared_t(1000); // Mech limit 27 rad/s^2(1500 degree_second_squared)
@@ -104,7 +104,6 @@ private:
   wpi::log::DoubleLogEntry m_MotorCurrentLog;
   wpi::log::DoubleLogEntry m_MotorVoltageLog;
   frc::Timer *m_timer;
-  ctre::phoenix6::hardware::CANcoder m_encoder;
   float Turret_Angle;
 
   bool speed;
