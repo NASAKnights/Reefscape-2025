@@ -11,6 +11,7 @@ using degrees_per_second_squared_t =
 Turret::Turret() : m_controller(
                        TurretConstants::kAngleP, TurretConstants::kAngleI, TurretConstants::kAngleD,
                        frc::TrapezoidProfile<units::degrees>::Constraints(TurretConstants::kTurretVelLimit, TurretConstants::kTurretAccelLimit), 5_ms),
+
                    m_motor(TurretConstants::kAngleMotorId), m_feedforward(TurretConstants::kFFks, TurretConstants::kFFkg, TurretConstants::kFFkV,
                                                                           TurretConstants::kFFkA),
 
@@ -23,7 +24,6 @@ Turret::Turret() : m_controller(
     m_controller.SetTolerance(TurretConstants::kTolerancePos, TurretConstants::kToleranceVel);
     // Start m_Turret in neutral position
     m_TurretState = TurretConstants::DISABLED;
-
     wpi::log::DataLog &log = frc::DataLogManager::GetLog();
     m_AngleLog = wpi::log::DoubleLogEntry(log, "/Turret/Angle");
     m_SetPointLog = wpi::log::DoubleLogEntry(log, "/Turret/Setpoint");
@@ -52,16 +52,20 @@ units::degree_t Turret::GetMeasurement()
         return m_TurretSim.GetAngle();
     }
 
-    return units::degree_t{m_motor.GetPosition().GetValue()};
+    return units::turn_t{(m_motor.GetPosition().GetValue() / TurretConstants::kGearRatio)};
 }
 
 void Turret::SetAngle(double TurretAngleGoal)
 {
     // m_TurretState = TurretConstants::MOVE;
-    m_TurretState = TurretConstants::START;
-    m_goal = units::angle::degree_t(TurretAngleGoal);
+    if (TurretAngleGoal != m_goal.value())
+    {
+        m_TurretState = TurretConstants::START;
+        m_goal = units::angle::degree_t(TurretAngleGoal);
+    }
     // m_controller.Reset(GetMeasurement());
     // m_controller.SetGoal(m_goal);
+    frc::SmartDashboard::PutNumber("/Turret/m_goal", double(m_goal));
 }
 
 void Turret::Periodic()
@@ -76,6 +80,7 @@ void Turret::Periodic()
     {
     case TurretConstants::START:
     {
+        frc::SmartDashboard::PutString("/Turret/State", "START");
         m_controller.Reset(GetMeasurement());
         m_controller.SetGoal(m_goal);
         m_TurretState = TurretConstants::MOVE;
@@ -83,7 +88,7 @@ void Turret::Periodic()
     case TurretConstants::MOVE:
     {
 
-        frc::SmartDashboard::PutString("/Turret/State", "MOVING");
+        frc::SmartDashboard::PutString("/Turret/State", "MOVE");
         if (m_controller.AtGoal())
         {
             m_TurretState = TurretConstants::HOLD;

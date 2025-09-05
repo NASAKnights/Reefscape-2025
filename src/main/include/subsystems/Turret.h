@@ -34,20 +34,20 @@ namespace TurretConstants
     DISABLED
   };
 
-  const double kAngleP = 100.0;
-  const double kAngleI = 0.0;
-  const double kAngleD = 10.0; // 0.0001
+  const double kAngleP = 0.005;
+  const double kAngleI = 0.01;
+  const double kAngleD = 0.0; // 0.0001
   const double kIZone = 1.0;
-  const auto kTurretVelLimit = units::degrees_per_second_t(360.0);
-  const auto kTurretAccelLimit = units::angular_acceleration::degrees_per_second_squared_t(1000); // Mech limit 27 rad/s^2(1500 degree_second_squared)
+  const auto kTurretVelLimit = units::degrees_per_second_t(36000.0);
+  const auto kTurretAccelLimit = units::angular_acceleration::degrees_per_second_squared_t(100000); // Mech limit 27 rad/s^2(1500 degree_second_squared)
   const units::degree_t kTolerancePos = 1_deg;
   const units::degrees_per_second_t kToleranceVel = 0.5_deg_per_s;
-  const int kAngleMotorId = 2;
+  const int kAngleMotorId = 50;
 
-  const auto kFFks = units::volt_t(0.23);                               // Volts static (motor)
-  const auto kFFkg = units::volt_t(0.28);                               // Volts
-  const auto kFFkV = units::unit_t<frc::ArmFeedforward::kv_unit>(0.79); // volts*s/rad
-  const auto kFFkA = units::unit_t<frc::ArmFeedforward::ka_unit>(0.01); // volts*s^2/rad
+  const auto kFFks = units::volt_t(0.23);                                // Volts static (motor)
+  const auto kFFkg = units::volt_t(0.0);                                 // Volts
+  const auto kFFkV = units::unit_t<frc::ArmFeedforward::kv_unit>(0.3);   // volts*s/rad
+  const auto kFFkA = units::unit_t<frc::ArmFeedforward::ka_unit>(0.001); // volts*s^2/rad
 
   const bool kTurretEnableCurrentLimit = true;
   const int kTurretContinuousCurrentLimit = 35;
@@ -56,7 +56,7 @@ namespace TurretConstants
 
   const std::array<double, 2> kSimNoise = {0.0};
   const frc::DCMotor kSimMotor = frc::DCMotor::KrakenX60(1);
-  const double kGearRatio = 81.0; // gear ratio for motor to arm
+  const double kGearRatio = 43.0; // gear ratio for motor to arm
   const units::moment_of_inertia::kilogram_square_meter_t kmoi =
       units::moment_of_inertia::kilogram_square_meter_t(0.06742); // I = MR^2
   const units::length::meter_t kTurretRadius = units::length::meter_t(0.3048);

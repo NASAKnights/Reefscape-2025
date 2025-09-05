@@ -248,6 +248,9 @@ void Robot::CreateRobot()
     AddPeriodic([this]
                 { m_wrist.Periodic(); },
                 10_ms, 2_ms);
+    AddPeriodic([this]
+                { m_turret.Periodic(); },
+                5_ms, 3_ms);
 
     // Configure the button bindings
     BindCommands();
