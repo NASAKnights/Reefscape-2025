@@ -118,6 +118,7 @@ private:
     std::string_view baseLink = "base_link";
 
     nt::StructPublisher<frc::Pose3d> TurretPose3D;
+    nt::StructPublisher<frc::Pose3d> ShooterPose3D;
     nt::StructArrayPublisher<frc::Pose3d> modelPosePublisher;
     nt::NetworkTableInstance networkTableInst;
 

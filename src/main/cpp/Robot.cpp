@@ -46,20 +46,20 @@ void Robot::RobotPeriodic()
 {
     frc2::CommandScheduler::GetInstance().Run();
     this->UpdateDashboard();
-    m_VoltageLog.Append(m_pdh.GetVoltage());
+    m_VoltageLog.Append(m_pdh.GetVoltage(4));
     m_CurrentLog.Append(m_pdh.GetTotalCurrent());
     m_PowerLog.Append(m_pdh.GetTotalPower());
     m_EnergyLog.Append(m_pdh.GetTotalEnergy());
     m_TemperatureLog.Append(m_pdh.GetTemperature());
     m_BatteryLog.Append(batteryShunt.GetVoltage());
-
     frc::Pose2d pose = frc::Pose2d(units::length::meter_t{0.0}, units::length::meter_t{0.0}, frc::Rotation2d{});
-    frc::Pose3d TurretPose3D = frc::Pose3d(pose.X(), pose.Y(), 0.0_m, frc::Rotation3d(0.0_rad, 0.0_rad, units::radian_t{m_turret.GetMeasurement()}));
+    frc::Pose3d TurretPose3D = frc::Pose3d(pose.X(), pose.Y(), 0.0_m, frc::Rotation3d(0.0_rad, 0.0_rad, 0.0_rad));
+    frc::Pose3d ShooterPose3D = frc::Pose3d(pose.X(), pose.Y(), 0.0_m, frc::Rotation3d(0.0_rad, 0.0_rad, units::radian_t{m_turret.GetMeasurement()}));
     std::vector<frc::Pose3d> modelPoses = {
-        TurretPose3D};
+        TurretPose3D,
+        ShooterPose3D};
     modelPosePublisher.Set(modelPoses, 0);
 }
-
 // This function is called once each time the robot enters Disabled mode.
 void Robot::DisabledInit()
 {
