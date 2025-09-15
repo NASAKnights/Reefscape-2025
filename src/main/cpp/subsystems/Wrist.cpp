@@ -15,6 +15,8 @@ Wrist::Wrist() : m_controller(
                                                                                                                          WristConstants::kFFkA),
                  m_encoder{m_motor.GetEncoder()},
 
+                 m_absolute_encoder{0},
+
                  m_WristSim(WristConstants::kSimMotor, WristConstants::kGearRatio, WristConstants::kmoi,
                             WristConstants::kWristLength, WristConstants::kminAngle, WristConstants::kmaxAngle,
                             WristConstants::kGravity, WristConstants::kWristStartAngle)
@@ -38,6 +40,7 @@ Wrist::Wrist() : m_controller(
     m_MotorCurrentLog = wpi::log::DoubleLogEntry(log, "/Wrist/MotorCurrent");
     m_MotorVoltageLog = wpi::log::DoubleLogEntry(log, "/Wrist/MotorVoltage");
 
+    m_encoder.SetPosition(m_absolute_encoder.GetAbsolutePosition().GetValue().value() * 360);
     // if constexpr(frc::RobotBase::IsSimulation())
     // {
     //     m_simTimer.Start();
@@ -62,7 +65,7 @@ units::degree_t Wrist::GetMeasurement()
 
 void Wrist::SetAngle(double wristAngleGoal)
 {
-    if (m_WristState != WristConstants::ZEROING)
+    if ((wristAngleGoal < double(WristConstants::kmaxAngle)) && (wristAngleGoal > double(WristConstants::kminAngle)))
     {
         // m_WristState = WristConstants::MOVE;
         m_WristState = WristConstants::START;
@@ -87,12 +90,6 @@ void Wrist::Periodic()
         m_controller.Reset(GetMeasurement());
         m_controller.SetGoal(m_goal);
         m_WristState = WristConstants::MOVE;
-    }
-    case WristConstants::ZEROING:
-    {
-        frc::SmartDashboard::PutString("/Wrist/State", "ZEROING");
-        m_motor.Set(0.1);
-        break;
     }
     case WristConstants::MOVE:
     {
@@ -137,16 +134,6 @@ void Wrist::Periodic()
         break;
     }
     }
-    if (m_motor.GetForwardLimitSwitch().Get())
-    {
-        m_encoder.SetPosition(106.0);
-        if (m_WristState == WristConstants::ZEROING)
-        {
-            // m_goal = 0.1_m;
-            m_WristState = WristConstants::HOLD;
-            SetAngle(105.0);
-        }
-    }
 }
 
 WristConstants::WristState Wrist::GetState()
@@ -156,7 +143,7 @@ WristConstants::WristState Wrist::GetState()
 
 void Wrist::Zero()
 {
-    m_WristState = WristConstants::ZEROING;
+    m_encoder.SetPosition(m_absolute_encoder.GetAbsolutePosition().GetValue().value() * 360);
 }
 
 void Wrist::printLog()

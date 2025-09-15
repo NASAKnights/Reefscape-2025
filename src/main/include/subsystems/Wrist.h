@@ -2,8 +2,8 @@
 
 #include "frc/DataLogManager.h"
 #include "wpi/DataLog.h"
+#include <ctre/phoenix6/CANcoder.hpp>
 #include <ctre/phoenix6/Pigeon2.hpp>
-#include <ctre/phoenix6/TalonFX.hpp>
 #include <frc/DutyCycleEncoder.h>
 #include <frc/Encoder.h>
 #include <frc/controller/ArmFeedforward.h>
@@ -29,7 +29,6 @@ namespace WristConstants
         MOVE,
         HOLD,
         START,
-        ZEROING,
         DISABLED
     };
 
@@ -60,8 +59,8 @@ namespace WristConstants
     const units::moment_of_inertia::kilogram_square_meter_t kmoi =
         units::moment_of_inertia::kilogram_square_meter_t(0.00902);
     const units::length::meter_t kWristLength = units::length::meter_t(0.1778);
-    const units::angle::radian_t kminAngle = -30_deg;
-    const units::angle::radian_t kmaxAngle = 95_deg;
+    const units::angle::radian_t kminAngle = 0_deg;
+    const units::angle::radian_t kmaxAngle = 20_deg;
     const bool kGravity = true;
     const units::angle::radian_t kWristStartAngle = units::angle::radian_t(0.0);
 
@@ -114,6 +113,7 @@ private:
     frc::sim::SingleJointedArmSim m_WristSim;
 
     frc::ProfiledPIDController<units::degrees> m_controller;
+    ctre::phoenix6::hardware::CANcoder m_absolute_encoder;
 
     hal::SimDouble m_WristSimVelocity;
     hal::SimDouble m_WristSimposition;
