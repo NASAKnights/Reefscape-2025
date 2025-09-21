@@ -2,7 +2,7 @@
 
 #include "Robot.hpp"
 
-Robot::Robot()
+Robot::Robot() : networkTableInst(nt::NetworkTableInstance::GetDefault())
 {
     this->CreateRobot();
 }
@@ -37,6 +37,11 @@ void Robot::RobotInit()
     // autoChooser.SetDefaultOption("AAA", );
 
     frc::SmartDashboard::PutData("Auto Chooser", &autoChooser);
+
+    auto sdTable = networkTableInst.GetTable("SmartDashboard");
+    // stageOne3dPOS = sdTable->GetStructTopic<frc::Pose3d>("Stage 1 3D Pose").Publish();
+    // carage3dPOS = sdTable->GetStructTopic<frc::Pose3d>("Carage 3D Pose").Publish();
+    modelPosePublisher = sdTable->GetStructArrayTopic<frc::Pose3d>("ModelPoses").Publish();
 };
 
 // This function is called every 20 ms
@@ -50,6 +55,20 @@ void Robot::RobotPeriodic()
     m_EnergyLog.Append(m_pdh.GetTotalEnergy());
     m_TemperatureLog.Append(m_pdh.GetTemperature());
     m_BatteryLog.Append(batteryShunt.GetVoltage());
+
+    frc::Pose2d pose = frc::Pose2d(units::length::meter_t{0.0}, units::length::meter_t{0.0}, frc::Rotation2d{});
+
+    frc::Pose3d stageOne3dPOS = frc::Pose3d(pose.X(), pose.Y(), units::length::meter_t(m_elevator.GetHeight()) / 2, frc::Rotation3d(pose.Rotation()));
+    frc::Pose3d carage3dPOS = frc::Pose3d(pose.X(), pose.Y(), units::length::meter_t(m_elevator.GetHeight()), frc::Rotation3d(pose.Rotation()));
+    frc::Pose3d wrist3dPOS = frc::Pose3d(0.28_m, 0_m, units::length::meter_t(m_elevator.GetHeight() + 0.595), frc::Rotation3d(units::angle::radian_t{0.0}, units::angle::radian_t{-m_wrist.GetMeasurement()}, units::angle::radian_t{0.0}));
+    frc::Pose3d climb3dPOS = frc::Pose3d(0_m, 0_m, 0_m, frc::Rotation3d(0.0_rad, 0.0_rad, 0.0_rad));
+    std::vector<frc::Pose3d> modelPoses = {
+        stageOne3dPOS,
+        carage3dPOS,
+        wrist3dPOS,
+        climb3dPOS,
+    };
+    modelPosePublisher.Set(modelPoses, 0);
 }
 
 // This function is called once each time the robot enters Disabled mode.
@@ -168,7 +187,7 @@ void Robot::CreateRobot()
                 Pose2d startPos = Pose2d(currentPose.Translation(), Rotation2d());
                 Pose2d endPos = m_poiGenerator.GetClosestPOI().TransformBy(offset);
 
-                auto transformedEndPos = endPos.TransformBy(Transform2d(0.33_m, 0_m, 0_rad));
+                auto transformedEndPos = endPos.TransformBy(Transform2d(0.25_m, 0_m, 0_rad));
                 std::vector<Waypoint> waypoints = PathPlannerPath::waypointsFromPoses({startPos, endPos, transformedEndPos});
                 // Paths must be used as shared pointers
                 auto path = std::make_shared<PathPlannerPath>(
@@ -177,7 +196,8 @@ void Robot::CreateRobot()
                     std::vector<PointTowardsZone>(),
                     std::vector<ConstraintsZone>(),
                     std::vector<EventMarker>(),
-                    PathConstraints(1_mps, 2.0_mps_sq, 360_deg_per_s, 940_deg_per_s_sq),
+                    PathConstraints(1_mps, 1.5_mps_sq, 360_deg_per_s, 940_deg_per_s_sq),
+                    // PathConstraints(1_mps, 2.0_mps_sq, 360_deg_per_s, 940_deg_per_s_sq),
                     std::nullopt, // Ideal starting state can be nullopt for on-the-fly paths
                     GoalEndState(0_mps, endPos.Rotation()),
                     false
@@ -213,8 +233,8 @@ void Robot::CreateRobot()
     m_swerveDrive.SetDefaultCommand(frc2::RunCommand(
         [this]
         {
-            // auto approach = m_driverController.GetRawButton(5);
-            bool approach = 0;
+            auto controllerIn = m_driverController.GetRawButton(5);
+            // bool approach = 0;
 
             auto leftXAxis = MathUtilNK::calculateAxis(m_driverController.GetRawAxis(1),
                                                        DriveConstants::kDefaultAxisDeadband);
@@ -223,12 +243,21 @@ void Robot::CreateRobot()
             auto rightXAxis = MathUtilNK::calculateAxis(m_driverController.GetRawAxis(2),
                                                         DriveConstants::kDefaultAxisDeadband);
 
-            m_swerveDrive.WeightedDriving(approach, leftXAxis, leftYAxis, rightXAxis, targetKey);
+            // m_swerveDrive.WeightedDriving(approach, leftXAxis, leftYAxis, rightXAxis, targetKey);
 
-            // m_swerveDrive.Drive(frc::ChassisSpeeds::FromFieldRelativeSpeeds(
-            //     -leftXAxis * DriveConstants::kMaxTranslationalVelocity,
-            //     -leftYAxis * DriveConstants::kMaxTranslationalVelocity,
-            //     -rightXAxis * DriveConstants::kMaxRotationalVelocity, m_swerveDrive.GetHeading()));
+            if (controllerIn)
+                // Robot-Oriented Drive
+                m_swerveDrive.Drive(frc::ChassisSpeeds::FromFieldRelativeSpeeds(
+                    -leftXAxis * DriveConstants::kMaxTranslationalVelocity,
+                    -leftYAxis * DriveConstants::kMaxTranslationalVelocity,
+                    -rightXAxis * DriveConstants::kMaxRotationalVelocity, frc::Rotation2d()));
+            else
+            {
+                m_swerveDrive.Drive(frc::ChassisSpeeds::FromFieldRelativeSpeeds(
+                    -leftXAxis * DriveConstants::kMaxTranslationalVelocity,
+                    -leftYAxis * DriveConstants::kMaxTranslationalVelocity,
+                    -rightXAxis * DriveConstants::kMaxRotationalVelocity, m_swerveDrive.GetHeading()));
+            }
         },
         {&m_swerveDrive}));
 
@@ -400,15 +429,6 @@ void Robot::BindCommands()
 
 void Robot::DisabledPeriodic()
 {
-    // if (m_chooser.GetSelected() != prevAuto)
-    // {
-    //     SetAutonomousCommand(m_chooser.GetSelected());
-    // }
-    // else
-    // {
-    //     prevAuto = m_chooser.GetSelected();
-    // }
-
     std::string poiName = std::string("POI/") + frc::SmartDashboard::GetString("POIName", "");
     frc::SmartDashboard::PutBoolean("IsPersist", frc::SmartDashboard::IsPersistent(poiName));
 }

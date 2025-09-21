@@ -412,6 +412,7 @@ void SwerveDrive::DisableDrive()
     // frc::SmartDashboard::PutBoolean("TestTestTest", enable);
 }
 
+// Warning, this is unfinished (and also deprecated), and may produce results that are not expected
 void SwerveDrive::WeightedDriving(bool approach, double leftXAxis,
                                   double leftYAxis, double rightXAxis, std::string poiKey)
 {
@@ -419,9 +420,8 @@ void SwerveDrive::WeightedDriving(bool approach, double leftXAxis,
     timer.Reset();
 
     auto Po = frc::SmartDashboard::GetNumber("Note Po", 0.0);
-    auto Px = frc::SmartDashboard::GetNumber("Note Px", 0.0);
-    auto Py = frc::SmartDashboard::GetNumber("Note Py", 0.0);
-    auto Do = frc::SmartDashboard::GetNumber("Note Do", 0.0);
+    auto Px = frc::SmartDashboard::GetNumber("Note Px", 1);
+    auto Py = frc::SmartDashboard::GetNumber("Note Py", 1);
 
     // TODO: Continue tuning
     frc::Pose2d Target;
@@ -508,32 +508,19 @@ void SwerveDrive::ShuffleboardInit() {}
 
 void SwerveDrive::SetOffsets()
 {
-    frc::SmartDashboard::SetPersistent("FrontLeftDegree");
-
     auto FrontLeftDegree = frc::SmartDashboard::GetNumber("FrontLeftDegree", -4.8);
-
-    // frc::SmartDashboard::PutNumber("FrontLeftDegree", -4.8);
     frc::SmartDashboard::SetPersistent("FrontLeftDegree");
     frc::Rotation2d kFrontLeftOffset(-units::degree_t{FrontLeftDegree});
 
-    frc::SmartDashboard::SetPersistent("FrontRightDegree");
     auto FrontRightDegree = frc::SmartDashboard::GetNumber("FrontRightDegree", -66);
-
-    // frc::SmartDashboard::PutNumber("FrontRightDegree", -66);
     frc::SmartDashboard::SetPersistent("FrontRightDegree");
     frc::Rotation2d kFrontRightOffset(-units::degree_t{FrontRightDegree});
 
-    frc::SmartDashboard::SetPersistent("BackLeftDegree");
     auto BackLeftDegree = frc::SmartDashboard::GetNumber("BackLeftDegree", 70);
-
-    // frc::SmartDashboard::PutNumber("BackLeftDegree", 71);
     frc::SmartDashboard::SetPersistent("BackLeftDegree");
     frc::Rotation2d kBackLeftOffset(-units::degree_t{BackLeftDegree});
 
-    frc::SmartDashboard::SetPersistent("BackRightDegree");
     auto BackRightDegree = frc::SmartDashboard::GetNumber("BackRightDegree", 178);
-
-    // frc::SmartDashboard::PutNumber("BackRightDegree", 178);
     frc::SmartDashboard::SetPersistent("BackRightDegree");
     frc::Rotation2d kBackRightOffset(-units::degree_t{BackRightDegree});
 

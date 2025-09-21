@@ -11,6 +11,9 @@
 #include <frc/geometry/Pose2d.h>
 #include <frc/geometry/Quaternion.h>
 #include <frc/geometry/Rotation3d.h>
+#include <networktables/StructTopic.h>
+#include <frc/geometry/struct/Pose2dStruct.h>
+#include <networktables/StructArrayTopic.h>
 
 class POIGenerator
 {
@@ -46,8 +49,10 @@ public:
 
 private:
   std::string_view robotPoseLink = "base_link";
+  nt::StructPublisher<frc::Pose2d> poiPublisher;
+  nt::DoubleArrayPublisher poiPublisherDeprecated;
   std::vector<frc::Pose2d> poses{};
-  frc::Field2d closestPOI; // Field object
+  frc::Pose2d closestPOI; // Field object
   nt::NetworkTableInstance networkTableInst;
   nt::DoubleArraySubscriber baseLinkSubscriber;
 };

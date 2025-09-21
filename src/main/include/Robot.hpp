@@ -52,6 +52,7 @@
 #include <units/velocity.h>
 
 #include "subsystems/Elevator.h"
+#include "subsystems/Wrist.h"
 
 #include "subsystems/LEDController.h"
 #include "subsystems/Climber.h"
@@ -110,6 +111,13 @@ private:
     Climber m_climber;
 
     std::string_view baseLink = "base_link";
+    nt::StructPublisher<frc::Pose3d> stageOne3dPOS;
+    nt::StructPublisher<frc::Pose3d> carage3dPOS;
+    nt::StructPublisher<frc::Pose3d> wrist3dPOS;
+    nt::StructPublisher<frc::Pose3d> wristPOS;
+    nt::StructPublisher<frc::Pose3d> climb3dPOS;
+    nt::StructArrayPublisher<frc::Pose3d> modelPosePublisher;
+    nt::NetworkTableInstance networkTableInst;
 
     std::string targetKey = "POI/POIREEF";
     std::string prevAuto = "";

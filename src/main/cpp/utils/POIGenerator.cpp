@@ -6,12 +6,17 @@
 
 POIGenerator::POIGenerator() : networkTableInst(nt::NetworkTableInstance::GetDefault())
 {
-    auto poseTable = networkTableInst.GetTable("ROS2Bridge");
+    auto rosBridgeTable = networkTableInst.GetTable("ROS2Bridge");
+    auto sdTable = networkTableInst.GetTable("SmartDashboard");
 
-    baseLinkSubscriber = poseTable->GetDoubleArrayTopic(robotPoseLink).Subscribe({}, {.periodic = 0.01, .sendAll = true});
-    auto inst = nt::NetworkTableInstance::GetDefault();
-    frc::SmartDashboard::PutData("ClosestPOI", &closestPOI);
-    std::vector<nt::Topic> topics = inst.GetTopics("/SmartDashboard/POI");
+    baseLinkSubscriber = rosBridgeTable->GetDoubleArrayTopic(robotPoseLink).Subscribe({}, {.periodic = 0.01, .sendAll = true});
+    poiPublisher = sdTable->GetStructTopic<frc::Pose2d>("TargetPOI").Publish();
+    poiPublisherDeprecated = sdTable->GetDoubleArrayTopic("Field/TargetPOI").Publish();
+
+    // frc::SmartDashboard::PutData("Field/ClosestPOI", &closestPOI);
+    // poiPublisher.Set(closestPOI, nt::Now());
+
+    std::vector<nt::Topic> topics = networkTableInst.GetTopics("/SmartDashboard/POI");
     std::string prefix = "/SmartDashboard/";
     for (auto topic : topics)
     {
@@ -55,9 +60,21 @@ frc::Pose2d POIGenerator::GetClosestPOI()
 {
     std::vector<double> baseLinkPose = baseLinkSubscriber.GetAtomic().value;
     auto baseLink = DoubleArrayToPose2d(baseLinkPose);
-    auto pose = baseLink.Nearest(poses);
-    closestPOI.SetRobotPose(pose);
-    frc::SmartDashboard::PutNumber("TARGET POI X", pose.X().value());
-    frc::SmartDashboard::PutNumber("TARGET POI Y", pose.Y().value());
-    return pose;
+    if (poses.size() > 0)
+    {
+        auto pose = baseLink.Nearest(poses);
+        // closestPOI = pose;
+        poiPublisher.Set(pose, nt::Now());
+        double poseDeconstruct[]{double{pose.X()},
+                                 double{pose.Y()},
+                                 double(pose.Rotation().Radians())};
+
+        poiPublisherDeprecated.Set(poseDeconstruct, nt::Now());
+
+        return pose;
+    }
+    else
+    {
+        return frc::Pose2d(0_m, 0.0_m, frc::Rotation2d());
+    }
 }
