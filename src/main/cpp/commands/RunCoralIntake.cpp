@@ -4,9 +4,10 @@
 
 #include "commands/RunCoralIntake.h"
 
-RunCoralIntake::RunCoralIntake(IntakeCoral *intakeCoral) : m_intakeCoral{intakeCoral}
+RunCoralIntake::RunCoralIntake(IntakeCoral *intakeCoral, CoralIntakeV2 *coralIntakeV2) : m_intakeCoral{intakeCoral}, m_coralIntakeV2{coralIntakeV2}
 {
   AddRequirements(m_intakeCoral);
+  AddRequirements(m_coralIntakeV2);
 }
 
 // Called when the command is initially scheduled.
@@ -15,18 +16,19 @@ void RunCoralIntake::Initialize() {}
 // Called repeatedly when this Command is scheduled to run
 void RunCoralIntake::Execute()
 {
-  m_intakeCoral->Intake(-0.45);
+  m_coralIntakeV2->Intake(-0.45);
 }
 
 // Called once the command ends or is interrupted.
 void RunCoralIntake::End(bool interrupted)
 {
   // m_intakeCoral->stopMotors();
-  m_intakeCoral->Intake(-0.25);
+  m_coralIntakeV2->Intake(-0.25);
 }
 
 // Returns true when the command should end.
 bool RunCoralIntake::IsFinished()
 {
-  return m_intakeCoral->hasCoral();
+
+  return m_coralIntakeV2->hasCoral();
 }
