@@ -101,6 +101,8 @@ private:
     IntakeCoral m_CoralIntake;
     IntakeAlgae m_AlgaeIntake;
 
+    CoralIntakeV2 m_CoralIntakeV2;
+
     frc::SendableChooser<std::string> m_chooser;
     frc::AnalogInput batteryShunt{0};
 

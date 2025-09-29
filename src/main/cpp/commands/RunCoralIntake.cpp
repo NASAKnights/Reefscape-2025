@@ -4,7 +4,7 @@
 
 #include "commands/RunCoralIntake.h"
 
-RunCoralIntake::RunCoralIntake(IntakeCoral *intakeCoral, CoralIntakeV2 *coralIntakeV2) : m_intakeCoral{intakeCoral}, m_coralIntakeV2{coralIntakeV2}
+RunCoralIntake::RunCoralIntake(CoralIntakeV2 *coralIntakeV2) : m_coralIntakeV2{coralIntakeV2}
 {
   AddRequirements(m_intakeCoral);
   AddRequirements(m_coralIntakeV2);

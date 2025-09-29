@@ -17,7 +17,7 @@ public:
   /* You should consider using the more terse Command factories API instead
    * https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands
    */
-  RunCoralIntake(IntakeCoral *intakeCoral, CoralIntakeV2 *coralIntakeV2);
+  RunCoralIntake(CoralIntakeV2 *coralIntakeV2);
 
   void Initialize() override;
 
