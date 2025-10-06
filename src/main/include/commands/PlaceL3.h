@@ -9,9 +9,7 @@
 #include "subsystems/Wrist.h"
 #include "subsystems/Elevator.h"
 #include "subsystems/IntakeCoral.h"
-#include "subsystems/IntakeAlgae.h"
 #include "commands/Reset.h"
-#include "commands/RunAlgaeIntake.h"
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.
 // For more information, see:

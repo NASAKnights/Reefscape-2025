@@ -343,9 +343,9 @@ void Robot::BindCommands()
         .OnTrue(PlaceL3(&m_wrist, &m_elevator).ToPtr())
         .OnFalse(Reset(&m_elevator, &m_wrist).ToPtr());
 
-    frc2::JoystickButton(&m_operatorController, 5)
-        .WhileTrue(GrabCoralFar(&m_elevator, &m_wrist, &m_CoralIntakeV2).ToPtr())
-        .OnFalse(Reset(&m_elevator, &m_wrist).ToPtr());
+    // frc2::JoystickButton(&m_operatorController, 5)
+    //     .WhileTrue(GrabCoralFar(&m_elevator, &m_wrist, &m_CoralIntakeV2).ToPtr())
+    //     .OnFalse(Reset(&m_elevator, &m_wrist).ToPtr());
 
     frc2::JoystickButton(&m_operatorController, 6)
         .WhileTrue(GrabCoral(&m_elevator, &m_wrist, &m_CoralIntakeV2).ToPtr())
@@ -358,8 +358,8 @@ void Robot::BindCommands()
         .WhileTrue(RunCoralIntake(&m_CoralIntakeV2).ToPtr());
 
     // Left Trigger
-    frc2::JoystickButton(&m_operatorController, 7)
-        .WhileTrue(ScoreAlgae(&m_wrist, &m_AlgaeIntake, &m_elevator).ToPtr());
+    // frc2::JoystickButton(&m_operatorController, 7)
+    //     .WhileTrue(ScoreAlgae(&m_wrist, &m_AlgaeIntake, &m_elevator).ToPtr());
 
     // Right Trigger
     frc2::JoystickButton(&m_operatorController, 8)
@@ -372,13 +372,13 @@ void Robot::BindCommands()
     frc2::JoystickButton(&m_operatorController, 10)
         .WhileTrue(ClimbCage(&m_climber).ToPtr());
 
-    frc2::POVButton(&m_operatorController, 180) // Zero wrist
-        .OnTrue(frc2::CommandPtr(frc2::InstantCommand(
-            [this]
-            {
-                m_wrist.Zero();
-                return;
-            })));
+    // frc2::POVButton(&m_operatorController, 180) // Zero wrist
+    //     .OnTrue(frc2::CommandPtr(frc2::InstantCommand(
+    //         [this]
+    //         {
+    //             m_wrist.Zero();
+    //             return;
+    //         })));
 
     // frc2::POVButton(&m_operatorController, 0) // Zero wrist
     //     .OnTrue(frc2::CommandPtr(frc2::InstantCommand(

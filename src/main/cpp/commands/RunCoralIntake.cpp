@@ -6,7 +6,7 @@
 
 RunCoralIntake::RunCoralIntake(CoralIntakeV2 *coralIntakeV2) : m_coralIntakeV2{coralIntakeV2}
 {
-  AddRequirements(m_intakeCoral);
+  // AddRequirements(m_intakeCoral);
   AddRequirements(m_coralIntakeV2);
 }
 
@@ -23,7 +23,8 @@ void RunCoralIntake::Execute()
 void RunCoralIntake::End(bool interrupted)
 {
   // m_intakeCoral->stopMotors();
-  m_coralIntakeV2->Intake(-0.25);
+  // m_coralIntakeV2->Intake(-0.25);
+  m_coralIntakeV2->stopMotors();
 }
 
 // Returns true when the command should end.
