@@ -65,7 +65,8 @@ units::degree_t Wrist::GetMeasurement()
 
 void Wrist::SetAngle(double wristAngleGoal)
 {
-    if ((wristAngleGoal < double(WristConstants::kmaxAngle)) && (wristAngleGoal > double(WristConstants::kminAngle)))
+    frc::SmartDashboard::PutNumber("/Wrist/Wrist Angle Goal", wristAngleGoal);
+    if ((wristAngleGoal <= double(WristConstants::kmaxAngle.convert<units::angle::degree>())) && (wristAngleGoal >= double(WristConstants::kminAngle.convert<units::angle::degree>())))
     {
         // m_WristState = WristConstants::MOVE;
         m_WristState = WristConstants::START;
