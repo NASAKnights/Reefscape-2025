@@ -20,11 +20,13 @@ Wrist::Wrist() : m_controller(
                  m_WristSim(WristConstants::kSimMotor, WristConstants::kGearRatio, WristConstants::kmoi,
                             WristConstants::kWristLength, WristConstants::kminAngle, WristConstants::kmaxAngle,
                             WristConstants::kGravity, WristConstants::kWristStartAngle)
+
 {
     m_controller.SetIZone(WristConstants::kIZone);
     rev::spark::SparkBaseConfig config;
     config.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
-    config.encoder.PositionConversionFactor(360 / 81.0);
+    // config.encoder.PositionConversionFactor(360 / 81.0);
+    config.absoluteEncoder.PositionConversionFactor(360 / 9.);
     config.SmartCurrentLimit(30, 0, 20000);
 
     m_motor.Configure(config, rev::spark::SparkMax::ResetMode::kResetSafeParameters, rev::spark::SparkMax::PersistMode::kPersistParameters);
@@ -41,6 +43,8 @@ Wrist::Wrist() : m_controller(
     m_MotorVoltageLog = wpi::log::DoubleLogEntry(log, "/Wrist/MotorVoltage");
 
     m_encoder.SetPosition(m_absolute_encoder.GetAbsolutePosition().GetValue().value() * 360);
+
+    frc::SmartDashboard::PutNumber("Absolute Encoder Angle", m_absolute_encoder.GetAbsolutePosition().GetValue().value() * 360);
     // if constexpr(frc::RobotBase::IsSimulation())
     // {
     //     m_simTimer.Start();
@@ -60,7 +64,7 @@ units::degree_t Wrist::GetMeasurement()
         return m_WristSim.GetAngle();
     }
 
-    return units::degree_t{m_encoder.GetPosition()};
+    return units::degree_t{m_IntakeWristEncoder.GetPosition()};
 }
 
 void Wrist::SetAngle(double wristAngleGoal)
@@ -78,6 +82,7 @@ void Wrist::SetAngle(double wristAngleGoal)
 
 void Wrist::Periodic()
 {
+    frc::SmartDashboard::PutNumber("Absolute Encoder Angle", m_absolute_encoder.GetAbsolutePosition().GetValue().value() * 360);
 
     printLog();
     double fb;
@@ -144,7 +149,7 @@ WristConstants::WristState Wrist::GetState()
 
 void Wrist::Zero()
 {
-    m_encoder.SetPosition(m_absolute_encoder.GetAbsolutePosition().GetValue().value() * 360);
+    m_encoder.SetPosition(m_absolute_encoder.GetAbsolutePosition().GetValue().value());
 }
 
 void Wrist::printLog()

@@ -32,19 +32,14 @@
 
 #include "commands/RunCoralIntake.h"
 #include "commands/RunCoralOuttake.h"
-#include "commands/RunAlgaeIntake.h"
-#include "commands/RunAlgaeOuttake.h"
 #include "commands/PlaceL4.h"
 #include "commands/PlaceL3.h"
 #include "commands/PlaceL2.h"
 #include "commands/PlaceL1.h"
-#include "commands/GrabAlgaeL2.h"
-#include "commands/GrabAlgaeL3.h"
 #include "commands/GrabCoral.h"
 #include "commands/GrabCoralFar.h"
-#include "commands/ScoreAlgae.h"
+
 #include "commands/ClimbCage.h"
-#include "subsystems/IntakeAlgae.h"
 #include "commands/GrabCoralFar.h"
 #include "commands/GoToPoint.h"
 
@@ -55,7 +50,7 @@
 
 #include "subsystems/LEDController.h"
 #include "subsystems/Climber.h"
-#include "subsystems/IntakeAlgae.h"
+
 #include "subsystems/IntakeCoral.h"
 
 #include "commands/ClimbCage.h"
@@ -99,7 +94,8 @@ private:
     // Subsystems
 
     IntakeCoral m_CoralIntake;
-    IntakeAlgae m_AlgaeIntake;
+
+    CoralIntakeV2 m_CoralIntakeV2;
 
     frc::SendableChooser<std::string> m_chooser;
     frc::AnalogInput batteryShunt{0};

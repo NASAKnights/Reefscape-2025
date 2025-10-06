@@ -5,18 +5,25 @@
 #pragma once
 
 #include <frc2/command/SubsystemBase.h>
+#include <frc/DigitalInput.h>
 #include <ctre/phoenix/motorcontrol/can/TalonSRX.h>
+#include <rev/SparkMax.h>
+#include <frc/smartdashboard/SmartDashboard.h>
+#include <frc/Timer.h>
 
-class IntakeAlgae : public frc2::SubsystemBase
+class CoralIntakeV2 : public frc2::SubsystemBase
 {
 public:
-  IntakeAlgae();
-  void SetConfig();
+  CoralIntakeV2();
   void Intake(double Speed);
   void Outtake(double Speed);
+  bool IsLimitSwitch();
+  void SetConfig();
   void stopMotors();
 
-  bool hasAlgae();
+  bool hasCoral();
+
+  // frc::DigitalInput limitSwitch;
 
   /**
    * Will be called periodically whenever the CommandScheduler runs.
@@ -25,7 +32,9 @@ public:
 
 private:
   bool Configure = false;
-  ctre::phoenix::motorcontrol::can::TalonSRX AlgaeMotorController{3};
+  rev::spark::SparkMax coralIntakeMotor;
+  frc::Timer timerV2;
+
   // Components (e.g. motor controllers and sensors) should generally be
   // declared private and exposed only through public methods.
 };

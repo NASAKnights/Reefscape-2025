@@ -193,11 +193,11 @@ void Robot::CreateRobot()
     pathplanner::EventTrigger("Score L2").OnTrue(std::move(PlaceL2(&m_wrist, &m_elevator)).ToPtr());
     pathplanner::EventTrigger("Score L3").OnTrue(std::move(PlaceL3(&m_wrist, &m_elevator)).ToPtr());
     pathplanner::EventTrigger("Score L4").OnTrue(std::move(PlaceL4(&m_wrist, &m_elevator)).ToPtr());
-    pathplanner::EventTrigger("Intake").WhileTrue(std::move(GrabCoral(&m_elevator, &m_wrist, &m_CoralIntake).ToPtr()));
+    pathplanner::EventTrigger("Intake").WhileTrue(std::move(GrabCoral(&m_elevator, &m_wrist, &m_CoralIntakeV2).ToPtr()));
 
-    pathplanner::NamedCommands::registerCommand("IntakeNAMED", std::move(GrabCoral(&m_elevator, &m_wrist, &m_CoralIntake).ToPtr()));
+    pathplanner::NamedCommands::registerCommand("IntakeNAMED", std::move(GrabCoral(&m_elevator, &m_wrist, &m_CoralIntakeV2).ToPtr()));
     pathplanner::NamedCommands::registerCommand("OuttakeCoralNAMED", std::move(RunCoralOuttake(&m_CoralIntake).ToPtr()));
-    pathplanner::NamedCommands::registerCommand("RunIntake", std::move(RunCoralIntake(&m_CoralIntake).ToPtr()));
+    pathplanner::NamedCommands::registerCommand("RunIntake", std::move(RunCoralIntake(&m_CoralIntakeV2).ToPtr()));
 
     pathplanner::EventTrigger("OuttakeCoral").WhileTrue(std::move(RunCoralOuttake(&m_CoralIntake).ToPtr()));
     // pathplanner::NamedCommands::registerCommand("Vision", std::move(GoToPoint(&m_swerveDrive, &m_poiGenerator).ToPtr()));
@@ -343,23 +343,23 @@ void Robot::BindCommands()
         .OnTrue(PlaceL3(&m_wrist, &m_elevator).ToPtr())
         .OnFalse(Reset(&m_elevator, &m_wrist).ToPtr());
 
-    frc2::JoystickButton(&m_operatorController, 5)
-        .WhileTrue(GrabCoralFar(&m_elevator, &m_wrist, &m_CoralIntake).ToPtr())
-        .OnFalse(Reset(&m_elevator, &m_wrist).ToPtr());
+    // frc2::JoystickButton(&m_operatorController, 5)
+    //     .WhileTrue(GrabCoralFar(&m_elevator, &m_wrist, &m_CoralIntakeV2).ToPtr())
+    //     .OnFalse(Reset(&m_elevator, &m_wrist).ToPtr());
 
     frc2::JoystickButton(&m_operatorController, 6)
-        .WhileTrue(GrabCoral(&m_elevator, &m_wrist, &m_CoralIntake).ToPtr())
+        .WhileTrue(GrabCoral(&m_elevator, &m_wrist, &m_CoralIntakeV2).ToPtr())
         .OnFalse(Reset(&m_elevator, &m_wrist).ToPtr());
 
     // frc2::JoystickButton(&m_operatorController, 6)
     //     .WhileTrue(GrabAlgaeL3(&m_AlgaeIntake).ToPtr());
     // ^ Rewrite command to include elevator
     frc2::POVButton(&m_operatorController, 0)
-        .WhileTrue(RunCoralIntake(&m_CoralIntake).ToPtr());
+        .WhileTrue(RunCoralIntake(&m_CoralIntakeV2).ToPtr());
 
     // Left Trigger
-    frc2::JoystickButton(&m_operatorController, 7)
-        .WhileTrue(ScoreAlgae(&m_wrist, &m_AlgaeIntake, &m_elevator).ToPtr());
+    // frc2::JoystickButton(&m_operatorController, 7)
+    //     .WhileTrue(ScoreAlgae(&m_wrist, &m_AlgaeIntake, &m_elevator).ToPtr());
 
     // Right Trigger
     frc2::JoystickButton(&m_operatorController, 8)
@@ -372,13 +372,13 @@ void Robot::BindCommands()
     frc2::JoystickButton(&m_operatorController, 10)
         .WhileTrue(ClimbCage(&m_climber).ToPtr());
 
-    frc2::POVButton(&m_operatorController, 180) // Zero wrist
-        .OnTrue(frc2::CommandPtr(frc2::InstantCommand(
-            [this]
-            {
-                m_wrist.Zero();
-                return;
-            })));
+    // frc2::POVButton(&m_operatorController, 180) // Zero wrist
+    //     .OnTrue(frc2::CommandPtr(frc2::InstantCommand(
+    //         [this]
+    //         {
+    //             m_wrist.Zero();
+    //             return;
+    //         })));
 
     // frc2::POVButton(&m_operatorController, 0) // Zero wrist
     //     .OnTrue(frc2::CommandPtr(frc2::InstantCommand(
