@@ -25,8 +25,7 @@ Wrist::Wrist() : m_controller(
     m_controller.SetIZone(WristConstants::kIZone);
     rev::spark::SparkBaseConfig config;
     config.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kBrake);
-    // config.encoder.PositionConversionFactor(360 / 81.0);
-    config.absoluteEncoder.PositionConversionFactor(360 / 9.);
+    config.encoder.PositionConversionFactor(360 / 81.0);
     config.SmartCurrentLimit(30, 0, 20000);
 
     m_motor.Configure(config, rev::spark::SparkMax::ResetMode::kResetSafeParameters, rev::spark::SparkMax::PersistMode::kPersistParameters);
@@ -64,7 +63,7 @@ units::degree_t Wrist::GetMeasurement()
         return m_WristSim.GetAngle();
     }
 
-    return units::degree_t{m_IntakeWristEncoder.GetPosition()};
+    return units::degree_t{m_absolute_encoder.GetPosition().GetValue()};
 }
 
 void Wrist::SetAngle(double wristAngleGoal)

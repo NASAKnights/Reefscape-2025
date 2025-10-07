@@ -119,6 +119,4 @@ private:
     hal::SimDouble m_WristSimposition;
 
     rev::spark::SparkBaseConfig WristFollowConfig;
-
-    rev::spark::SparkAbsoluteEncoder m_IntakeWristEncoder = m_motor.GetAbsoluteEncoder();
 };
