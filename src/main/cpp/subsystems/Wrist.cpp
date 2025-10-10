@@ -15,7 +15,7 @@ Wrist::Wrist() : m_controller(
                                                                                                                          WristConstants::kFFkA),
                  m_encoder{m_motor.GetEncoder()},
 
-                 m_absolute_encoder{0},
+                 m_absolute_encoder{3},
 
                  m_WristSim(WristConstants::kSimMotor, WristConstants::kGearRatio, WristConstants::kmoi,
                             WristConstants::kWristLength, WristConstants::kminAngle, WristConstants::kmaxAngle,

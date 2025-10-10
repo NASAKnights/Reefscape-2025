@@ -11,7 +11,6 @@
 #include <frc2/command/ParallelCommandGroup.h>
 #include <frc2/command/CommandHelper.h>
 #include <frc2/command/SequentialCommandGroup.h>
-#include "subsystems/CoralIntakeV2.h"
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.
 // For more information, see:
@@ -21,7 +20,7 @@ class GrabCoral
                                  GrabCoral>
 {
 public:
-  GrabCoral(Elevator *elevator, Wrist *wrist, CoralIntakeV2 *coralIntakeV2);
+  GrabCoral(Elevator *elevator, Wrist *wrist, IntakeCoral *Intakecoral);
 
 private:
 };

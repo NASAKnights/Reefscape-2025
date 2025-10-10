@@ -7,7 +7,6 @@
 #include <frc2/command/Command.h>
 #include <frc2/command/CommandHelper.h>
 #include <subsystems/IntakeCoral.h>
-#include <subsystems/CoralIntakeV2.h>
 #include <frc/Timer.h>
 
 class RunCoralIntake
@@ -17,7 +16,7 @@ public:
   /* You should consider using the more terse Command factories API instead
    * https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands
    */
-  RunCoralIntake(CoralIntakeV2 *coralIntakeV2);
+  RunCoralIntake(IntakeCoral *_Intakecoral);
 
   void Initialize() override;
 
@@ -28,7 +27,6 @@ public:
   bool IsFinished() override;
 
 private:
-  IntakeCoral *m_intakeCoral;
-  CoralIntakeV2 *m_coralIntakeV2;
+  IntakeCoral *m_Intakecoral;
   timer_t timer1;
 };

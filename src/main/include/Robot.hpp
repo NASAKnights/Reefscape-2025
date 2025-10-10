@@ -93,11 +93,12 @@ private:
 
     // Subsystems
 
-    IntakeCoral m_CoralIntake;
+    // IntakeCoral m_CoralIntake;
 
-    CoralIntakeV2 m_CoralIntakeV2;
+    IntakeCoral m_Intakecoral;
 
-    frc::SendableChooser<std::string> m_chooser;
+    frc::SendableChooser<std::string>
+        m_chooser;
     frc::AnalogInput batteryShunt{0};
 
     SwerveDrive m_swerveDrive;
