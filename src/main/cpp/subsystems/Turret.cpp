@@ -60,7 +60,8 @@ void Turret::SetAngle(double TurretAngleGoal)
     // m_TurretState = TurretConstants::MOVE;
     if (TurretAngleGoal != m_goal.value())
     {
-        m_TurretState = TurretConstants::START;
+        if ((TurretAngleGoal <= double(TurretConstants::kmaxAngle.convert<units::angle::degree>())) && (TurretAngleGoal >= double(TurretConstants::kminAngle.convert<units::degree>())))
+            m_TurretState = TurretConstants::START;
         m_goal = units::angle::degree_t(TurretAngleGoal);
     }
     // m_controller.Reset(GetMeasurement());
@@ -127,6 +128,28 @@ void Turret::Periodic()
     case TurretConstants::TRACKING:
     {
         // do math stuff perchance
+
+        // Minimize
+        // theta = arccos((vector(turret2goal) * <1,0>)/(||vector(turret2goal|| * ||<1,0>||)) + arccos((trace(world2turret_rotation_matrix) - 1)/2)
+
+        // Measurement: angle between world y axis and vector(turret2goal)
+        // arccos((vector(turret2goal) * <1,0>)/(||vector(turret2goal|| * ||<1,0>||)) = angle between world y axis and vector(turret2goal)
+
+        // Control Var/ Control angle:
+        // arccos((trace(world2turret_rotation_matrix) - 1)/2) = angle between turret y axis and world y axis
+
+        // world2robot comes in 2D pose: SwerveDrive.Getpose() ?
+        // world2goal comes from camera
+        // robot2turret comes from 3D pose and encoder
+        // world2turret rotation matrix: how get?
+
+        // grab world2robot, world2goal, robot2turret transforms
+        // get world2turret transform from world2robot * robot2turret
+        // get turret2goal transform from (world2turret)^-1 * world2goal
+        // get turret2goal vector from turret2goal transform
+        // grab rotation matrix from world2turret transform
+        // Calc control angle to make theta 0
+        // set goal angle to control Var angle needed to make theta zero
     }
     default:
     {
