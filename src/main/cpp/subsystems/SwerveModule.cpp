@@ -16,6 +16,7 @@
 #include <units/angular_velocity.h>
 
 #include "Constants.hpp"
+#include <frc/RobotState.h>
 
 using namespace ctre::phoenix6;
 using namespace ModuleConstants;
@@ -120,6 +121,13 @@ void SwerveModule::Periodic()
   frc::SmartDashboard::PutNumber(
       "Module " + std::to_string(m_id) + "/" + " Rotations",
       (m_driveMotor.GetPosition()).GetValue().value());
+  if constexpr (frc::RobotBase::IsSimulation())
+  {
+    if (frc::RobotState::IsEnabled())
+    {
+      SimulationPeriodic();
+    }
+  }
 }
 
 void SwerveModule::SimulationPeriodic()

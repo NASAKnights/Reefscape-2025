@@ -23,7 +23,7 @@ Turret::Turret() : m_controller(
 
     m_controller.SetTolerance(TurretConstants::kTolerancePos, TurretConstants::kToleranceVel);
     // Start m_Turret in neutral position
-    m_TurretState = TurretConstants::DISABLED;
+    m_TurretState = TurretConstants::HOLD;
     wpi::log::DataLog &log = frc::DataLogManager::GetLog();
     m_AngleLog = wpi::log::DoubleLogEntry(log, "/Turret/Angle");
     m_SetPointLog = wpi::log::DoubleLogEntry(log, "/Turret/Setpoint");
@@ -61,12 +61,60 @@ void Turret::SetAngle(double TurretAngleGoal)
     if (TurretAngleGoal != m_goal.value())
     {
         if ((TurretAngleGoal <= double(TurretConstants::kmaxAngle.convert<units::angle::degree>())) && (TurretAngleGoal >= double(TurretConstants::kminAngle.convert<units::degree>())))
+        {
             m_TurretState = TurretConstants::START;
-        m_goal = units::angle::degree_t(TurretAngleGoal);
+            m_goal = units::angle::degree_t(TurretAngleGoal);
+        }
     }
     // m_controller.Reset(GetMeasurement());
     // m_controller.SetGoal(m_goal);
     frc::SmartDashboard::PutNumber("/Turret/m_goal", double(m_goal));
+}
+
+double Turret::findTrackingAngle()
+{
+    auto poseTable = networkTableInst.GetTable("ROS2Bridge");
+
+    baseLinkSubscriber = poseTable->GetDoubleArrayTopic(robotPoseLink).Subscribe({}, {.periodic = 0.01, .sendAll = true});
+
+    std::vector<double> baseLinkPose = baseLinkSubscriber.GetAtomic().value;
+    auto baseLink = DoubleArrayToPose2d(baseLinkPose);
+
+    frc::Transform3d world2robot = frc::Transform3d(units::meter_t{baseLink.X()}, units::meter_t{baseLink.Y()}, 0_m, frc::Rotation3d(0_rad, 0_rad, baseLink.Rotation().Radians()));
+
+    // goalSubscriber = poseTable->GetDoubleArrayTopic(goalPoseLink).Subscribe({}, {.periodic = 0.01, .sendAll = true});
+
+    // std::vector<double> goalPose = goalSubscriber.GetAtomic().value;
+    // auto world2goal = DoubleArrayToPose2d(goalPose);
+
+    frc::Transform3d world2goal = frc::Transform3d(2_m, 2_m, 0_m, frc::Rotation3d());
+
+    // world2turret rotation matrix
+    frc::Transform3d world2turret = frc::Transform3d(units::length::meter_t{baseLink.X() + units::length::meter_t{TurretConstants::kXOffset}}, units::length::meter_t{baseLink.Y() + units::length::meter_t{TurretConstants::kYOffset}}, units::length::meter_t{TurretConstants::kZOffset}, frc::Rotation3d(0.0_rad, 0.0_rad, units::angle::radian_t{GetMeasurement().convert<units::angle::radians>()}));
+
+    // grab world2robot, world2goal, robot2turret transforms
+
+    // get robot2turret transform from world2robot * (world2turret)^-1
+
+    frc::Transform3d robot2turret = frc::Transform3d(world2robot.ToMatrix().inverse() * world2turret.ToMatrix());
+    // get turret2goal transform from (world2turret)^-1 * world2goal
+
+    frc::Transform3d turret2goal = frc::Transform3d(world2turret.ToMatrix().inverse() * world2goal.ToMatrix());
+
+    // get turret2goal vector from turret2goal transform
+    Eigen::Vector3d tgVector = turret2goal.Translation().ToVector();
+
+    // grab rotation matrix from world2turret transform
+    // Calc control angle to make theta 0
+
+    units::angle::degree_t beta = units::angle::degree_t(std::acos((tgVector.dot(Eigen::Vector3d(0.0, 1.0, 0.0))) / (tgVector.norm()))); // make better var name
+    units::angle::degree_t current_alpha = units::angle::degree_t(std::acos((world2turret.Rotation().ToMatrix().trace() - 1) / 2));
+
+    units::angle::degree_t error = beta - current_alpha;
+
+    double goalAngle = double(GetMeasurement().convert<units::angle::degrees>() + error);
+
+    return goalAngle;
 }
 
 void Turret::Periodic()
@@ -109,6 +157,10 @@ void Turret::Periodic()
     }
     case TurretConstants::HOLD:
     {
+        // if (isTracking)
+        // {
+        //     m_TurretState = TurretConstants::TRACKING;
+        // }
         frc::SmartDashboard::PutString("/Turret/State", "HOLD");
         double fb = m_controller.Calculate(GetMeasurement());
         units::volt_t ff = m_feedforward.Calculate(units::radian_t{m_controller.GetSetpoint().position}, units::radians_per_second_t{m_controller.GetSetpoint().velocity}, units::radians_per_second_squared_t{m_controller.GetSetpoint().velocity / 1_s});
@@ -133,23 +185,20 @@ void Turret::Periodic()
         // theta = arccos((vector(turret2goal) * <1,0>)/(||vector(turret2goal|| * ||<1,0>||)) + arccos((trace(world2turret_rotation_matrix) - 1)/2)
 
         // Measurement: angle between world y axis and vector(turret2goal)
-        // arccos((vector(turret2goal) * <1,0>)/(||vector(turret2goal|| * ||<1,0>||)) = angle between world y axis and vector(turret2goal)
+        // arccos((vector(turret2goal) * <1,0>)/(||vector(turret2goal)|| * ||<1,0>||)) = angle between world y axis and vector(turret2goal)
 
         // Control Var/ Control angle:
         // arccos((trace(world2turret_rotation_matrix) - 1)/2) = angle between turret y axis and world y axis
 
-        // world2robot comes in 2D pose: SwerveDrive.Getpose() ?
-        // world2goal comes from camera
-        // robot2turret comes from 3D pose and encoder
-        // world2turret rotation matrix: how get?
+        // beta - current(alpha) = error
+        //  current angle + error = new goal angle
 
-        // grab world2robot, world2goal, robot2turret transforms
-        // get world2turret transform from world2robot * robot2turret
-        // get turret2goal transform from (world2turret)^-1 * world2goal
-        // get turret2goal vector from turret2goal transform
-        // grab rotation matrix from world2turret transform
-        // Calc control angle to make theta 0
+        // world2robot comes in 2D pose: SwerveDrive.Getpose()
+        frc::SmartDashboard::PutString("/Turret/State", "Tracking");
+
         // set goal angle to control Var angle needed to make theta zero
+        // SetAngle(findTrackingAngle());
+        break;
     }
     default:
     {

@@ -15,6 +15,8 @@
 #include <units/time.h>
 #include <units/acceleration.h>
 
+#include <subsystems/SwerveDrive.hpp>
+
 #include "Constants.hpp"
 #include <frc/DigitalInput.h>
 #include <frc/RobotBase.h>
@@ -66,6 +68,10 @@ namespace TurretConstants
   const bool kGravity = false;
   const units::angle::radian_t kTurretStartAngle = units::angle::radian_t(0.0);
 
+  const double kXOffset = 0.0;
+  const double kYOffset = 0.0;
+  const double kZOffset = 0.0;
+
 } // namespace ArmConstants
 
 /**
@@ -89,11 +95,34 @@ public:
   void HoldPosition();
   // void get_pigeon();
   units::degree_t GetMeasurement();
+  double findTrackingAngle();
   TurretConstants::TurretState GetState();
+  bool isTracking = true;
 
   // units::time::second_t time_brake_released;
 
 private:
+  static frc::Pose2d DoubleArrayToPose2d(std::vector<double> arr)
+  {
+    if (arr.size() > 0)
+    {
+      auto x = units::length::meter_t(arr.at(0));
+      auto y = units::length::meter_t(arr.at(1));
+
+      auto o = units::angle::radian_t(
+          frc::Rotation3d(frc::Quaternion(arr.at(6),
+                                          arr.at(3),
+                                          arr.at(4),
+                                          arr.at(5)))
+              .ToRotation2d()
+              .Radians()
+              .value());
+
+      frc::SmartDashboard::PutBoolean("DIDIWORK?", true);
+
+      return frc::Pose2d(x, y, o);
+    }
+  }
   TurretConstants::TurretState m_TurretState;
   void printLog();
   ctre::phoenix6::hardware::TalonFX m_motor;
@@ -106,7 +135,9 @@ private:
   frc::Timer *m_timer;
   float Turret_Angle;
 
-  bool speed;
+  SwerveDrive m_swerveDrive;
+
+  // bool speed;
   units::degree_t m_goal;
 
   frc::Timer m_simTimer;
@@ -117,4 +148,11 @@ private:
 
   hal::SimDouble m_TurretSimVelocity;
   hal::SimDouble m_TurretSimposition;
+  nt::DoubleArraySubscriber baseLinkSubscriber;
+  nt::DoubleArraySubscriber goalSubscriber;
+  std::string_view robotPoseLink = "base_link";
+  std::string_view goalPoseLink = "goal";
+  std::vector<frc::Pose2d> poses{};
+  frc::Field2d closestPOI; // Field object
+  nt::NetworkTableInstance networkTableInst;
 };
