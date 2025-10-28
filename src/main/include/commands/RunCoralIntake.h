@@ -28,5 +28,4 @@ public:
 
 private:
   IntakeCoral *m_Intakecoral;
-  timer_t timer1;
 };
