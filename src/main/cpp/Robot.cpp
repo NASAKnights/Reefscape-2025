@@ -138,17 +138,7 @@ void Robot::TeleopPeriodic()
         frc::SmartDashboard::PutNumber("drive/accelLim", 4.0);
     }
 
-    // frc::SmartDashboard::PutBoolean("/Turret/isTracking", m_turret.isTracking);
-
-    // if (m_operatorController.GetRawButton(4))
-    // {
-    //     m_turret.isTracking = false;
-    //     m_turret.SetAngle(MathUtilNK::calculateAxis(m_operatorController.GetRawAxis(0), DriveConstants::kDefaultAxisDeadband) * 135);
-    // }
-    // else
-    // {
-    //     m_turret.isTracking = true;
-    // }
+    // m_turret.SetAngle(MathUtilNK::calculateAxis(m_operatorController.GetRawAxis(0), DriveConstants::kDefaultAxisDeadband) * 135);
 }
 
 void Robot::TeleopExit()

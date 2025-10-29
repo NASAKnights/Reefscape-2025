@@ -3,6 +3,9 @@
 // the WPILib BSD license file in the root directory of this project.
 #include "subsystems/Turret.h"
 
+#include <frc/geometry/Transform3d.h>
+#include <frc/geometry/Translation2d.h>
+
 using State = frc::TrapezoidProfile<units::degrees>::State;
 using degrees_per_second_squared_t =
     units::unit_t<units::compound_unit<units::angular_velocity::degrees_per_second,
@@ -23,13 +26,20 @@ Turret::Turret() : m_controller(
 
     m_controller.SetTolerance(TurretConstants::kTolerancePos, TurretConstants::kToleranceVel);
     // Start m_Turret in neutral position
-    m_TurretState = TurretConstants::HOLD;
+    m_TurretState = TurretConstants::TRACKING;
     wpi::log::DataLog &log = frc::DataLogManager::GetLog();
     m_AngleLog = wpi::log::DoubleLogEntry(log, "/Turret/Angle");
     m_SetPointLog = wpi::log::DoubleLogEntry(log, "/Turret/Setpoint");
     m_StateLog = wpi::log::IntegerLogEntry(log, "/Turret/State");
     m_MotorCurrentLog = wpi::log::DoubleLogEntry(log, "/Turret/MotorCurrent");
     m_MotorVoltageLog = wpi::log::DoubleLogEntry(log, "/Turret/MotorVoltage");
+
+    networkTableInst = nt::NetworkTableInstance::GetDefault();
+    auto poseTable = networkTableInst.GetTable("ROS2Bridge");
+    baseLinkSubscriber = poseTable->GetDoubleArrayTopic(robotPoseLink).Subscribe({}, {.periodic = 0.02, .sendAll = true});
+
+    m_turretObject = m_turretField.GetObject("Turret");
+    frc::SmartDashboard::PutData("Turret Field", &m_turretField);
 
     // if constexpr(frc::RobotBase::IsSimulation())
     // {
@@ -55,42 +65,31 @@ units::degree_t Turret::GetMeasurement()
     return units::turn_t{(m_motor.GetPosition().GetValue() / TurretConstants::kGearRatio)};
 }
 
-void Turret::SetAngle(double TurretAngleGoal)
+units::degree_t Turret::findTrackingAngle()
 {
-    // m_TurretState = TurretConstants::MOVE;
-    if (TurretAngleGoal != m_goal.value())
-    {
-        if ((TurretAngleGoal <= double(TurretConstants::kmaxAngle.convert<units::angle::degree>())) && (TurretAngleGoal >= double(TurretConstants::kminAngle.convert<units::degree>())))
-        {
-            m_TurretState = TurretConstants::START;
-            m_goal = units::angle::degree_t(TurretAngleGoal);
-        }
-    }
-    // m_controller.Reset(GetMeasurement());
-    // m_controller.SetGoal(m_goal);
-    frc::SmartDashboard::PutNumber("/Turret/m_goal", double(m_goal));
-}
-
-double Turret::findTrackingAngle()
-{
-    auto poseTable = networkTableInst.GetTable("ROS2Bridge");
-
-    baseLinkSubscriber = poseTable->GetDoubleArrayTopic(robotPoseLink).Subscribe({}, {.periodic = 0.01, .sendAll = true});
-
-    std::vector<double> baseLinkPose = baseLinkSubscriber.GetAtomic().value;
+    std::vector<double> baseLinkPose = baseLinkSubscriber.Get({});
     auto baseLink = DoubleArrayToPose2d(baseLinkPose);
+    if (!baseLink.has_value())
+    {
+        return GetMeasurement();
+    }
 
-    frc::Transform3d world2robot = frc::Transform3d(units::meter_t{baseLink.X()}, units::meter_t{baseLink.Y()}, 0_m, frc::Rotation3d(0_rad, 0_rad, baseLink.Rotation().Radians()));
+    frc::Transform3d world2robot = frc::Transform3d(baseLink->X(), baseLink->Y(), 0_m, frc::Rotation3d(0_rad, 0_rad, baseLink->Rotation().Radians()));
 
     // goalSubscriber = poseTable->GetDoubleArrayTopic(goalPoseLink).Subscribe({}, {.periodic = 0.01, .sendAll = true});
 
     // std::vector<double> goalPose = goalSubscriber.GetAtomic().value;
     // auto world2goal = DoubleArrayToPose2d(goalPose);
 
-    frc::Transform3d world2goal = frc::Transform3d(2_m, 2_m, 0_m, frc::Rotation3d());
+    frc::Transform3d world2goal = goal;
 
     // world2turret rotation matrix
-    frc::Transform3d world2turret = frc::Transform3d(units::length::meter_t{baseLink.X() + units::length::meter_t{TurretConstants::kXOffset}}, units::length::meter_t{baseLink.Y() + units::length::meter_t{TurretConstants::kYOffset}}, units::length::meter_t{TurretConstants::kZOffset}, frc::Rotation3d(0.0_rad, 0.0_rad, units::angle::radian_t{GetMeasurement().convert<units::angle::radians>()}));
+    frc::Transform3d world2turret =
+        frc::Transform3d(baseLink->X() + units::length::meter_t{TurretConstants::kXOffset},
+                         baseLink->Y() + units::length::meter_t{TurretConstants::kYOffset},
+                         units::length::meter_t{TurretConstants::kZOffset},
+                         frc::Rotation3d(0.0_rad, 0.0_rad,
+                                         units::angle::radian_t{GetMeasurement().convert<units::angle::radians>()} + baseLink->Rotation().Radians()));
 
     // grab world2robot, world2goal, robot2turret transforms
 
@@ -99,62 +98,65 @@ double Turret::findTrackingAngle()
     frc::Transform3d robot2turret = frc::Transform3d(world2robot.ToMatrix().inverse() * world2turret.ToMatrix());
     // get turret2goal transform from (world2turret)^-1 * world2goal
 
-    frc::Transform3d turret2goal = frc::Transform3d(world2turret.ToMatrix().inverse() * world2goal.ToMatrix());
+    // Compute world-space vector from turret to goal
+    Eigen::Vector3d tgVector = (world2goal.Translation() - world2turret.Translation()).ToVector();
 
-    // get turret2goal vector from turret2goal transform
-    Eigen::Vector3d tgVector = turret2goal.Translation().ToVector();
+    // Compute desired yaw in world frame
+    units::radian_t targetYaw = units::radian_t{std::atan2(tgVector.y(), tgVector.x())};
 
-    // grab rotation matrix from world2turret transform
-    // Calc control angle to make theta 0
+    // Get current turret yaw in world frame
+    units::radian_t turretYaw = world2turret.Rotation().ToRotation2d().Radians();
 
-    units::angle::degree_t beta = units::angle::degree_t(std::acos((tgVector.dot(Eigen::Vector3d(0.0, 1.0, 0.0))) / (tgVector.norm()))); // make better var name
-    units::angle::degree_t current_alpha = units::angle::degree_t(std::acos((world2turret.Rotation().ToMatrix().trace() - 1) / 2));
+    // Find smallest signed error
+    units::radian_t error = frc::AngleModulus(targetYaw - turretYaw);
 
-    units::angle::degree_t error = beta - current_alpha;
+    // Add to current turret angle
+    units::degree_t newTarget = GetMeasurement() + units::degree_t{error};
 
-    double goalAngle = double(GetMeasurement().convert<units::angle::degrees>() + error);
+    // If the computed target exceeds the upper limit by >180°, it likely wrapped
+    if (newTarget > TurretConstants::kmaxAngle)
+    {
+        // If we’re only just beyond by less than 180°, clamp
+        if (newTarget - 360_deg >= TurretConstants::kminAngle)
+            newTarget -= 360_deg;
+        else
+            newTarget = TurretConstants::kmaxAngle;
+    }
+    else if (newTarget < TurretConstants::kminAngle)
+    {
+        if (newTarget + 360_deg <= TurretConstants::kmaxAngle)
+            newTarget += 360_deg;
+        else
+            newTarget = TurretConstants::kminAngle;
+    }
+    return newTarget;
+}
 
-    return goalAngle;
+void Turret::SetAngle(units::degree_t TurretAngleGoal)
+{
+    if (TurretAngleGoal != m_goal)
+    {
+        if ((TurretAngleGoal <= TurretConstants::kmaxAngle) &&
+            (TurretAngleGoal >= TurretConstants::kminAngle))
+        {
+            m_goal = units::angle::degree_t(TurretAngleGoal);
+            m_controller.Reset(GetMeasurement());
+            m_controller.SetGoal(m_goal);
+        }
+    }
+    frc::SmartDashboard::PutNumber("/Turret/m_goal", double(m_goal));
 }
 
 void Turret::Periodic()
 {
 
     printLog();
+    UpdateFieldVisuals();
     double fb;
     units::volt_t ff;
     units::volt_t v;
-
     switch (m_TurretState)
     {
-    case TurretConstants::START:
-    {
-        frc::SmartDashboard::PutString("/Turret/State", "START");
-        m_controller.Reset(GetMeasurement());
-        m_controller.SetGoal(m_goal);
-        m_TurretState = TurretConstants::MOVE;
-    }
-    case TurretConstants::MOVE:
-    {
-
-        frc::SmartDashboard::PutString("/Turret/State", "MOVE");
-        if (m_controller.AtGoal())
-        {
-            m_TurretState = TurretConstants::HOLD;
-        }
-        else
-        {
-            fb = m_controller.Calculate(GetMeasurement());
-            ff = m_feedforward.Calculate(units::radian_t{m_controller.GetSetpoint().position}, units::radians_per_second_t{m_controller.GetSetpoint().velocity}, units::radians_per_second_squared_t{m_controller.GetSetpoint().velocity / 1_s});
-            v = units::volt_t{fb} + ff;
-            if constexpr (frc::RobotBase::IsSimulation())
-            {
-                m_TurretSim.SetInputVoltage(v);
-            }
-            m_motor.SetVoltage(v);
-        }
-        break;
-    }
     case TurretConstants::HOLD:
     {
         // if (isTracking)
@@ -162,43 +164,24 @@ void Turret::Periodic()
         //     m_TurretState = TurretConstants::TRACKING;
         // }
         frc::SmartDashboard::PutString("/Turret/State", "HOLD");
-        double fb = m_controller.Calculate(GetMeasurement());
-        units::volt_t ff = m_feedforward.Calculate(units::radian_t{m_controller.GetSetpoint().position}, units::radians_per_second_t{m_controller.GetSetpoint().velocity}, units::radians_per_second_squared_t{m_controller.GetSetpoint().velocity / 1_s});
-        units::volt_t v = units::volt_t{fb} + ff;
-        if constexpr (frc::RobotBase::IsSimulation())
-        {
-            m_TurretSim.SetInputVoltage(v);
-        }
-        m_motor.SetVoltage(v);
+        fb = m_controller.Calculate(GetMeasurement());
+        ff = m_feedforward.Calculate(units::radian_t{m_controller.GetSetpoint().position}, units::radians_per_second_t{m_controller.GetSetpoint().velocity}, units::radians_per_second_squared_t{m_controller.GetSetpoint().velocity / 1_s});
+        v = units::volt_t{fb} + ff;
         break;
     }
     case TurretConstants::DISABLED:
     {
         frc::SmartDashboard::PutString("/Turret/State", "DISABLED");
+        v = units::voltage::volt_t(0.0);
         break;
     }
     case TurretConstants::TRACKING:
     {
-        // do math stuff perchance
-
-        // Minimize
-        // theta = arccos((vector(turret2goal) * <1,0>)/(||vector(turret2goal|| * ||<1,0>||)) + arccos((trace(world2turret_rotation_matrix) - 1)/2)
-
-        // Measurement: angle between world y axis and vector(turret2goal)
-        // arccos((vector(turret2goal) * <1,0>)/(||vector(turret2goal)|| * ||<1,0>||)) = angle between world y axis and vector(turret2goal)
-
-        // Control Var/ Control angle:
-        // arccos((trace(world2turret_rotation_matrix) - 1)/2) = angle between turret y axis and world y axis
-
-        // beta - current(alpha) = error
-        //  current angle + error = new goal angle
-
-        // world2robot comes in 2D pose: SwerveDrive.Getpose()
-        frc::SmartDashboard::PutString("/Turret/State", "Tracking");
-
-        // set goal angle to control Var angle needed to make theta zero
-        // SetAngle(findTrackingAngle());
-        break;
+        frc::SmartDashboard::PutString("/Turret/State", "TRACKING");
+        SetAngle(findTrackingAngle());
+        fb = m_controller.Calculate(GetMeasurement());
+        ff = m_feedforward.Calculate(units::radian_t{m_controller.GetSetpoint().position}, units::radians_per_second_t{m_controller.GetSetpoint().velocity}, units::radians_per_second_squared_t{m_controller.GetSetpoint().velocity / 1_s});
+        v = units::volt_t{fb} + ff;
     }
     default:
     {
@@ -206,6 +189,12 @@ void Turret::Periodic()
         break;
     }
     }
+    if constexpr (frc::RobotBase::IsSimulation())
+    {
+        m_TurretSim.SetInputVoltage(v);
+        SimulationPeriodic();
+    }
+    m_motor.SetVoltage(v);
 }
 
 TurretConstants::TurretState Turret::GetState()
@@ -223,7 +212,7 @@ void Turret::printLog()
     m_SetPointLog.Append(m_controller.GetSetpoint().position.value());
     m_StateLog.Append(m_TurretState);
     // m_MotorCurrentLog.Append(m_motor.GetOutputCurrent());
-    // m_MotorVoltageLog.Append(m_motor.GetAppliedOutput());zz
+    // m_MotorVoltageLog.Append(m_motor.GetAppliedOutput());
 }
 
 void Turret::Disable()
@@ -240,4 +229,54 @@ void Turret::HoldPosition()
         m_goal = GetMeasurement();
         m_TurretState = TurretConstants::TurretState::HOLD;
     }
+}
+
+void Turret::UpdateFieldVisuals()
+{
+    m_turretField.GetObject("Goal")->SetPose(frc::Pose3d(goal.ToMatrix()).ToPose2d());
+    if (m_turretObject == nullptr)
+    {
+        return;
+    }
+
+    auto baseLinkPose = DoubleArrayToPose2d(baseLinkSubscriber.Get({}));
+    if (baseLinkPose.has_value())
+    {
+        m_turretField.SetRobotPose(*baseLinkPose);
+        auto turretPose = CalculateTurretPose(*baseLinkPose);
+        m_turretObject->SetPose(turretPose);
+        m_lastRobotPose = *baseLinkPose;
+        m_lastTurretPose = turretPose;
+        return;
+    }
+
+    if (m_lastRobotPose.has_value())
+    {
+        m_turretField.SetRobotPose(*m_lastRobotPose);
+    }
+
+    if (m_lastTurretPose.has_value())
+    {
+        m_turretObject->SetPose(*m_lastTurretPose);
+    }
+    else
+    {
+        // Default to robot origin so the turret object stays visible even before NT data arrives.
+        auto defaultPose = CalculateTurretPose(frc::Pose2d{});
+        m_turretObject->SetPose(defaultPose);
+        m_lastTurretPose = defaultPose;
+    }
+}
+
+frc::Pose2d Turret::CalculateTurretPose(const frc::Pose2d &robotPose)
+{
+    // The turret's pose relative to the robot center
+    frc::Transform2d turretTransform{
+        frc::Translation2d{
+            units::meter_t{TurretConstants::kXOffset},
+            units::meter_t{TurretConstants::kYOffset}},
+        frc::Rotation2d{GetMeasurement() + TurretConstants::kAngleOffset}};
+
+    // Apply that transform in the robot's frame to get field-relative turret pose
+    return robotPose.TransformBy(turretTransform);
 }
