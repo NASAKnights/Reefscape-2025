@@ -8,12 +8,23 @@
 #include <frc/DutyCycleEncoder.h>
 #include <frc/Encoder.h>
 #include <frc/controller/ArmFeedforward.h>
+#include <frc/smartdashboard/FieldObject2d.h>
+#include <frc/geometry/Pose2d.h>
+#include <frc/geometry/Quaternion.h>
+#include <frc/geometry/Rotation3d.h>
+#include <frc/geometry/Translation2d.h>
+#include <frc/geometry/Transform3d.h>
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc2/command/ProfiledPIDSubsystem.h>
 #include <rev/SparkMax.h>
-#include <units/angle.h>
-#include <units/time.h>
 #include <units/acceleration.h>
+#include <units/angle.h>
+#include <units/length.h>
+#include <units/time.h>
+
+#include <optional>
+#include <string_view>
+#include <vector>
 
 #include "Constants.hpp"
 #include <frc/DigitalInput.h>
@@ -22,6 +33,9 @@
 #include <frc/Timer.h>
 #include <frc/simulation/SimDeviceSim.h>
 #include <frc/simulation/SingleJointedArmSim.h>
+#include <networktables/DoubleArrayTopic.h>
+#include <networktables/NetworkTableInstance.h>
+#include <frc/smartdashboard/Field2d.h>
 
 namespace TurretConstants
 {
@@ -65,6 +79,10 @@ namespace TurretConstants
   const units::angle::radian_t kmaxAngle = 135_deg;
   const bool kGravity = false;
   const units::angle::radian_t kTurretStartAngle = units::angle::radian_t(0.0);
+  const double kXOffset = 0.0;
+  const double kYOffset = 0.0;
+  const double kZOffset = 0.0;
+  const units::degree_t kAngleOffset(0.0);
 
 } // namespace ArmConstants
 
@@ -84,16 +102,41 @@ public:
   void SimulationPeriodic();
   void Enable();
   void Disable();
-  void SetAngle(double angle);
+  void SetAngle(units::degree_t angle);
   void Zero();
   void HoldPosition();
   // void get_pigeon();
   units::degree_t GetMeasurement();
   TurretConstants::TurretState GetState();
+  bool isTracking = true;
 
   // units::time::second_t time_brake_released;
 
 private:
+  frc::Transform3d goal = frc::Transform3d(2_m, 2_m, 0_m, frc::Rotation3d());
+  static std::optional<frc::Pose2d> DoubleArrayToPose2d(const std::vector<double> &arr)
+  {
+    if (arr.size() < 7)
+    {
+      return std::nullopt;
+    }
+
+    auto x = units::length::meter_t(arr.at(0));
+    auto y = units::length::meter_t(arr.at(1));
+
+    auto o = units::angle::radian_t(
+        frc::Rotation3d(frc::Quaternion(arr.at(6),
+                                        arr.at(3),
+                                        arr.at(4),
+                                        arr.at(5)))
+            .ToRotation2d()
+            .Radians()
+            .value());
+
+    return frc::Pose2d(x, y, o);
+  }
+  void UpdateFieldVisuals();
+  frc::Pose2d CalculateTurretPose(const frc::Pose2d &robotPose);
   TurretConstants::TurretState m_TurretState;
   void printLog();
   ctre::phoenix6::hardware::TalonFX m_motor;
@@ -105,10 +148,9 @@ private:
   wpi::log::DoubleLogEntry m_MotorVoltageLog;
   frc::Timer *m_timer;
   float Turret_Angle;
+  units::degree_t findTrackingAngle();
 
-  bool speed;
   units::degree_t m_goal;
-
   frc::Timer m_simTimer;
 
   frc::sim::SingleJointedArmSim m_TurretSim;
@@ -117,4 +159,14 @@ private:
 
   hal::SimDouble m_TurretSimVelocity;
   hal::SimDouble m_TurretSimposition;
+  nt::DoubleArraySubscriber baseLinkSubscriber;
+  nt::DoubleArraySubscriber goalSubscriber;
+  std::string_view robotPoseLink = "base_link";
+  std::string_view goalPoseLink = "goal";
+  std::vector<frc::Pose2d> poses{};
+  nt::NetworkTableInstance networkTableInst;
+  frc::Field2d m_turretField;
+  frc::FieldObject2d *m_turretObject = nullptr;
+  std::optional<frc::Pose2d> m_lastRobotPose;
+  std::optional<frc::Pose2d> m_lastTurretPose;
 };

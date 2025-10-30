@@ -146,7 +146,7 @@ void SwerveDrive::Periodic()
 {
     // getCameraResults();
     // sensor fusion? EKF (eek kinda fun) (extended Kalman filter)
-
+    SimulationPeriodic();
     PublishOdometry(m_poseEstimator.GetEstimatedPosition());
     if (useVision)
     {
@@ -355,6 +355,7 @@ void SwerveDrive::UpdatePoseEstimate()
                                                  units::meter_t{compressedResults.at(1)},
                                                  units::meter_t{compressedResults.at(2)});
         frc::Pose3d cameraPose = frc::Pose3d(posTranslation, frc::Rotation3d(rotation_q));
+
         if (poseFilter1.IsPoseValid(cameraPose, compressedResults.at(7)))
         {
             frc::Pose2d visionMeasurement2d = cameraPose.ToPose2d();

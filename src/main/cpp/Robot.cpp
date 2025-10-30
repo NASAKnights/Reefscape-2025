@@ -56,7 +56,6 @@ void Robot::RobotPeriodic()
     frc::Pose3d TurretPose3D = frc::Pose3d(pose.X(), pose.Y(), 0.0_m, frc::Rotation3d(0.0_rad, 0.0_rad, 0.0_rad));
     frc::Pose3d ShooterPose3D = frc::Pose3d(pose.X(), pose.Y(), 0.0_m, frc::Rotation3d(0.0_rad, 0.0_rad, units::radian_t{m_turret.GetMeasurement()}));
     std::vector<frc::Pose3d> modelPoses = {
-        TurretPose3D,
         ShooterPose3D};
     modelPosePublisher.Set(modelPoses, 0);
 }
@@ -64,6 +63,11 @@ void Robot::RobotPeriodic()
 void Robot::DisabledInit()
 {
     // m_LED_Controller.DefaultAnimation();
+    if constexpr (frc::RobotBase::IsSimulation())
+    {
+        m_swerveDrive.ResetPose(frc::Pose2d());
+        m_swerveDrive.ResetDriveEncoders();
+    }
 }
 
 void Robot::SetAutonomousCommand(std::string a)
@@ -134,7 +138,7 @@ void Robot::TeleopPeriodic()
         frc::SmartDashboard::PutNumber("drive/accelLim", 4.0);
     }
 
-    m_turret.SetAngle(MathUtilNK::calculateAxis(m_operatorController.GetRawAxis(0), DriveConstants::kDefaultAxisDeadband) * 135);
+    // m_turret.SetAngle(MathUtilNK::calculateAxis(m_operatorController.GetRawAxis(0), DriveConstants::kDefaultAxisDeadband) * 135);
 }
 
 void Robot::TeleopExit()
