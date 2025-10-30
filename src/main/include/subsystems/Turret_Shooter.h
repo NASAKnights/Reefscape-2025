@@ -7,6 +7,9 @@
 #include <frc2/command/SubsystemBase.h>
 #include <rev/SparkFlex.h>
 #include <units/velocity.h>
+#include <rev/SparkBase.h>
+#include <frc2/command/PIDCommand.h>
+#include <frc2/command/PIDSubsystem.h>
 
 class Turret_Shooter : public frc2::SubsystemBase
 {
@@ -18,7 +21,7 @@ public:
    */
   void Periodic() override;
 
-  void Idle(double setSpeed);
+  void StopMotors();
   void SetSpeed(double speed);
   double max_speed = 1000; // need to change to actual value we want
 
@@ -33,5 +36,11 @@ private:
   rev::spark::SparkBaseConfig followerShooterMotorConfig;
   rev::spark::SparkBaseConfig mainShooterMotorConfig;
 
-  rev::spark::SparkClosedLoopController m = m_mainShooterMotor.GetClosedLoopController();
+  rev::spark::SparkClosedLoopController mainMotorController = m_mainShooterMotor.GetClosedLoopController();
+
+  double kP = 0.1;
+  double kI = 0.0;
+  double kD = 0.0;
+  double kMinOutput = -1.0;
+  double kMaxOutput = 1.0;
 };

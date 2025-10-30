@@ -46,7 +46,7 @@ void Robot::RobotPeriodic()
 {
     frc2::CommandScheduler::GetInstance().Run();
     this->UpdateDashboard();
-    m_VoltageLog.Append(m_pdh.GetVoltage(4));
+    m_VoltageLog.Append(m_pdh.GetVoltage());
     m_CurrentLog.Append(m_pdh.GetTotalCurrent());
     m_PowerLog.Append(m_pdh.GetTotalPower());
     m_EnergyLog.Append(m_pdh.GetTotalEnergy());
