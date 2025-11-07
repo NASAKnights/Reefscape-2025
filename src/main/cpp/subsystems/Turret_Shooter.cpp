@@ -26,7 +26,7 @@ Turret_Shooter::Turret_Shooter()
         .D(kD)
         .OutputRange(kMinOutput, kMaxOutput);
     backShooterMotorConfig.closedLoop
-        .P(kP)
+        .P(kP * 10)
         .I(kI)
         .D(kD)
         .OutputRange(kMinOutput, kMaxOutput);
@@ -46,17 +46,17 @@ void Turret_Shooter::SetSpeed()
     if (min_speed <= shooterSpeed <= max_speed)
     {
         mainMotorController.SetReference(shooterSpeed, rev::spark::SparkLowLevel::ControlType::kVelocity);
-        backMotorController.SetReference(shooterSpeed, rev::spark::SparkLowLevel::ControlType::kVelocity);
+        backMotorController.SetReference(-shooterSpeed, rev::spark::SparkLowLevel::ControlType::kVelocity);
     }
     else if (min_speed > shooterSpeed)
     {
         mainMotorController.SetReference(min_speed, rev::spark::SparkLowLevel::ControlType::kVelocity);
-        backMotorController.SetReference(min_speed, rev::spark::SparkLowLevel::ControlType::kVelocity);
+        backMotorController.SetReference(-min_speed, rev::spark::SparkLowLevel::ControlType::kVelocity);
     }
     else if (max_speed < shooterSpeed)
     {
         mainMotorController.SetReference(max_speed, rev::spark::SparkLowLevel::ControlType::kVelocity);
-        backMotorController.SetReference(max_speed, rev::spark::SparkLowLevel::ControlType::kVelocity);
+        backMotorController.SetReference(-max_speed, rev::spark::SparkLowLevel::ControlType::kVelocity);
     }
 
     // mainMotorController.SetReference(shooterSpeed, rev::spark::SparkLowLevel::ControlType::kVelocity);
@@ -67,6 +67,8 @@ void Turret_Shooter::StopMotors()
     shooterSpeed = 0.0;
     mainMotorController.SetReference(0, rev::spark::SparkLowLevel::ControlType::kVelocity);
     backMotorController.SetReference(0, rev::spark::SparkLowLevel::ControlType::kVelocity);
+    m_mainShooterMotor.Set(0.);
+    m_backMotor.Set(0.);
 }
 
 // This method will be called once per scheduler run
