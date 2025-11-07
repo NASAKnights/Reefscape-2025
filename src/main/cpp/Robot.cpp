@@ -274,6 +274,21 @@ void Robot::BindCommands()
             frc2::InstantCommand([this]
                                  { return m_swerveDrive.ResetHeading(); })));
 
+    // rightTrigger
+    frc2::JoystickButton(&m_driverController, 8)
+        .WhileTrue(frc2::CommandPtr(frc2::InstantCommand(
+            [this]
+            {
+                m_turretShooter.SetSpeed();
+                return;
+            })))
+        .OnFalse(frc2::CommandPtr(frc2::InstantCommand(
+            [this]
+            {
+                m_turretShooter.StopMotors();
+                return;
+            })));
+
     // frc2::JoystickButton(&m_driverController, 5)
     //     .WhileTrue(RunCoralOuttake(&m_CoralIntake).ToPtr());
 

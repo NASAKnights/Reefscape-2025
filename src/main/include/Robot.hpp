@@ -29,6 +29,7 @@
 #include "subsystems/SwerveDrive.hpp"
 #include "subsystems/Elevator.h"
 #include "subsystems/Wrist.h"
+#include <subsystems/Turret_Shooter.h>
 
 #include "commands/RunCoralIntake.h"
 #include "commands/RunCoralOuttake.h"
@@ -47,6 +48,7 @@
 #include "subsystems/IntakeAlgae.h"
 #include "commands/GrabCoralFar.h"
 #include "commands/GoToPoint.h"
+// #include "commands/SetSpeed.h"
 
 #include <units/angular_velocity.h>
 #include <units/velocity.h>
@@ -114,6 +116,7 @@ private:
     Elevator m_elevator;
     Climber m_climber;
     Turret m_turret;
+    Turret_Shooter m_turretShooter;
 
     std::string_view baseLink = "base_link";
 

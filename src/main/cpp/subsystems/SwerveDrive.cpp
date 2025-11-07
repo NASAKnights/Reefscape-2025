@@ -22,12 +22,12 @@ SwerveDrive::SwerveDrive()
       kSwerveKinematics{{DriveConstants::kFrontLeftPosition, DriveConstants::kFrontRightPosition,
                          DriveConstants::kBackLeftPosition, DriveConstants::kBackRightPosition}},
       pidX{0.9, 1e-4, 0}, pidY{0.9, 1e-4, 0}, pidRot{0.15, 0, 0}, networkTableInst(nt::NetworkTableInstance::GetDefault()), m_poseEstimator{kSwerveKinematics,
-                                                                                                                                            frc::Rotation2d(m_pigeon.GetYaw().GetValue()), // TODO: YAW is CCW+ whereas this API is CW+ (Check if need to reverse)
-                                                                                                                                            // frc::Rotation2d(units::radian_t{navx.GetYaw()}), // TODO: YAW is CCW+ whereas this API is CW+ (Check if need to reverse)
+                                                                                                                                            // frc::Rotation2d(m_pigeon.GetYaw().GetValue()), // TODO: YAW is CCW+ whereas this API is CW+ (Check if need to reverse)
+                                                                                                                                            frc::Rotation2d(units::radian_t{navx.GetYaw()}), // TODO: YAW is CCW+ whereas this API is CW+ (Check if need to reverse)
                                                                                                                                             {modules[0].GetPosition(), modules[1].GetPosition(), modules[2].GetPosition(),
                                                                                                                                              modules[3].GetPosition()},
-                                                                                                                                            frc::Pose2d()},
-      m_pigeonSim{m_pigeon}
+                                                                                                                                            frc::Pose2d()}
+//   m_pigeonSim{m_pigeon}
 {
 
     // Add a function that loads the Robot Preferences, including
@@ -152,7 +152,8 @@ void SwerveDrive::Periodic()
     {
         UpdatePoseEstimate();
     }
-    m_poseEstimator.Update(m_pigeon.GetRotation2d(), GetModulePositions());
+    // m_poseEstimator.Update(m_pigeon.GetRotation2d(), GetModulePositions());
+    m_poseEstimator.Update(navx.GetRotation2d(), GetModulePositions());
     m_field.SetRobotPose(m_poseEstimator.GetEstimatedPosition());
 
     // PrintNetworkTableValues();
@@ -167,8 +168,8 @@ void SwerveDrive::SimulationPeriodic()
 
     units::second_t dt = m_simTimer.Get();
     m_simTimer.Reset();
-    units::angle::degree_t delta = m_pigeon.GetAngularVelocityZWorld().GetValue() * dt;
-    m_pigeonSim.AddYaw(delta);
+    // units::angle::degree_t delta = m_pigeon.GetAngularVelocityZWorld().GetValue() * dt;
+    // m_pigeonSim.AddYaw(delta);
 }
 
 void SwerveDrive::Drive(frc::ChassisSpeeds speeds)
@@ -206,7 +207,7 @@ void SwerveDrive::Drive(frc::ChassisSpeeds speeds)
 
         if constexpr (frc::RobotBase::IsSimulation())
         {
-            m_pigeonSim.SetAngularVelocityZ(speeds.omega);
+            // m_pigeonSim.SetAngularVelocityZ(speeds.omega);
         }
 
         frc::SmartDashboard::PutNumber("drive/vx", speeds.vx.value());
@@ -246,16 +247,16 @@ void SwerveDrive::SetSlow() {}
 
 frc::Rotation2d SwerveDrive::GetHeading()
 {
-    return m_pigeon.GetRotation2d();
-    // return navx.GetRotation2d();
+    // return m_pigeon.GetRotation2d();
+    return navx.GetRotation2d();
 }
 
 void SwerveDrive::ResetHeading()
 {
     if (enable == true)
     {
-        m_pigeon.Reset();
-        // navx.Reset();
+        // m_pigeon.Reset();
+        navx.Reset();
     }
 }
 

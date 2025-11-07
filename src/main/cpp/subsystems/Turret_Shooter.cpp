@@ -7,32 +7,66 @@
 Turret_Shooter::Turret_Shooter()
 {
 
-    m_followerShooterMotor.Configure(followerShooterMotorConfig, rev::spark::SparkBase::ResetMode::kNoResetSafeParameters, rev::spark::SparkBase::PersistMode::kPersistParameters);
-    m_mainShooterMotor.Configure(mainShooterMotorConfig, rev::spark::SparkBase::ResetMode::kNoResetSafeParameters, rev::spark::SparkBase::PersistMode::kPersistParameters);
-
     mainShooterMotorConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kCoast);
     followerShooterMotorConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kCoast);
+    backShooterMotorConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kCoast);
 
     mainShooterMotorConfig.SmartCurrentLimit(30);
     followerShooterMotorConfig.SmartCurrentLimit(30);
+    backShooterMotorConfig.SmartCurrentLimit(30);
 
     mainShooterMotorConfig.closedLoop
         .P(kP)
         .I(kI)
         .D(kD)
         .OutputRange(kMinOutput, kMaxOutput);
+    followerShooterMotorConfig.closedLoop
+        .P(kP)
+        .I(kI)
+        .D(kD)
+        .OutputRange(kMinOutput, kMaxOutput);
+    backShooterMotorConfig.closedLoop
+        .P(kP)
+        .I(kI)
+        .D(kD)
+        .OutputRange(kMinOutput, kMaxOutput);
+
+    m_followerShooterMotor.Configure(followerShooterMotorConfig, rev::spark::SparkBase::ResetMode::kNoResetSafeParameters, rev::spark::SparkBase::PersistMode::kPersistParameters);
+    m_mainShooterMotor.Configure(mainShooterMotorConfig, rev::spark::SparkBase::ResetMode::kNoResetSafeParameters, rev::spark::SparkBase::PersistMode::kPersistParameters);
+    m_backMotor.Configure(backShooterMotorConfig, rev::spark::SparkBase::ResetMode::kNoResetSafeParameters, rev::spark::SparkBase::PersistMode::kPersistParameters);
+
+    frc::SmartDashboard::PutNumber("Shooter_Speed", shooterSpeed);
 }
 
-void Turret_Shooter::SetSpeed(double speed)
+void Turret_Shooter::SetSpeed()
 {
 
-    mainMotorController.SetReference(speed, rev::spark::SparkLowLevel::ControlType::kVelocity);
+    shooterSpeed = frc::SmartDashboard::GetNumber("Shooter_Speed", 0.0);
+
+    if (min_speed <= shooterSpeed <= max_speed)
+    {
+        mainMotorController.SetReference(shooterSpeed, rev::spark::SparkLowLevel::ControlType::kVelocity);
+        backMotorController.SetReference(shooterSpeed, rev::spark::SparkLowLevel::ControlType::kVelocity);
+    }
+    else if (min_speed > shooterSpeed)
+    {
+        mainMotorController.SetReference(min_speed, rev::spark::SparkLowLevel::ControlType::kVelocity);
+        backMotorController.SetReference(min_speed, rev::spark::SparkLowLevel::ControlType::kVelocity);
+    }
+    else if (max_speed < shooterSpeed)
+    {
+        mainMotorController.SetReference(max_speed, rev::spark::SparkLowLevel::ControlType::kVelocity);
+        backMotorController.SetReference(max_speed, rev::spark::SparkLowLevel::ControlType::kVelocity);
+    }
+
+    // mainMotorController.SetReference(shooterSpeed, rev::spark::SparkLowLevel::ControlType::kVelocity);
 }
 
 void Turret_Shooter::StopMotors()
 {
-
+    shooterSpeed = 0.0;
     mainMotorController.SetReference(0, rev::spark::SparkLowLevel::ControlType::kVelocity);
+    backMotorController.SetReference(0, rev::spark::SparkLowLevel::ControlType::kVelocity);
 }
 
 // This method will be called once per scheduler run
