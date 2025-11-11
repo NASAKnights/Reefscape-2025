@@ -15,6 +15,8 @@ Turret_Shooter::Turret_Shooter()
     followerShooterMotorConfig.SmartCurrentLimit(30);
     backShooterMotorConfig.SmartCurrentLimit(30);
 
+    mainShooterMotorConfig.Inverted(true);
+
     mainShooterMotorConfig.closedLoop
         .P(kP)
         .I(kI)
@@ -46,17 +48,17 @@ void Turret_Shooter::SetSpeed()
     if (min_speed <= shooterSpeed <= max_speed)
     {
         mainMotorController.SetReference(shooterSpeed, rev::spark::SparkLowLevel::ControlType::kVelocity);
-        backMotorController.SetReference(-shooterSpeed, rev::spark::SparkLowLevel::ControlType::kVelocity);
+        backMotorController.SetReference(shooterSpeed, rev::spark::SparkLowLevel::ControlType::kVelocity);
     }
     else if (min_speed > shooterSpeed)
     {
         mainMotorController.SetReference(min_speed, rev::spark::SparkLowLevel::ControlType::kVelocity);
-        backMotorController.SetReference(-min_speed, rev::spark::SparkLowLevel::ControlType::kVelocity);
+        backMotorController.SetReference(min_speed, rev::spark::SparkLowLevel::ControlType::kVelocity);
     }
     else if (max_speed < shooterSpeed)
     {
         mainMotorController.SetReference(max_speed, rev::spark::SparkLowLevel::ControlType::kVelocity);
-        backMotorController.SetReference(-max_speed, rev::spark::SparkLowLevel::ControlType::kVelocity);
+        backMotorController.SetReference(max_speed, rev::spark::SparkLowLevel::ControlType::kVelocity);
     }
 
     // mainMotorController.SetReference(shooterSpeed, rev::spark::SparkLowLevel::ControlType::kVelocity);
@@ -72,4 +74,8 @@ void Turret_Shooter::StopMotors()
 }
 
 // This method will be called once per scheduler run
-void Turret_Shooter::Periodic() {}
+void Turret_Shooter::Periodic()
+{
+
+    frc::SmartDashboard::PutNumber("Shooter/actual speed", m_mainShooterMotor.GetEncoder().GetVelocity());
+}

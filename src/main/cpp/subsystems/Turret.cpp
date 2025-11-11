@@ -22,6 +22,7 @@ Turret::Turret() : m_controller(
                                TurretConstants::kTurretRadius, TurretConstants::kminAngle, TurretConstants::kmaxAngle,
                                TurretConstants::kGravity, TurretConstants::kTurretStartAngle, TurretConstants::kSimNoise)
 {
+    m_motor.SetInverted(true);
     m_controller.SetIZone(TurretConstants::kIZone);
 
     m_controller.SetTolerance(TurretConstants::kTolerancePos, TurretConstants::kToleranceVel);
@@ -40,6 +41,8 @@ Turret::Turret() : m_controller(
 
     m_turretObject = m_turretField.GetObject("Turret");
     frc::SmartDashboard::PutData("Turret Field", &m_turretField);
+    m_motor.SetPosition(0.0_rad);
+    SetAngle(0.0_deg);
 
     // if constexpr(frc::RobotBase::IsSimulation())
     // {
@@ -140,11 +143,16 @@ void Turret::SetAngle(units::degree_t TurretAngleGoal)
             (TurretAngleGoal >= TurretConstants::kminAngle))
         {
             m_goal = units::angle::degree_t(TurretAngleGoal);
-            m_controller.Reset(GetMeasurement());
+            m_controller.Reset(GetMeasurement(), GetVelocity());
             m_controller.SetGoal(m_goal);
         }
     }
     frc::SmartDashboard::PutNumber("/Turret/m_goal", double(m_goal));
+}
+
+units::degrees_per_second_t Turret::GetVelocity()
+{
+    return m_motor.GetVelocity().GetValue() / TurretConstants::kGearRatio;
 }
 
 void Turret::Periodic()
@@ -178,7 +186,7 @@ void Turret::Periodic()
     case TurretConstants::TRACKING:
     {
         frc::SmartDashboard::PutString("/Turret/State", "TRACKING");
-        SetAngle(findTrackingAngle());
+        // SetAngle(findTrackingAngle());
         fb = m_controller.Calculate(GetMeasurement());
         ff = m_feedforward.Calculate(units::radian_t{m_controller.GetSetpoint().position}, units::radians_per_second_t{m_controller.GetSetpoint().velocity}, units::radians_per_second_squared_t{m_controller.GetSetpoint().velocity / 1_s});
         v = units::volt_t{fb} + ff;
@@ -208,6 +216,7 @@ void Turret::printLog()
     frc::SmartDashboard::PutNumber("/Turret/Goal Angle", m_controller.GetGoal().position.value());
     frc::SmartDashboard::PutNumber("/Turret/setpoint",
                                    m_controller.GetSetpoint().position.value());
+    frc::SmartDashboard::PutNumber("/Turret/velocity", double(GetVelocity()));
     m_AngleLog.Append(GetMeasurement().value());
     m_SetPointLog.Append(m_controller.GetSetpoint().position.value());
     m_StateLog.Append(m_TurretState);

@@ -45,7 +45,7 @@ private:
 
   double shooterSpeed = 0.0;
 
-  double kP = 0.1;
+  double kP = 0.005;
   double kI = 0.0;
   double kD = 0.0;
   double kMinOutput = -1.0;

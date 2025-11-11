@@ -112,6 +112,7 @@ void Robot::TeleopInit()
     // this line or comment it out.
     m_wrist.HoldPosition();
     m_elevator.HoldPosition();
+    m_turret.Reset();
     /*
     if (m_wrist.GetState() != WristConstants::WristState::ZEROING)
     {

@@ -48,12 +48,12 @@ namespace TurretConstants
     DISABLED
   };
 
-  const double kAngleP = 0.005;
+  const double kAngleP = 0.2;
   const double kAngleI = 0.01;
   const double kAngleD = 0.0; // 0.0001
   const double kIZone = 1.0;
-  const auto kTurretVelLimit = units::degrees_per_second_t(36000.0);
-  const auto kTurretAccelLimit = units::angular_acceleration::degrees_per_second_squared_t(100000); // Mech limit 27 rad/s^2(1500 degree_second_squared)
+  const auto kTurretVelLimit = units::degrees_per_second_t(108.0);
+  const auto kTurretAccelLimit = units::angular_acceleration::degrees_per_second_squared_t(108); // Mech limit 27 rad/s^2(1500 degree_second_squared)
   const units::degree_t kTolerancePos = 1_deg;
   const units::degrees_per_second_t kToleranceVel = 0.5_deg_per_s;
   const int kAngleMotorId = 50;
@@ -75,8 +75,8 @@ namespace TurretConstants
       units::moment_of_inertia::kilogram_square_meter_t(0.06742); // I = MR^2
   const units::length::meter_t kTurretRadius = units::length::meter_t(0.3048);
   const units::mass::kilogram_t kTurretMass = units::mass::kilogram_t(0.725748);
-  const units::angle::radian_t kminAngle = -135_deg;
-  const units::angle::radian_t kmaxAngle = 135_deg;
+  const units::angle::radian_t kminAngle = -225_deg;
+  const units::angle::radian_t kmaxAngle = 45_deg;
   const bool kGravity = false;
   const units::angle::radian_t kTurretStartAngle = units::angle::radian_t(0.0);
   const double kXOffset = 0.0;
@@ -105,8 +105,13 @@ public:
   void SetAngle(units::degree_t angle);
   void Zero();
   void HoldPosition();
+  void Reset()
+  {
+    m_controller.Reset(GetMeasurement(), GetVelocity());
+  }
   // void get_pigeon();
   units::degree_t GetMeasurement();
+  units::degrees_per_second_t GetVelocity();
   TurretConstants::TurretState GetState();
   bool isTracking = true;
 
