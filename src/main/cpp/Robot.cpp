@@ -277,10 +277,10 @@ void Robot::BindCommands()
 
     // rightTrigger
     frc2::JoystickButton(&m_driverController, 8)
-        .WhileTrue(frc2::CommandPtr(frc2::InstantCommand(
+        .WhileTrue(frc2::CommandPtr(frc2::RunCommand(
             [this]
             {
-                m_turretShooter.SetSpeed();
+                m_turretShooter.NewSetSpeed();
                 return;
             })))
         .OnFalse(frc2::CommandPtr(frc2::InstantCommand(

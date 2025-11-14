@@ -4,7 +4,7 @@
 
 #include "subsystems/Turret_Shooter.h"
 
-Turret_Shooter::Turret_Shooter()
+Turret_Shooter::Turret_Shooter() : m_feedforward{kFFks, kFFkV, kFFkA}
 {
 
     mainShooterMotorConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kCoast);
@@ -17,21 +17,21 @@ Turret_Shooter::Turret_Shooter()
 
     mainShooterMotorConfig.Inverted(true);
 
-    mainShooterMotorConfig.closedLoop
-        .P(kP)
-        .I(kI)
-        .D(kD)
-        .OutputRange(kMinOutput, kMaxOutput);
-    followerShooterMotorConfig.closedLoop
-        .P(kP)
-        .I(kI)
-        .D(kD)
-        .OutputRange(kMinOutput, kMaxOutput);
-    backShooterMotorConfig.closedLoop
-        .P(kP * 10)
-        .I(kI)
-        .D(kD)
-        .OutputRange(kMinOutput, kMaxOutput);
+    // mainShooterMotorConfig.closedLoop
+    //     .P(kP)
+    //     .I(kI)
+    //     .D(kD)
+    //     .OutputRange(kMinOutput, kMaxOutput);
+    // followerShooterMotorConfig.closedLoop
+    //     .P(kP)
+    //     .I(kI)
+    //     .D(kD)
+    //     .OutputRange(kMinOutput, kMaxOutput);
+    // backShooterMotorConfig.closedLoop
+    //     .P(kP * 10)
+    //     .I(kI)
+    //     .D(kD)
+    //     .OutputRange(kMinOutput, kMaxOutput);
 
     m_followerShooterMotor.Configure(followerShooterMotorConfig, rev::spark::SparkBase::ResetMode::kNoResetSafeParameters, rev::spark::SparkBase::PersistMode::kPersistParameters);
     m_mainShooterMotor.Configure(mainShooterMotorConfig, rev::spark::SparkBase::ResetMode::kNoResetSafeParameters, rev::spark::SparkBase::PersistMode::kPersistParameters);
@@ -73,6 +73,33 @@ void Turret_Shooter::StopMotors()
     m_backMotor.Set(0.);
 }
 
+void Turret_Shooter::NewSetSpeed()
+{
+    newShooterSpeed = frc::SmartDashboard::GetNumber("Shooter_Speed", 0.0);
+
+    if (m_mainShooterMotor.GetEncoder().GetVelocity() >= newShooterSpeed)
+    {
+        // StopMotors();
+        m_mainShooterMotor.Set(0.);
+    }
+    else if (m_mainShooterMotor.GetEncoder().GetVelocity() < newShooterSpeed)
+    {
+        m_mainShooterMotor.Set(0.9);
+    }
+
+    if (m_backMotor.GetEncoder().GetVelocity() >= newShooterSpeed)
+    {
+        // StopMotors();
+        m_backMotor.Set(0.);
+    }
+    else if (m_backMotor.GetEncoder().GetVelocity() < newShooterSpeed)
+    {
+        // m_backMotor.Set(0.9);
+        // Controls a motor with the output of the BangBang controller and a feedforward
+        // Shrinks the feedforward slightly to avoid overspeeding the shooter
+        // m_backMotor.SetVoltage(0.9 * m_feedforward.Calculate(newShooterSpeed));
+    }
+}
 // This method will be called once per scheduler run
 void Turret_Shooter::Periodic()
 {
