@@ -20,6 +20,7 @@
 #include <frc2/command/RunCommand.h>
 #include <frc2/command/button/JoystickButton.h>
 #include <frc2/command/button/POVButton.h>
+#include <commands/AutoWheelOffsets.h>
 
 #include <pathplanner/lib/auto/AutoBuilder.h>
 #include <pathplanner/lib/auto/NamedCommands.h>
@@ -29,6 +30,7 @@
 #include "subsystems/SwerveDrive.hpp"
 #include "subsystems/Elevator.h"
 #include "subsystems/Wrist.h"
+#include "subsystems/TurretIntake.h"
 #include <subsystems/Turret_Shooter.h>
 
 #include "commands/RunCoralIntake.h"
@@ -117,6 +119,7 @@ private:
     Climber m_climber;
     Turret m_turret;
     Turret_Shooter m_turretShooter;
+    TurretIntake m_turretIntake;
 
     std::string_view baseLink = "base_link";
 
@@ -155,6 +158,8 @@ private:
     frc2::CommandPtr removePOICommand = frc2::CommandPtr(frc2::InstantCommand([this]
                                                                               { return m_poiGenerator.RemovePOI(); }))
                                             .IgnoringDisable(true);
+
+    frc2::CommandPtr autoWheelOffsetsCommand = AutoWheelOffsets(&m_swerveDrive).ToPtr().IgnoringDisable(true);
 
     // Robot Container methods
     void CreateRobot();

@@ -22,6 +22,7 @@ void Robot::RobotInit()
     frc::SmartDashboard::PutString("POIName", "");
     frc::SmartDashboard::PutData("AddPOI", addPOICommand.get());
     frc::SmartDashboard::PutData("RemovePOI", removePOICommand.get());
+    frc::SmartDashboard::PutData("Set", autoWheelOffsetsCommand.get());
 
     // frc::SmartDashboard::PutNumber("FrontLeftDegree", 0.0);
     // frc::SmartDashboard::PutNumber("FrontRightDegree", 0.0);
@@ -287,6 +288,36 @@ void Robot::BindCommands()
             [this]
             {
                 m_turretShooter.StopMotors();
+                return;
+            })));
+
+    // leftTrigger
+    frc2::JoystickButton(&m_driverController, 7)
+        .WhileTrue(frc2::CommandPtr(frc2::RunCommand(
+            [this]
+            {
+                m_turretIntake.Intake();
+                return;
+            })))
+        .OnFalse(frc2::CommandPtr(frc2::InstantCommand(
+            [this]
+            {
+                m_turretIntake.StopIntake();
+                return;
+            })));
+
+    // leftBumper
+    frc2::JoystickButton(&m_driverController, 5)
+        .WhileTrue(frc2::CommandPtr(frc2::InstantCommand(
+            [this]
+            {
+                m_turretIntake.Outtake();
+                return;
+            })))
+        .OnFalse(frc2::CommandPtr(frc2::InstantCommand(
+            [this]
+            {
+                m_turretIntake.StopIntake();
                 return;
             })));
 

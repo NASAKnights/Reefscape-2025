@@ -23,6 +23,7 @@
       "/SmartDashboard/ClosestPOI": "Field2d",
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/RemovePOI": "Command",
+      "/SmartDashboard/Set": "Command",
       "/SmartDashboard/Turret Field": "Field2d"
     }
   },

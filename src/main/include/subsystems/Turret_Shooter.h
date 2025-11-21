@@ -52,10 +52,10 @@ private:
   rev::spark::SparkClosedLoopController mainMotorController = m_mainShooterMotor.GetClosedLoopController();
   rev::spark::SparkClosedLoopController backMotorController = m_backMotor.GetClosedLoopController();
 
-  static constexpr auto kFFks = 0.05_V;                                                // Volts static (motor)
-  static constexpr auto kFFkV = 0.25_V / 1.0_rpm;                                      // volts*s/meters //1.01 // 2.23
-  static constexpr auto kFFkA = 0.38_V / units::revolutions_per_minute_squared_t{1.0}; // volts*s^2/meters //0.1
-  frc::SimpleMotorFeedforward<units::turn_t> m_feedforward;
+  // static constexpr auto kFFks = 0.05_V;                                                // Volts static (motor)
+  // static constexpr auto kFFkV = 0.25_V / 1.0_rpm;                                      // volts*s/meters //1.01 // 2.23
+  // static constexpr auto kFFkA = 0.38_V / units::revolutions_per_minute_squared_t{1.0}; // volts*s^2/meters //0.1
+  // frc::SimpleMotorFeedforward<units::turn_t> m_feedforward;
 
   double shooterSpeed = 0.0;
   double newShooterSpeed = 0.0;

@@ -4,7 +4,7 @@
 
 #include "subsystems/Turret_Shooter.h"
 
-Turret_Shooter::Turret_Shooter() : m_feedforward{kFFks, kFFkV, kFFkA}
+Turret_Shooter::Turret_Shooter()
 {
 
     mainShooterMotorConfig.SetIdleMode(rev::spark::SparkBaseConfig::IdleMode::kCoast);
@@ -90,11 +90,11 @@ void Turret_Shooter::NewSetSpeed()
     if (m_backMotor.GetEncoder().GetVelocity() >= newShooterSpeed)
     {
         // StopMotors();
-        m_backMotor.Set(0.);
+        m_backMotor.Set(0.475);
     }
     else if (m_backMotor.GetEncoder().GetVelocity() < newShooterSpeed)
     {
-        // m_backMotor.Set(0.9);
+        m_backMotor.Set(0.9);
         // Controls a motor with the output of the BangBang controller and a feedforward
         // Shrinks the feedforward slightly to avoid overspeeding the shooter
         // m_backMotor.SetVoltage(0.9 * m_feedforward.Calculate(newShooterSpeed));
