@@ -5,6 +5,7 @@
 
 #include <frc/geometry/Transform3d.h>
 #include <frc/geometry/Translation2d.h>
+#include <cmath>
 
 using State = frc::TrapezoidProfile<units::degrees>::State;
 using degrees_per_second_squared_t =
@@ -132,17 +133,23 @@ units::degree_t Turret::findTrackingAngle()
         else
             newTarget = TurretConstants::kminAngle;
     }
+    frc::SmartDashboard::PutNumber("/Turret/newTarget", double(newTarget));
     return newTarget;
 }
 
 void Turret::SetAngle(units::degree_t TurretAngleGoal)
 {
-    if (TurretAngleGoal != m_goal)
+    if (!(TurretAngleGoal.value() < m_goal.value() + TurretConstants::kTolerancePos.value() && TurretAngleGoal.value() > m_goal.value() - TurretConstants::kTolerancePos.value()))
     {
         if ((TurretAngleGoal <= TurretConstants::kmaxAngle) &&
             (TurretAngleGoal >= TurretConstants::kminAngle))
         {
+            auto velocity = GetVelocity();
             m_goal = units::angle::degree_t(TurretAngleGoal);
+            if (abs(velocity.value()) < (1_deg_per_s).value())
+            {
+                velocity = 1_deg_per_s * copysign(1.0, velocity.value());
+            }
             m_controller.Reset(GetMeasurement(), GetVelocity());
             m_controller.SetGoal(m_goal);
         }
@@ -186,7 +193,7 @@ void Turret::Periodic()
     case TurretConstants::TRACKING:
     {
         frc::SmartDashboard::PutString("/Turret/State", "TRACKING");
-        // SetAngle(findTrackingAngle());
+        SetAngle(findTrackingAngle());
         fb = m_controller.Calculate(GetMeasurement());
         ff = m_feedforward.Calculate(units::radian_t{m_controller.GetSetpoint().position}, units::radians_per_second_t{m_controller.GetSetpoint().velocity}, units::radians_per_second_squared_t{m_controller.GetSetpoint().velocity / 1_s});
         v = units::volt_t{fb} + ff;
