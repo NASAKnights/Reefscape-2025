@@ -271,40 +271,42 @@ void Robot::BindCommands()
 {
 
     // --------------DRIVER BUTTONS----------------------------------
-    frc2::JoystickButton(&m_driverController, 1)
+    frc2::JoystickButton(&m_driverController, 3)
         .OnTrue(frc2::CommandPtr(
             frc2::InstantCommand([this]
                                  { return m_swerveDrive.ResetHeading(); })));
 
+    // We Need To Fix This With The New Controller Triggers
+
     // rightTrigger
-    frc2::JoystickButton(&m_driverController, 8)
-        .WhileTrue(frc2::CommandPtr(frc2::RunCommand(
-            [this]
-            {
-                m_turretShooter.NewSetSpeed();
-                return;
-            })))
-        .OnFalse(frc2::CommandPtr(frc2::InstantCommand(
-            [this]
-            {
-                m_turretShooter.StopMotors();
-                return;
-            })));
+    // frc2::JoystickButton(&m_driverController, 8)
+    //     .WhileTrue(frc2::CommandPtr(frc2::RunCommand(
+    //         [this]
+    //         {
+    //             m_turretShooter.NewSetSpeed();
+    //             return;
+    //         })))
+    //     .OnFalse(frc2::CommandPtr(frc2::InstantCommand(
+    //         [this]
+    //         {
+    //             m_turretShooter.StopMotors();
+    //             return;
+    //         })));
 
     // leftTrigger
-    frc2::JoystickButton(&m_driverController, 7)
-        .WhileTrue(frc2::CommandPtr(frc2::RunCommand(
-            [this]
-            {
-                m_turretIntake.Intake();
-                return;
-            })))
-        .OnFalse(frc2::CommandPtr(frc2::InstantCommand(
-            [this]
-            {
-                m_turretIntake.StopIntake();
-                return;
-            })));
+    // frc2::JoystickButton(&m_driverController, 7)
+    //     .WhileTrue(frc2::CommandPtr(frc2::RunCommand(
+    //         [this]
+    //         {
+    //             m_turretIntake.Intake();
+    //             return;
+    //         })))
+    //     .OnFalse(frc2::CommandPtr(frc2::InstantCommand(
+    //         [this]
+    //         {
+    //             m_turretIntake.StopIntake();
+    //             return;
+    //         })));
 
     // leftBumper
     frc2::JoystickButton(&m_driverController, 5)
@@ -332,7 +334,7 @@ void Robot::BindCommands()
     // frc2::JoystickButton(&m_driverController, 3)
     // .WhileTrue(GoToPoint(&m_swerveDrive, &m_poiGenerator).ToPtr());
 
-    frc2::JoystickButton(&m_driverController, 3)
+    frc2::JoystickButton(&m_driverController, 2)
         .OnTrue(scoreClosest.get())
         .OnFalse(frc2::CommandPtr(
             frc2::InstantCommand([this]
@@ -370,7 +372,7 @@ void Robot::BindCommands()
     //             return;
     //         }))));
 
-    frc2::JoystickButton(&m_driverController, 10)
+    frc2::JoystickButton(&m_driverController, 8)
         .WhileTrue(frc2::CommandPtr(frc2::InstantCommand(
             [this]
             {
