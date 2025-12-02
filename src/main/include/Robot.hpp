@@ -19,6 +19,7 @@
 #include <frc2/command/InstantCommand.h>
 #include <frc2/command/RunCommand.h>
 #include <frc2/command/button/JoystickButton.h>
+#include <frc2/command/button/Trigger.h>
 #include <frc2/command/button/POVButton.h>
 #include <commands/AutoWheelOffsets.h>
 

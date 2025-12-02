@@ -232,11 +232,11 @@ void Robot::CreateRobot()
             // auto approach = m_driverController.GetRawButton(5);
             bool approach = 0;
 
-            auto leftXAxis = MathUtilNK::calculateAxis(m_driverController.GetRawAxis(1),
+            auto leftXAxis = MathUtilNK::calculateAxis(m_driverController.GetRawAxis(0),
                                                        DriveConstants::kDefaultAxisDeadband);
-            auto leftYAxis = MathUtilNK::calculateAxis(m_driverController.GetRawAxis(0),
+            auto leftYAxis = MathUtilNK::calculateAxis(m_driverController.GetRawAxis(1),
                                                        DriveConstants::kDefaultAxisDeadband);
-            auto rightXAxis = MathUtilNK::calculateAxis(m_driverController.GetRawAxis(2),
+            auto rightXAxis = MathUtilNK::calculateAxis(m_driverController.GetRawAxis(4),
                                                         DriveConstants::kDefaultAxisDeadband);
 
             m_swerveDrive.WeightedDriving(approach, leftXAxis, leftYAxis, rightXAxis, targetKey);
@@ -278,8 +278,18 @@ void Robot::BindCommands()
 
     // We Need To Fix This With The New Controller Triggers
 
-    // rightTrigger
-    // frc2::JoystickButton(&m_driverController, 8)
+    double rawAxis4 = m_driverController.GetRawAxis(3);
+    // rightTrigger    double axisValue = m_stick.GetRawAxis(1);
+    frc2::Trigger([this]
+                  {
+                if(m_driverController.GetRawAxis(3) > 0.5)
+                {
+                    m_turretShooter.NewSetSpeed();
+                } else {
+                    m_turretShooter.StopMotors();
+                }
+                return true; });
+    // frc2::Trigger(&m_driverController, 8)
     //     .WhileTrue(frc2::CommandPtr(frc2::RunCommand(
     //         [this]
     //         {
@@ -294,19 +304,19 @@ void Robot::BindCommands()
     //         })));
 
     // leftTrigger
-    // frc2::JoystickButton(&m_driverController, 7)
-    //     .WhileTrue(frc2::CommandPtr(frc2::RunCommand(
-    //         [this]
-    //         {
-    //             m_turretIntake.Intake();
-    //             return;
-    //         })))
-    //     .OnFalse(frc2::CommandPtr(frc2::InstantCommand(
-    //         [this]
-    //         {
-    //             m_turretIntake.StopIntake();
-    //             return;
-    //         })));
+    frc2::JoystickButton(&m_driverController, 7)
+        .WhileTrue(frc2::CommandPtr(frc2::RunCommand(
+            [this]
+            {
+                m_turretIntake.Intake();
+                return;
+            })))
+        .OnFalse(frc2::CommandPtr(frc2::InstantCommand(
+            [this]
+            {
+                m_turretIntake.StopIntake();
+                return;
+            })));
 
     // leftBumper
     frc2::JoystickButton(&m_driverController, 5)
