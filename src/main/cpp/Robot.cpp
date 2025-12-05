@@ -278,33 +278,34 @@ void Robot::BindCommands()
 
     // We Need To Fix This With The New Controller Triggers
 
-    double rawAxis4 = m_driverController.GetRawAxis(3);
-    // rightTrigger    double axisValue = m_stick.GetRawAxis(1);
-    frc2::Trigger([this]
-                  {
-                if(m_driverController.GetRawAxis(3) > 0.5)
-                {
-                    m_turretShooter.NewSetSpeed();
-                } else {
-                    m_turretShooter.StopMotors();
-                }
-                return true; });
-    // frc2::Trigger(&m_driverController, 8)
-    //     .WhileTrue(frc2::CommandPtr(frc2::RunCommand(
-    //         [this]
-    //         {
-    //             m_turretShooter.NewSetSpeed();
-    //             return;
-    //         })))
-    //     .OnFalse(frc2::CommandPtr(frc2::InstantCommand(
-    //         [this]
-    //         {
-    //             m_turretShooter.StopMotors();
-    //             return;
-    //         })));
+    // double rawAxis4 = m_driverController.GetRawAxis(3);
+    // // rightTrigger    double axisValue = m_stick.GetRawAxis(1);
+    // frc2::Trigger([this]
+    //               {
+    //             if(m_driverController.GetRawAxis(3) > 0.5)
+    //             {
+    //                 m_turretShooter.NewSetSpeed();
+    //             } else {
+    //                 m_turretShooter.StopMotors();
+    //             }
+    //             return true; });
+    // rightBumper
+    frc2::JoystickButton(&m_driverController, 6)
+        .WhileTrue(frc2::CommandPtr(frc2::RunCommand(
+            [this]
+            {
+                m_turretShooter.NewSetSpeed();
+                return;
+            })))
+        .OnFalse(frc2::CommandPtr(frc2::InstantCommand(
+            [this]
+            {
+                m_turretShooter.StopMotors();
+                return;
+            })));
 
-    // leftTrigger
-    frc2::JoystickButton(&m_driverController, 7)
+    // buttonA
+    frc2::JoystickButton(&m_driverController, 1)
         .WhileTrue(frc2::CommandPtr(frc2::RunCommand(
             [this]
             {

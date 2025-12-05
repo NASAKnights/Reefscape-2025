@@ -52,8 +52,8 @@ namespace TurretConstants
   const double kAngleI = 0.01;
   const double kAngleD = 0.0; // 0.0001
   const double kIZone = 1.0;
-  const auto kTurretVelLimit = units::degrees_per_second_t(108.0);
-  const auto kTurretAccelLimit = units::angular_acceleration::degrees_per_second_squared_t(108); // Mech limit 27 rad/s^2(1500 degree_second_squared)
+  const auto kTurretVelLimit = units::degrees_per_second_t(200.0);
+  const auto kTurretAccelLimit = units::angular_acceleration::degrees_per_second_squared_t(200); // Mech limit 27 rad/s^2(1500 degree_second_squared)
   const units::degree_t kTolerancePos = 1_deg;
   const units::degrees_per_second_t kToleranceVel = 0.5_deg_per_s;
   const int kAngleMotorId = 50;
