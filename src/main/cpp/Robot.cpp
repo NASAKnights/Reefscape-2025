@@ -84,10 +84,10 @@ void Robot::SetAutonomousCommand(std::string a)
 void Robot::AutonomousInit()
 {
     // m_autonomousCommand = this->GetAutonomousCommand();
-    m_elevator.HoldPosition();
+    // m_elevator.HoldPosition();
     // m_swerveDrive.TurnVisionOff(); // don't use vision during Auto
     auto m_autonomousCommand = autoChooser.GetSelected();
-    m_CoralIntake.Intake(-0.25);
+    // m_CoralIntake.Intake(-0.25);
     // auto start = std::move(autoMap.at(1)).second;
     // m_autonomousCommand = std::move(std::move(autoMap.at(1)).first).ToPtr();
     m_swerveDrive.ResetPose(autoStartPose);
@@ -102,7 +102,7 @@ void Robot::AutonomousPeriodic() {}
 
 void Robot::AutonomousExit()
 {
-    m_elevator.Disable();
+    // m_elevator.Disable();
 }
 
 void Robot::TeleopInit()
@@ -111,8 +111,8 @@ void Robot::TeleopInit()
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-    m_wrist.HoldPosition();
-    m_elevator.HoldPosition();
+    // m_wrist.HoldPosition();
+    // m_elevator.HoldPosition();
     m_turret.Reset();
     /*
     if (m_wrist.GetState() != WristConstants::WristState::ZEROING)
@@ -131,21 +131,21 @@ void Robot::TeleopInit()
 
 void Robot::TeleopPeriodic()
 {
-    if (m_elevator.GetHeight() >= 0.35 && !m_pathfind.IsScheduled())
-    {
-        frc::SmartDashboard::PutNumber("drive/accelLim", 0.5);
-    }
-    else
-    {
-        frc::SmartDashboard::PutNumber("drive/accelLim", 4.0);
-    }
+    // if (m_elevator.GetHeight() >= 0.35 && !m_pathfind.IsScheduled())
+    // {
+    //     frc::SmartDashboard::PutNumber("drive/accelLim", 0.5);
+    // }
+    // else
+    // {
+    //     frc::SmartDashboard::PutNumber("drive/accelLim", 4.0);
+    // }
 
     // m_turret.SetAngle(MathUtilNK::calculateAxis(m_operatorController.GetRawAxis(0), DriveConstants::kDefaultAxisDeadband) * 135);
 }
 
 void Robot::TeleopExit()
 {
-    m_elevator.Disable();
+    // m_elevator.Disable();
 }
 
 /**
@@ -205,17 +205,17 @@ void Robot::CreateRobot()
                 m_pathfind = frc2::CommandPtr(AutoBuilder::followPath(path).Unwrap());
                 m_pathfind.Schedule(); })
             .Unwrap());
-    pathplanner::EventTrigger("Score L1").OnTrue(std::move(PlaceL1(&m_wrist, &m_elevator)).ToPtr());
-    pathplanner::EventTrigger("Score L2").OnTrue(std::move(PlaceL2(&m_wrist, &m_elevator)).ToPtr());
-    pathplanner::EventTrigger("Score L3").OnTrue(std::move(PlaceL3(&m_wrist, &m_elevator)).ToPtr());
-    pathplanner::EventTrigger("Score L4").OnTrue(std::move(PlaceL4(&m_wrist, &m_elevator)).ToPtr());
-    pathplanner::EventTrigger("Intake").WhileTrue(std::move(GrabCoral(&m_elevator, &m_wrist, &m_CoralIntake).ToPtr()));
+    // pathplanner::EventTrigger("Score L1").OnTrue(std::move(PlaceL1(&m_wrist, &m_elevator)).ToPtr());
+    // pathplanner::EventTrigger("Score L2").OnTrue(std::move(PlaceL2(&m_wrist, &m_elevator)).ToPtr());
+    // pathplanner::EventTrigger("Score L3").OnTrue(std::move(PlaceL3(&m_wrist, &m_elevator)).ToPtr());
+    // pathplanner::EventTrigger("Score L4").OnTrue(std::move(PlaceL4(&m_wrist, &m_elevator)).ToPtr());
+    // pathplanner::EventTrigger("Intake").WhileTrue(std::move(GrabCoral(&m_elevator, &m_wrist, &m_CoralIntake).ToPtr()));
 
-    pathplanner::NamedCommands::registerCommand("IntakeNAMED", std::move(GrabCoral(&m_elevator, &m_wrist, &m_CoralIntake).ToPtr()));
-    pathplanner::NamedCommands::registerCommand("OuttakeCoralNAMED", std::move(RunCoralOuttake(&m_CoralIntake).ToPtr()));
-    pathplanner::NamedCommands::registerCommand("RunIntake", std::move(RunCoralIntake(&m_CoralIntake).ToPtr()));
+    // pathplanner::NamedCommands::registerCommand("IntakeNAMED", std::move(GrabCoral(&m_elevator, &m_wrist, &m_CoralIntake).ToPtr()));
+    // pathplanner::NamedCommands::registerCommand("OuttakeCoralNAMED", std::move(RunCoralOuttake(&m_CoralIntake).ToPtr()));
+    // pathplanner::NamedCommands::registerCommand("RunIntake", std::move(RunCoralIntake(&m_CoralIntake).ToPtr()));
 
-    pathplanner::EventTrigger("OuttakeCoral").WhileTrue(std::move(RunCoralOuttake(&m_CoralIntake).ToPtr()));
+    // pathplanner::EventTrigger("OuttakeCoral").WhileTrue(std::move(RunCoralOuttake(&m_CoralIntake).ToPtr()));
     // pathplanner::NamedCommands::registerCommand("Vision", std::move(GoToPoint(&m_swerveDrive, &m_poiGenerator).ToPtr()));
     pathplanner::NamedCommands::registerCommand("TURN VISION OFF :(", frc2::CommandPtr(
                                                                           frc2::InstantCommand([&]
@@ -224,7 +224,7 @@ void Robot::CreateRobot()
                                                                          frc2::InstantCommand([&]
                                                                                               { return m_swerveDrive.TurnVisionOn(); })));
 
-    pathplanner::EventTrigger("Reset").OnTrue(std::move(Reset(&m_elevator, &m_wrist).ToPtr()));
+    // pathplanner::EventTrigger("Reset").OnTrue(std::move(Reset(&m_elevator, &m_wrist).ToPtr()));
 
     m_swerveDrive.SetDefaultCommand(frc2::RunCommand(
         [this]
@@ -232,7 +232,7 @@ void Robot::CreateRobot()
             // auto approach = m_driverController.GetRawButton(5);
             bool approach = 0;
 
-            auto leftXAxis = MathUtilNK::calculateAxis(m_driverController.GetRawAxis(0),
+            auto leftXAxis = MathUtilNK::calculateAxis(-m_driverController.GetRawAxis(0),
                                                        DriveConstants::kDefaultAxisDeadband);
             auto leftYAxis = MathUtilNK::calculateAxis(m_driverController.GetRawAxis(1),
                                                        DriveConstants::kDefaultAxisDeadband);
@@ -248,12 +248,12 @@ void Robot::CreateRobot()
         },
         {&m_swerveDrive}));
 
-    AddPeriodic([this]
-                { m_elevator.Periodic(); },
-                5_ms, 1_ms);
-    AddPeriodic([this]
-                { m_wrist.Periodic(); },
-                10_ms, 2_ms);
+    // AddPeriodic([this]
+    //             { m_elevator.Periodic(); },
+    //             5_ms, 1_ms);
+    // AddPeriodic([this]
+    //             { m_wrist.Periodic(); },
+    //             10_ms, 2_ms);
     AddPeriodic([this]
                 { m_turret.Periodic(); },
                 5_ms, 3_ms);
@@ -290,49 +290,49 @@ void Robot::BindCommands()
     //             }
     //             return true; });
     // rightBumper
-    frc2::JoystickButton(&m_driverController, 6)
-        .WhileTrue(frc2::CommandPtr(frc2::RunCommand(
-            [this]
-            {
-                m_turretShooter.NewSetSpeed();
-                return;
-            })))
-        .OnFalse(frc2::CommandPtr(frc2::InstantCommand(
-            [this]
-            {
-                m_turretShooter.StopMotors();
-                return;
-            })));
+    // frc2::JoystickButton(&m_driverController, 6)
+    //     .WhileTrue(frc2::CommandPtr(frc2::RunCommand(
+    //         [this]
+    //         {
+    //             m_turretShooter.NewSetSpeed();
+    //             return;
+    //         })))
+    //     .OnFalse(frc2::CommandPtr(frc2::InstantCommand(
+    //         [this]
+    //         {
+    //             m_turretShooter.StopMotors();
+    //             return;
+    //         })));
 
-    // buttonA
-    frc2::JoystickButton(&m_driverController, 1)
-        .WhileTrue(frc2::CommandPtr(frc2::RunCommand(
-            [this]
-            {
-                m_turretIntake.Intake();
-                return;
-            })))
-        .OnFalse(frc2::CommandPtr(frc2::InstantCommand(
-            [this]
-            {
-                m_turretIntake.StopIntake();
-                return;
-            })));
+    // // buttonA
+    // frc2::JoystickButton(&m_driverController, 1)
+    //     .WhileTrue(frc2::CommandPtr(frc2::RunCommand(
+    //         [this]
+    //         {
+    //             m_turretIntake.Intake();
+    //             return;
+    //         })))
+    //     .OnFalse(frc2::CommandPtr(frc2::InstantCommand(
+    //         [this]
+    //         {
+    //             m_turretIntake.StopIntake();
+    //             return;
+    //         })));
 
     // leftBumper
-    frc2::JoystickButton(&m_driverController, 5)
-        .WhileTrue(frc2::CommandPtr(frc2::InstantCommand(
-            [this]
-            {
-                m_turretIntake.Outtake();
-                return;
-            })))
-        .OnFalse(frc2::CommandPtr(frc2::InstantCommand(
-            [this]
-            {
-                m_turretIntake.StopIntake();
-                return;
-            })));
+    // frc2::JoystickButton(&m_driverController, 5)
+    //     .WhileTrue(frc2::CommandPtr(frc2::InstantCommand(
+    //         [this]
+    //         {
+    //             m_turretIntake.Outtake();
+    //             return;
+    //         })))
+    //     .OnFalse(frc2::CommandPtr(frc2::InstantCommand(
+    //         [this]
+    //         {
+    //             m_turretIntake.StopIntake();
+    //             return;
+    //         })));
 
     // frc2::JoystickButton(&m_driverController, 5)
     //     .WhileTrue(RunCoralOuttake(&m_CoralIntake).ToPtr());
@@ -383,19 +383,19 @@ void Robot::BindCommands()
     //             return;
     //         }))));
 
-    frc2::JoystickButton(&m_driverController, 8)
-        .WhileTrue(frc2::CommandPtr(frc2::InstantCommand(
-            [this]
-            {
-                m_climber.Unspool();
-                return;
-            })))
-        .OnFalse(frc2::CommandPtr(frc2::InstantCommand(
-            [this]
-            {
-                m_climber.Stop();
-                return;
-            })));
+    // frc2::JoystickButton(&m_driverController, 8)
+    //     .WhileTrue(frc2::CommandPtr(frc2::InstantCommand(
+    //         [this]
+    //         {
+    //             m_climber.Unspool();
+    //             return;
+    //         })))
+    //     .OnFalse(frc2::CommandPtr(frc2::InstantCommand(
+    //         [this]
+    //         {
+    //             m_climber.Stop();
+    //             return;
+    //         })));
 
     // --------------OPERATOR BUTTONS--------------------------------
     /* frc2::JoystickButton(&m_operatorController, 1)
@@ -404,58 +404,58 @@ void Robot::BindCommands()
     Example Button */
 
     // Square
-    frc2::JoystickButton(&m_operatorController, 1)
-        .OnTrue(PlaceL4(&m_wrist, &m_elevator).ToPtr())
-        .OnFalse(Reset(&m_elevator, &m_wrist).ToPtr());
-    // Cross
-    frc2::JoystickButton(&m_operatorController, 2)
-        .OnTrue(PlaceL1(&m_wrist, &m_elevator).ToPtr())
-        .OnFalse(Reset(&m_elevator, &m_wrist).ToPtr());
-    // Circle
-    frc2::JoystickButton(&m_operatorController, 3)
-        .OnTrue(PlaceL2(&m_wrist, &m_elevator).ToPtr())
-        .OnFalse(Reset(&m_elevator, &m_wrist).ToPtr());
-    // Triangle
-    frc2::JoystickButton(&m_operatorController, 4)
-        .OnTrue(PlaceL3(&m_wrist, &m_elevator).ToPtr())
-        .OnFalse(Reset(&m_elevator, &m_wrist).ToPtr());
+    // frc2::JoystickButton(&m_operatorController, 1)
+    //     .OnTrue(PlaceL4(&m_wrist, &m_elevator).ToPtr())
+    //     .OnFalse(Reset(&m_elevator, &m_wrist).ToPtr());
+    // // Cross
+    // frc2::JoystickButton(&m_operatorController, 2)
+    //     .OnTrue(PlaceL1(&m_wrist, &m_elevator).ToPtr())
+    //     .OnFalse(Reset(&m_elevator, &m_wrist).ToPtr());
+    // // Circle
+    // frc2::JoystickButton(&m_operatorController, 3)
+    //     .OnTrue(PlaceL2(&m_wrist, &m_elevator).ToPtr())
+    //     .OnFalse(Reset(&m_elevator, &m_wrist).ToPtr());
+    // // Triangle
+    // frc2::JoystickButton(&m_operatorController, 4)
+    //     .OnTrue(PlaceL3(&m_wrist, &m_elevator).ToPtr())
+    //     .OnFalse(Reset(&m_elevator, &m_wrist).ToPtr());
 
-    frc2::JoystickButton(&m_operatorController, 5)
-        .WhileTrue(GrabCoralFar(&m_elevator, &m_wrist, &m_CoralIntake).ToPtr())
-        .OnFalse(Reset(&m_elevator, &m_wrist).ToPtr());
-
-    frc2::JoystickButton(&m_operatorController, 6)
-        .WhileTrue(GrabCoral(&m_elevator, &m_wrist, &m_CoralIntake).ToPtr())
-        .OnFalse(Reset(&m_elevator, &m_wrist).ToPtr());
+    // frc2::JoystickButton(&m_operatorController, 5)
+    //     .WhileTrue(GrabCoralFar(&m_elevator, &m_wrist, &m_CoralIntake).ToPtr())
+    //     .OnFalse(Reset(&m_elevator, &m_wrist).ToPtr());
 
     // frc2::JoystickButton(&m_operatorController, 6)
-    //     .WhileTrue(GrabAlgaeL3(&m_AlgaeIntake).ToPtr());
-    // ^ Rewrite command to include elevator
-    frc2::POVButton(&m_operatorController, 0)
-        .WhileTrue(RunCoralIntake(&m_CoralIntake).ToPtr());
+    //     .WhileTrue(GrabCoral(&m_elevator, &m_wrist, &m_CoralIntake).ToPtr())
+    //     .OnFalse(Reset(&m_elevator, &m_wrist).ToPtr());
 
-    // Left Trigger
-    frc2::JoystickButton(&m_operatorController, 7)
-        .WhileTrue(ScoreAlgae(&m_wrist, &m_AlgaeIntake, &m_elevator).ToPtr());
+    // // frc2::JoystickButton(&m_operatorController, 6)
+    // //     .WhileTrue(GrabAlgaeL3(&m_AlgaeIntake).ToPtr());
+    // // ^ Rewrite command to include elevator
+    // frc2::POVButton(&m_operatorController, 0)
+    //     .WhileTrue(RunCoralIntake(&m_CoralIntake).ToPtr());
 
-    // Right Trigger
-    frc2::JoystickButton(&m_operatorController, 8)
-        .WhileTrue(RunCoralOuttake(&m_CoralIntake).ToPtr());
+    // // Left Trigger
+    // frc2::JoystickButton(&m_operatorController, 7)
+    //     .WhileTrue(ScoreAlgae(&m_wrist, &m_AlgaeIntake, &m_elevator).ToPtr());
 
-    // Share
-    frc2::JoystickButton(&m_operatorController, 9)
-        .WhileTrue(DeployClimb(&m_climber).ToPtr());
-    // Option
-    frc2::JoystickButton(&m_operatorController, 10)
-        .WhileTrue(ClimbCage(&m_climber).ToPtr());
+    // // Right Trigger
+    // frc2::JoystickButton(&m_operatorController, 8)
+    //     .WhileTrue(RunCoralOuttake(&m_CoralIntake).ToPtr());
 
-    frc2::POVButton(&m_operatorController, 180) // Zero wrist
-        .OnTrue(frc2::CommandPtr(frc2::InstantCommand(
-            [this]
-            {
-                m_wrist.Zero();
-                return;
-            })));
+    // // Share
+    // frc2::JoystickButton(&m_operatorController, 9)
+    //     .WhileTrue(DeployClimb(&m_climber).ToPtr());
+    // // Option
+    // frc2::JoystickButton(&m_operatorController, 10)
+    //     .WhileTrue(ClimbCage(&m_climber).ToPtr());
+
+    // frc2::POVButton(&m_operatorController, 180) // Zero wrist
+    //     .OnTrue(frc2::CommandPtr(frc2::InstantCommand(
+    //         [this]
+    //         {
+    //             m_wrist.Zero();
+    //             return;
+    //         })));
     // frc2::POVButton(&m_operatorController, 0) // Zero wrist
     //     .OnTrue(frc2::CommandPtr(frc2::InstantCommand(
     //         [this]

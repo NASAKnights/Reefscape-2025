@@ -43,7 +43,6 @@ SwerveDrive::SwerveDrive()
 
     // navx.Calibrate();
     navx.Reset();
-
     speeds = frc::ChassisSpeeds();
     networkTableInst.StartServer();
     frc::SmartDashboard::PutData("Field", &m_field);
@@ -156,8 +155,8 @@ void SwerveDrive::Periodic()
     m_poseEstimator.Update(navx.GetRotation2d(), GetModulePositions());
     m_field.SetRobotPose(m_poseEstimator.GetEstimatedPosition());
 
-    // PrintNetworkTableValues();
-
+        // PrintNetworkTableValues();
+    frc::SmartDashboard::PutNumber("Angular Velocity", navx.GetRate());
     frc::SmartDashboard::PutNumber("Heading", GetHeading().Degrees().value());
     // UpdateOdometry();
     PeriodicShuffleboard();

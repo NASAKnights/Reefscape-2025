@@ -115,9 +115,9 @@ private:
     frc::AnalogInput batteryShunt{0};
 
     SwerveDrive m_swerveDrive;
-    Wrist m_wrist;
-    Elevator m_elevator;
-    Climber m_climber;
+    // Wrist m_wrist;
+    // Elevator m_elevator;
+    // Climber m_climber;
     Turret m_turret;
     Turret_Shooter m_turretShooter;
     TurretIntake m_turretIntake;

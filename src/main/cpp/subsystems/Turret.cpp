@@ -144,14 +144,16 @@ void Turret::SetAngle(units::degree_t TurretAngleGoal)
         if ((TurretAngleGoal <= TurretConstants::kmaxAngle) &&
             (TurretAngleGoal >= TurretConstants::kminAngle))
         {
-            auto velocity = GetVelocity();
-            m_goal = units::angle::degree_t(TurretAngleGoal);
-            if (abs(velocity.value()) < (1_deg_per_s).value())
-            {
-                velocity = 1_deg_per_s * copysign(1.0, velocity.value());
-            }
-            m_controller.Reset(GetMeasurement(), GetVelocity());
-            m_controller.SetGoal(m_goal);
+            units::degrees_per_second_t robotVel = units::degrees_per_second_t{frc::SmartDashboard::GetNumber("Angular velocity", 0.0)};
+            auto turretVel = GetVelocity();
+            m_goal = TurretAngleGoal;
+            // m_goal = units::angle::degree_t(TurretAngleGoal);
+            // if (abs(velocity.value()) < (1_deg_per_s).value())
+            // {
+            //     velocity = 1_deg_per_s * copysign(1.0, velocity.value());
+            // }
+            // m_controller.Reset(GetMeasurement(), GetVelocity());
+            // m_controller.SetGoal(m_goal);
         }
     }
     frc::SmartDashboard::PutNumber("/Turret/m_goal", double(m_goal));
@@ -159,7 +161,7 @@ void Turret::SetAngle(units::degree_t TurretAngleGoal)
 
 units::degrees_per_second_t Turret::GetVelocity()
 {
-    return m_motor.GetVelocity().GetValue() / TurretConstants::kGearRatio;
+    return (m_motor.GetVelocity().GetValue() / TurretConstants::kGearRatio);
 }
 
 void Turret::Periodic()
@@ -194,9 +196,15 @@ void Turret::Periodic()
     {
         frc::SmartDashboard::PutString("/Turret/State", "TRACKING");
         SetAngle(findTrackingAngle());
-        fb = m_controller.Calculate(GetMeasurement());
-        ff = m_feedforward.Calculate(units::radian_t{m_controller.GetSetpoint().position}, units::radians_per_second_t{m_controller.GetSetpoint().velocity}, units::radians_per_second_squared_t{m_controller.GetSetpoint().velocity / 1_s});
-        v = units::volt_t{fb} + ff;
+        // fb = m_controller.Calculate(GetMeasurement());
+        // ff = m_feedforward.Calculate(units::radian_t{m_controller.GetSetpoint().position}, units::radians_per_second_t{m_controller.GetSetpoint().velocity}, units::radians_per_second_squared_t{m_controller.GetSetpoint().velocity / 1_s});
+        // v = units::volt_t{fb} + ff;
+        // units::degrees_per_second_t robotVel = units::degrees_per_second_t{frc::SmartDashboard::GetNumber("Angular velocity", 0.0)};
+        // auto turretVel = GetVelocity();
+
+        v = units::volt_t{0.00001 * (m_goal.value() - this->GetMeasurement().value())};
+        frc::SmartDashboard::PutNumber("/Turret/Voltage", double(v));
+        break;
     }
     default:
     {
