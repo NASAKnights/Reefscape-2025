@@ -47,6 +47,7 @@
 #include "subsystems/IntakeAlgae.h"
 #include "commands/GrabCoralFar.h"
 #include "commands/GoToPoint.h"
+#include "commands/AutoWheelOffsets.h"
 
 #include <units/angular_velocity.h>
 #include <units/velocity.h>
@@ -149,6 +150,8 @@ private:
     frc2::CommandPtr removePOICommand = frc2::CommandPtr(frc2::InstantCommand([this]
                                                                               { return m_poiGenerator.RemovePOI(); }))
                                             .IgnoringDisable(true);
+
+    frc2::CommandPtr autoWheelOffsetsCommand = AutoWheelOffsets(&m_swerveDrive).ToPtr().IgnoringDisable(true);
 
     // Robot Container methods
     void CreateRobot();
